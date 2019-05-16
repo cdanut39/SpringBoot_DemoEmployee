@@ -1,19 +1,28 @@
 package com.learning.spring.rest.employees.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
+import java.time.LocalDate;
 
-@Component
+
 @Entity
 @Table(name = "employees")
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
+
     private int salary;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Department department;
+
+//    private Gender sex;
+//
+//    private LocalDate startDate;
+
 
     public Employee() {
     }
@@ -23,6 +32,24 @@ public class Employee {
         this.name = name;
         this.salary = salary;
     }
+
+//    public Gender getSex() {
+//        return sex;
+//    }
+//
+//    public void setSex(Gender sex) {
+//        this.sex = sex;
+//    }
+//
+//    public LocalDate getStartDate() {
+//        return startDate;
+//    }
+//
+//    public void setStartDate(LocalDate startDate) {
+//        this.startDate = startDate;
+//    }
+
+
 
     public int getId() {
         return id;
@@ -48,12 +75,25 @@ public class Employee {
         this.salary = salary;
     }
 
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", salary=" + salary +
+//                ", department=" + department +
                 '}';
+    }
+
+    public enum Gender {
+        M, F;
     }
 }

@@ -1,8 +1,12 @@
 package com.learning.spring.rest.employees.controller;
 
+import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
+import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.model.Department;
 import com.learning.spring.rest.employees.model.Employee;
+import com.learning.spring.rest.employees.services.EmployeeServices;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +22,11 @@ public class EmployeeController {
 
     private static final Logger logger = LogManager.getLogger(EmployeeController.class);
 
-
     @Autowired
     EmployeeRepo repo;
+
+    @Autowired
+    EmployeeServices employeeServices;
 
     @GetMapping(value = "/employees/orderBy/salary/DESC", produces = {"application/json"})
     @ResponseBody
@@ -53,10 +59,10 @@ public class EmployeeController {
 
     @PostMapping("/employee")
     public Employee addEmployee(@RequestBody Employee employee) {
-        repo.save(employee);
-        logger.info("Employee with id {} and name {} was added successfully!", employee.getId(), employee.getName());
-        return employee;
 
+        Employee savedEmp = employeeServices.save(employee);
+
+        return savedEmp;
     }
 
 //    @PutMapping("/employee/{id}")
