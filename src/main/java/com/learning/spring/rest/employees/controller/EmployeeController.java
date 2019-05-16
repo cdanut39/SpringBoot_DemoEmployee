@@ -1,10 +1,7 @@
 package com.learning.spring.rest.employees.controller;
 
-import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
-import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.model.Department;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServices;
 import org.apache.logging.log4j.LogManager;
@@ -52,9 +49,8 @@ public class EmployeeController {
     @ResponseBody
     public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
 
-        Employee employee = repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
-        logger.info("Information for employee with id=" + id + ": Name={}, Salary={}", employee.getName(), employee.getSalary());
-        return new ResponseEntity<Employee>(employee, HttpStatus.OK);
+        Employee getEmployee = employeeServices.getEmployeeById(id);
+        return new ResponseEntity<Employee>(getEmployee, HttpStatus.OK);
     }
 
     @PostMapping("/employee")
