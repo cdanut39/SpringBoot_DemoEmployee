@@ -1,7 +1,9 @@
 package com.learning.spring.rest.employees.services;
 
+import com.learning.spring.rest.employees.mappers.EmployeeMapper;
 import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
+import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Department;
 import com.learning.spring.rest.employees.model.Employee;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Component
 public class EmployeeServices {
 
@@ -18,32 +22,15 @@ public class EmployeeServices {
 
     private EmployeeRepo employeeRepo;
     private DepartmentRepo departmentRepo;
-
+    private EmployeeMapper employeeMapper;
 
     @Autowired
-    public EmployeeServices(EmployeeRepo employeeRepo, DepartmentRepo departmentRepo) {
+    public EmployeeServices(EmployeeRepo employeeRepo, DepartmentRepo departmentRepo, EmployeeMapper employeeMapper) {
         this.employeeRepo = employeeRepo;
         this.departmentRepo = departmentRepo;
+        this.employeeMapper = employeeMapper;
     }
 
-//    public Employee convertFromEmpDtoToEmp(EmployeeDTO dto) {
-//
-//        Employee e = new Employee();
-//        e.setId(dto.getId());
-//        e.setDepartment(dto.getDepartment());
-//        e.setName(dto.getName());
-//        return e;
-//    }
-//
-//    EmployeeDTO convertFromEmpToEmpDto(Employee emp) {
-//
-//        EmployeeDTO dto = new EmployeeDTO();
-//        dto.setDepartment(emp.getDept());
-//        dto.setSalary(emp.getSalary);
-//
-//        return dto;
-//
-//    }
 
     public Employee getEmployeeById(int id) throws EmployeeNotFoundException {
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
@@ -53,21 +40,20 @@ public class EmployeeServices {
 
 
     @Transactional
-    public Employee save(Employee employee) {
+    public EmployeeDTO save(Employee employee) {
 
-//        Employee employee = convertFromEmpDtoToEmp(employeeDTO);
         String deptName = employee.getDepartment().getDeptName();
         Department department = departmentRepo.findByDeptName(deptName);
 
         if (department != null) {
             employee.setDepartment(department);
-//            employee.getDepartment().setDeptId(department.getDeptId());
         }
-
+        employee.setStartDate(LocalDate.now());
         Employee savedEmp = employeeRepo.save(employee);
+        EmployeeDTO employeeDTO = employeeMapper.convertFromEmpToEmpDto(savedEmp);
         logger.info("Employee with id {} and name {} was added successfully!", employee.getId(), employee.getName());
 
-        return savedEmp;
+        return employeeDTO;
 
     }
 }

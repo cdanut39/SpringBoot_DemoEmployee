@@ -1,7 +1,6 @@
 package com.learning.spring.rest.employees.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.List;
@@ -23,8 +22,8 @@ public class Department {
         this.employees = employees;
     }
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "department")
+//    @JsonIgnore
+    @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Employee> employees;
 
     public Department() {
@@ -47,15 +46,12 @@ public class Department {
     }
 
 
-
     @Override
     public String toString() {
         return "Department{" +
                 "deptId=" + deptId +
                 ", deptName='" + deptName + "}";
     }
-
-
 
 
 }

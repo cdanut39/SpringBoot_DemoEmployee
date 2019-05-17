@@ -1,7 +1,10 @@
 package com.learning.spring.rest.employees.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 @Entity
@@ -16,12 +19,16 @@ public class Employee {
 
     private int salary;
 
+//    private boolean bonus;
+
+    @Enumerated(EnumType.STRING)
+    private Gender sex;
+
+    private LocalDate startDate;
+
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Department department;
-
-//    private Gender sex;
-//
-//    private LocalDate startDate;
 
 
     public Employee() {
@@ -33,22 +40,21 @@ public class Employee {
         this.salary = salary;
     }
 
-//    public Gender getSex() {
-//        return sex;
-//    }
-//
-//    public void setSex(Gender sex) {
-//        this.sex = sex;
-//    }
-//
-//    public LocalDate getStartDate() {
-//        return startDate;
-//    }
-//
-//    public void setStartDate(LocalDate startDate) {
-//        this.startDate = startDate;
-//    }
+    public Gender getSex() {
+        return sex;
+    }
 
+    public void setSex(Gender sex) {
+        this.sex = sex;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
 
 
     public int getId() {

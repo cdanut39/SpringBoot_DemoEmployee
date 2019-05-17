@@ -1,6 +1,7 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
+import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServices;
@@ -26,13 +27,11 @@ public class EmployeeController {
     EmployeeServices employeeServices;
 
     @GetMapping(value = "/employees/orderBy/salary/DESC", produces = {"application/json"})
-    @ResponseBody
     public List<Employee> getEmployeesOrderdByCriteriaDESC() {
         return repo.getEmployeesOrderBySalary();
     }
 
     @GetMapping(value = "/employees/orderBy/{criteria}/ASC", produces = {"application/json"})
-    @ResponseBody
     public List<Employee> getEmployeesOrderdByCriteriaASC(@PathVariable("criteria") String criteria) {
         return repo.findAll(new Sort(Sort.Direction.ASC, criteria));
     }
@@ -54,9 +53,9 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee")
-    public Employee addEmployee(@RequestBody Employee employee) {
+    public EmployeeDTO addEmployee(@RequestBody Employee employee) {
 
-        Employee savedEmp = employeeServices.save(employee);
+        EmployeeDTO savedEmp = employeeServices.save(employee);
 
         return savedEmp;
     }
