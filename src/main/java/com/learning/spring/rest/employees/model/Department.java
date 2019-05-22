@@ -14,14 +14,6 @@ public class Department {
     private int deptId;
     private String deptName;
 
-    public List<Employee> getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
-    }
-
 //    @JsonIgnore
     @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Employee> employees;
@@ -45,6 +37,13 @@ public class Department {
         this.deptName = deptName;
     }
 
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
+    }
 
     @Override
     public String toString() {

@@ -1,12 +1,19 @@
 package com.learning.spring.rest.employees.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Date;
 
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
+@JsonPropertyOrder({"id", "name", "sex", "deptName", "salary", "bonus", "firstDay"})
+//pentru ordinea afisarii JSON-ului la GET request
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -15,21 +22,29 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank(message = "Name cannot be blank")
+    @Size(min = 3, max = 16, message = "Name has to be equal to or greater than 3 and less than 16 characters")
     private String name;
 
+    @Positive
+    @Min(value = 2000, message = "Minimum salary is 2000 eur")
     private int salary;
-
-//    private boolean bonus;
 
     @Enumerated(EnumType.STRING)
     private Gender sex;
 
+    @JsonProperty(value = "firstDay")
     private LocalDate startDate;
 
-    @JsonIgnore
+    @JsonProperty(required = true)
+    private boolean bonus;
+
+    @JsonProperty(access = WRITE_ONLY)
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Department department;
 
+    @Transient
+    private String deptName;
 
     public Employee() {
     }
@@ -55,7 +70,6 @@ public class Employee {
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
-
 
     public int getId() {
         return id;
@@ -87,6 +101,22 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public boolean isBonus() {
+        return bonus;
+    }
+
+    public void setBonus(boolean bonus) {
+        this.bonus = bonus;
+    }
+
+    public void setDeptName(Employee employee) {
+        this.deptName = employee.getDepartment().getDeptName();
+    }
+
+    public String getDeptName() {
+        return deptName;
     }
 
     @Override

@@ -10,7 +10,6 @@ public class EmployeeMapper {
     public Employee convertFromEmpDtoToEmp(EmployeeDTO dto) {
 
         Employee e = new Employee();
-        e.setDepartment(dto.getDepartment());
         e.setName(dto.getName());
         return e;
     }
@@ -19,7 +18,9 @@ public class EmployeeMapper {
 
         EmployeeDTO dto = new EmployeeDTO();
         dto.setName(emp.getName());
-        dto.setDepartment(emp.getDepartment());
+        dto.setId(emp.getId());
+        dto.setDeptName(emp.getDepartment().getDeptName());
+        dto.setStartDate(emp.getStartDate());
         dto.setSex(emp.getSex());
 
         return dto;

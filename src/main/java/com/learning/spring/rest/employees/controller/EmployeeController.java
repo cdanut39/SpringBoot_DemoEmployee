@@ -4,7 +4,7 @@ import com.learning.spring.rest.employees.dao.EmployeeRepo;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Employee;
-import com.learning.spring.rest.employees.services.EmployeeServices;
+import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class EmployeeController {
     EmployeeRepo repo;
 
     @Autowired
-    EmployeeServices employeeServices;
+    EmployeeServiceImpl employeeServices;
 
     @GetMapping(value = "/employees/orderBy/salary/DESC", produces = {"application/json"})
     public List<Employee> getEmployeesOrderdByCriteriaDESC() {
@@ -37,43 +38,33 @@ public class EmployeeController {
     }
 
 
-//    @GetMapping("/employee/{id}")
-//    @ResponseBody
-//    public Employee getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
-//
-//        return repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
-//    }
-
     @GetMapping("/employee/{id}")
-    @ResponseBody
     public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
 
         Employee getEmployee = employeeServices.getEmployeeById(id);
-        return new ResponseEntity<Employee>(getEmployee, HttpStatus.OK);
+        return new ResponseEntity<>(getEmployee, HttpStatus.OK);
     }
 
     @PostMapping("/employee")
-    public EmployeeDTO addEmployee(@RequestBody Employee employee) {
+    public EmployeeDTO addEmployee(@Valid @RequestBody Employee employee) {
 
         EmployeeDTO savedEmp = employeeServices.save(employee);
 
         return savedEmp;
     }
 
-//    @PutMapping("/employee/{id}")
-//    public Employee updateEmployee(@RequestBody @PathVariable("id") int id) {
-//        Employee updatedEmp = repo.getOne(id);
-//        updatedEmp.setName();
-//        repo.save(updatedEmp);
-//        return updatedEmp;
-//    }
+    @PutMapping("/updateEmployee/{id}")
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody Employee employee) {
+        EmployeeDTO updatedEmp = employeeServices.updateEmployee(id, employee);
+        return new ResponseEntity<>(updatedEmp, HttpStatus.OK);
+    }
 
     @DeleteMapping("/employee/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
         Employee employee = repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id));
         repo.delete(employee);
         logger.info("Successfully removed employee with id={},{}", employee.getId(), employee.getName());
-        return new ResponseEntity<String>("Employee " + id + " was successfully removed", HttpStatus.OK);
+        return new ResponseEntity<>("Employee " + id + " was successfully removed", HttpStatus.OK);
     }
 
 
