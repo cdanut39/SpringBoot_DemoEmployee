@@ -1,18 +1,9 @@
 package com.learning.spring.rest.employees.dto;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
-
-@Component
-@PropertySource(value = "classpath:config.properties")
-
 
 public class DepartmentDTO {
 
-    @Value("${companyName}")
     private String companyName;
     private int deptId;
     private String deptName;

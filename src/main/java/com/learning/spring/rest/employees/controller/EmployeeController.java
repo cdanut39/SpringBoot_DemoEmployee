@@ -3,6 +3,7 @@ package com.learning.spring.rest.employees.controller;
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
 import com.learning.spring.rest.employees.dto.BaseEmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.EmployeeNotValidException;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -47,22 +48,11 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee")
-    public BaseEmployeeDTO addEmployee(@Valid @RequestBody Employee employee, BindingResult bindingResult) {
-//        String errMsg = bindingResult.getAllErrors().get(0).getDefaultMessage();
-//        if(bindingResult.hasErrors()) {
-//            throow new EmployeeNotValidException(errMsg);
-//
-//        }
-//
-//
-//        handle(Exception e) {
-//
-//
-//            errorDTO=nwe ERRORDTO()
-//            errotDTO.etTimestamp(now())
-//                    errorDTO.setMSG(e.getMsgList());
-//
-//        }
+    public BaseEmployeeDTO addEmployee(@Valid @RequestBody Employee employee, BindingResult result) throws EmployeeNotValidException {
+        String errMsg = result.getAllErrors().get(0).getDefaultMessage();
+        if (result.hasErrors()) {
+            throw new EmployeeNotValidException(errMsg);
+        }
 
         BaseEmployeeDTO savedEmp = employeeServices.save(employee);
 
