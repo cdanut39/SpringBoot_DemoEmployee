@@ -1,7 +1,5 @@
 package com.learning.spring.rest.employees.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -13,8 +11,8 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int deptId;
     private String deptName;
+    private static final String COMPANY_NAME = "Softvision";
 
-//    @JsonIgnore
     @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Employee> employees;
 
@@ -43,6 +41,10 @@ public class Department {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    public static String getCompanyName() {
+        return COMPANY_NAME;
     }
 
     @Override

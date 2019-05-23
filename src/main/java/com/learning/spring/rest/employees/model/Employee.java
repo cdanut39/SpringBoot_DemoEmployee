@@ -2,12 +2,12 @@ package com.learning.spring.rest.employees.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
@@ -24,6 +24,7 @@ public class Employee {
 
     @NotBlank(message = "Name cannot be blank")
     @Size(min = 3, max = 16, message = "Name has to be equal to or greater than 3 and less than 16 characters")
+    @Pattern(regexp = "^[A-Z]*")
     private String name;
 
     @Positive
@@ -36,7 +37,6 @@ public class Employee {
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
 
-    @JsonProperty(required = true)
     private boolean bonus;
 
     @JsonProperty(access = WRITE_ONLY)
@@ -115,6 +115,10 @@ public class Employee {
         this.deptName = employee.getDepartment().getDeptName();
     }
 
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
     public String getDeptName() {
         return deptName;
     }
@@ -125,11 +129,12 @@ public class Employee {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", salary=" + salary +
-//                ", department=" + department +
+                ", department=" + department +
                 '}';
     }
 
     public enum Gender {
         M, F;
     }
+
 }

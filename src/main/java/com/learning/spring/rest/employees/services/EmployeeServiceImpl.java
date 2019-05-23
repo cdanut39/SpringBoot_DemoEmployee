@@ -2,7 +2,7 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
-import com.learning.spring.rest.employees.dto.EmployeeDTO;
+import com.learning.spring.rest.employees.dto.BaseEmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.mappers.EmployeeMapper;
 import com.learning.spring.rest.employees.model.Department;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.learning.spring.rest.employees.utils.DateAndTimeUtils.getCurrentDate;
+import java.time.LocalDate;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -34,31 +34,34 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    public Employee getEmployeeById(int id) throws EmployeeNotFoundException {
+    public BaseEmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException {
         Employee employee = employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
         employee.setDeptName(employee);
+        BaseEmployeeDTO baseEmployeeDTO =employeeMapper.convertFromEmpToEmpDto(employee);
         logger.info("Information for employee with id=" + id + ": Name={}, Salary={}", employee.getName(), employee.getSalary());
-        return employee;
+        return baseEmployeeDTO;
     }
 
 
     @Transactional
-    public EmployeeDTO save(Employee employee) {
+    public BaseEmployeeDTO save(Employee employee) {
         String deptName = employee.getDepartment().getDeptName();
         Department department = departmentRepo.findByDeptName(deptName);
         if (department != null) {
             employee.setDepartment(department);
         }
-        employee.setStartDate(getCurrentDate());
+
+        employee.setStartDate(LocalDate.now());
         Employee savedEmp = employeeRepo.save(employee);
-        EmployeeDTO employeeDTO = employeeMapper.convertFromEmpToEmpDto(savedEmp);
+        BaseEmployeeDTO baseEmployeeDTO = employeeMapper.convertFromEmpToEmpDto(savedEmp);
         logger.info("Employee with id {} and name {} was added successfully!", employee.getId(), employee.getName());
 
-        return employeeDTO;
+        return baseEmployeeDTO;
 
     }
 
-    public EmployeeDTO updateEmployee(int id, Employee emp) {
+    public BaseEmployeeDTO updateEmployee(int id, Employee emp) {
+
         Employee employeeToBeUpdated = employeeRepo.getOne(id);
         employeeToBeUpdated.setName(emp.getName());
         employeeToBeUpdated.setSalary(emp.getSalary());
@@ -71,10 +74,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             employeeToBeUpdated.setDepartment(emp.getDepartment());
         }
-
         employeeRepo.save(employeeToBeUpdated);
-        EmployeeDTO employeeDTO = employeeMapper.convertFromEmpToEmpDto(employeeToBeUpdated);
+        BaseEmployeeDTO baseEmployeeDTO = employeeMapper.convertFromEmpToEmpDto(employeeToBeUpdated);
         logger.info("Details of employee with id:{} were successfully updated!", id);
-        return employeeDTO;
+        return baseEmployeeDTO;
     }
 }

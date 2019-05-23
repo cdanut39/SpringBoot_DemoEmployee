@@ -1,7 +1,7 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
-import com.learning.spring.rest.employees.dto.EmployeeDTO;
+import com.learning.spring.rest.employees.dto.BaseEmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,23 +40,38 @@ public class EmployeeController {
 
 
     @GetMapping("/employee/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
+    public ResponseEntity<BaseEmployeeDTO> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
 
-        Employee getEmployee = employeeServices.getEmployeeById(id);
+        BaseEmployeeDTO getEmployee = employeeServices.getEmployeeById(id);
         return new ResponseEntity<>(getEmployee, HttpStatus.OK);
     }
 
     @PostMapping("/employee")
-    public EmployeeDTO addEmployee(@Valid @RequestBody Employee employee) {
+    public BaseEmployeeDTO addEmployee(@Valid @RequestBody Employee employee, BindingResult bindingResult) {
+//        String errMsg = bindingResult.getAllErrors().get(0).getDefaultMessage();
+//        if(bindingResult.hasErrors()) {
+//            throow new EmployeeNotValidException(errMsg);
+//
+//        }
+//
+//
+//        handle(Exception e) {
+//
+//
+//            errorDTO=nwe ERRORDTO()
+//            errotDTO.etTimestamp(now())
+//                    errorDTO.setMSG(e.getMsgList());
+//
+//        }
 
-        EmployeeDTO savedEmp = employeeServices.save(employee);
+        BaseEmployeeDTO savedEmp = employeeServices.save(employee);
 
         return savedEmp;
     }
 
     @PutMapping("/updateEmployee/{id}")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody Employee employee) {
-        EmployeeDTO updatedEmp = employeeServices.updateEmployee(id, employee);
+    public ResponseEntity<BaseEmployeeDTO> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody Employee employee) {
+        BaseEmployeeDTO updatedEmp = employeeServices.updateEmployee(id, employee);
         return new ResponseEntity<>(updatedEmp, HttpStatus.OK);
     }
 

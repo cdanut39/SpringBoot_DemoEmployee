@@ -1,16 +1,19 @@
 package com.learning.spring.rest.employees.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.learning.spring.rest.employees.model.Employee;
 
 import java.time.LocalDate;
 
-public class EmployeeDTO {
+public class BaseEmployeeDTO {
 
     private int id;
     private String name;
     private Employee.Gender sex;
-    private String deptName;
     private LocalDate startDate;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean bonus;
+
 
     public int getId() {
         return id;
@@ -36,14 +39,6 @@ public class EmployeeDTO {
         this.sex = sex;
     }
 
-    public String getDeptName() {
-        return deptName;
-    }
-
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -51,4 +46,13 @@ public class EmployeeDTO {
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
+
+    public boolean isBonus() {
+        return bonus;
+    }
+
+    public void setBonus(boolean bonus) {
+        this.bonus = bonus;
+    }
+
 }

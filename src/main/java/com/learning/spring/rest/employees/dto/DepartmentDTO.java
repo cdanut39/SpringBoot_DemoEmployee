@@ -1,18 +1,36 @@
 package com.learning.spring.rest.employees.dto;
 
-import com.learning.spring.rest.employees.model.Employee;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
+@PropertySource(value = "classpath:config.properties")
+
+
 public class DepartmentDTO {
 
+    @Value("${companyName}")
+    private String companyName;
     private int deptId;
     private String deptName;
-    private List<Employee> employees;
+    private List<BaseEmployeeDTO> employees;
+
 
     public int getDeptId() {
         return deptId;
     }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
 
     public void setDeptId(int deptId) {
         this.deptId = deptId;
@@ -26,13 +44,11 @@ public class DepartmentDTO {
         this.deptName = deptName;
     }
 
-    public List<Employee> getEmployees() {
+    public List<BaseEmployeeDTO> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<Employee> employees) {
+    public void setEmployees(List<BaseEmployeeDTO> employees) {
         this.employees = employees;
     }
-
-
 }
