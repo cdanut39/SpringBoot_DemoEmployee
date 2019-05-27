@@ -60,9 +60,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
-    public BaseEmployeeDTO updateEmployee(int id, Employee emp) {
+    public BaseEmployeeDTO updateEmployee(int id, Employee emp) throws EmployeeNotFoundException {
 
-        Employee employeeToBeUpdated = employeeRepo.getOne(id);
+        Employee employeeToBeUpdated = employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
         employeeToBeUpdated.setName(emp.getName());
         employeeToBeUpdated.setSalary(emp.getSalary());
         employeeToBeUpdated.setBonus(emp.isBonus());

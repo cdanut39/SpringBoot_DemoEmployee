@@ -2,9 +2,6 @@ package com.learning.spring.rest.employees.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -27,8 +24,7 @@ public class Employee {
     @Pattern(regexp = "^[A-Z]*")
     private String name;
 
-    @Positive
-    @Min(value = 2000, message = "Minimum salary is 2000 eur")
+    @Min(value = 2000, message = "Minimum salary is 2000 EURO")
     private int salary;
 
     @Enumerated(EnumType.STRING)
@@ -36,6 +32,8 @@ public class Employee {
 
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
+
+
 
     private boolean bonus;
 

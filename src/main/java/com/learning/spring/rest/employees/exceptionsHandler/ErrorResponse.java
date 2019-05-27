@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.handler;
+package com.learning.spring.rest.employees.exceptionsHandler;
 
 import java.time.LocalDateTime;
 

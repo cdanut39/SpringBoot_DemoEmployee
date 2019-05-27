@@ -1,5 +1,6 @@
-package com.learning.spring.rest.employees.handler;
+package com.learning.spring.rest.employees.exceptionsHandler;
 
+import com.learning.spring.rest.employees.exceptions.DepartmentNotFoundException;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.EmployeeNotValidException;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,22 @@ public class ErrorHandlerController {
     }
 
     @ExceptionHandler(EmployeeNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleEmployeeNotValidError(EmployeeNotValidException enve) {
-        ErrorResponse errorResp = new ErrorResponse();
+    public ResponseEntity<ErrorResponseValidation> handleEmployeeNotValidError(EmployeeNotValidException enve) {
+        ErrorResponseValidation errorResp = new ErrorResponseValidation();
         errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
         errorResp.setErrorMessage(enve.getMessage());
+        errorResp.setErrors(enve.getFieldErrors());
         errorResp.setTimestamp(now());
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DepartmentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEmployeeNotFoundError(DepartmentNotFoundException enfe) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
+        errorResp.setErrorMessage(enfe.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.NOT_FOUND);
     }
 
 }

@@ -11,7 +11,7 @@ public interface EmployeeService {
 
     BaseEmployeeDTO save(Employee employee);
 
-    BaseEmployeeDTO updateEmployee(int id, Employee employee);
+    BaseEmployeeDTO updateEmployee(int id, Employee employee) throws EmployeeNotFoundException;
 
 
 }

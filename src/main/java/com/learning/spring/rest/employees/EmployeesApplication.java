@@ -15,15 +15,7 @@ import java.util.TimeZone;
 
 @SpringBootApplication()
 public class EmployeesApplication {
-//
-//    @Autowired
-//    DepartmentDTO departmentDTO;
 
-    @PostConstruct
-    public void init() {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));   // It will set UTC timezone
-        System.out.println("Spring boot application running in UTC timezone :" + LocalDate.now());   // It will print UTC timezone
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(EmployeesApplication.class, args);
