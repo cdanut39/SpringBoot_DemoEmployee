@@ -1,6 +1,8 @@
 package com.learning.spring.rest.employees.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -10,6 +12,7 @@ public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int deptId;
+    @Size
     private String deptName;
     private static final String COMPANY_NAME = "Softvision";
 

@@ -2,9 +2,11 @@ package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
 import com.learning.spring.rest.employees.dto.BaseEmployeeDTO;
-import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.exceptions.EmployeeNotValidException;
+import com.learning.spring.rest.employees.dto.EmployeeWithDeptNameDTO;
+import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
+import com.learning.spring.rest.employees.mappers.EmployeeMapper;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -25,22 +27,30 @@ public class EmployeeController {
 
     private static final Logger logger = LogManager.getLogger(EmployeeController.class);
 
-    @Autowired
-    EmployeeRepo repo;
+    private EmployeeRepo repo;
+    private EmployeeServiceImpl employeeServices;
+    private EmployeeMapper employeeMapper;
 
     @Autowired
-    EmployeeServiceImpl employeeServices;
+    public EmployeeController(EmployeeRepo repo, EmployeeServiceImpl employeeServices, EmployeeMapper employeeMapper) {
+        this.repo = repo;
+        this.employeeServices = employeeServices;
+        this.employeeMapper = employeeMapper;
+    }
 
     @GetMapping(value = "/employees/orderBy/salary/DESC", produces = {"application/json"})
-    public List<Employee> getEmployeesOrderdByCriteriaDESC() {
-        return repo.getEmployeesOrderBySalary();
+    public List<EmployeeWithDeptNameDTO> getEmployeesOrderdByCriteriaDESC() {
+        List<Employee> employees = repo.getEmployeesOrderBySalary();
+        List<EmployeeWithDeptNameDTO> sortedEmployees = employees.stream().map(employeeMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
+        return sortedEmployees;
     }
 
     @GetMapping(value = "/employees/orderBy/{criteria}/ASC", produces = {"application/json"})
-    public List<Employee> getEmployeesOrderdByCriteriaASC(@PathVariable("criteria") String criteria) {
-        return repo.findAll(new Sort(Sort.Direction.ASC, criteria));
+    public List<EmployeeWithDeptNameDTO> getEmployeesOrderdByCriteriaASC(@PathVariable("criteria") String criteria) {
+        List<Employee> employees = repo.findAll(new Sort(Sort.Direction.ASC, criteria));
+        List<EmployeeWithDeptNameDTO> sortedEmployees = employees.stream().map(employeeMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
+        return sortedEmployees;
     }
-
 
     @GetMapping("/employee/{id}")
     public ResponseEntity<BaseEmployeeDTO> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
@@ -56,7 +66,7 @@ public class EmployeeController {
             List<ValidationError> fieldErrors = result.getFieldErrors().stream()
                     .map(e -> new ValidationError(e.getField(), e.getRejectedValue().toString(), e.getDefaultMessage()))
                     .collect(Collectors.toList());
-            logger.error("Invalid data");
+            logger.error("Invalid data for adding new employee");
             throw new EmployeeNotValidException("Employee data not valid", fieldErrors);
 
         }

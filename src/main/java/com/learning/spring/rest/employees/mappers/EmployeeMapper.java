@@ -26,7 +26,6 @@ public class EmployeeMapper {
         dto.setDeptName(emp.getDepartment().getDeptName());
         dto.setStartDate(emp.getStartDate());
         dto.setSex(emp.getSex());
-
         return dto;
 
     }

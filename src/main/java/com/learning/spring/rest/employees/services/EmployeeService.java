@@ -1,7 +1,7 @@
 package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dto.BaseEmployeeDTO;
-import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Employee;
 
 

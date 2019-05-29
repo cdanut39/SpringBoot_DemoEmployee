@@ -1,14 +1,16 @@
 package com.learning.spring.rest.employees.services;
 
+import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
 import com.learning.spring.rest.employees.dto.DepartmentDTO;
-import com.learning.spring.rest.employees.exceptions.DepartmentNotFoundException;
-import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundException;
+import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Department;
 
 
 public interface DepartmentService {
 
-    DepartmentDTO addDepartment(Department department);
+    BaseDepartmentDTO addDepartment(Department department) throws DepartmentAlreadyExistsException;
 
     void deleteDepartmentById(int id) throws DepartmentNotFoundException;
 

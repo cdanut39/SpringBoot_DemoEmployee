@@ -1,5 +1,6 @@
 package com.learning.spring.rest.employees.mappers;
 
+import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
 import com.learning.spring.rest.employees.dto.DepartmentDTO;
 import com.learning.spring.rest.employees.model.Department;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class DepartmentMapper {
     @Autowired
     private EmployeeMapper empMapper;
 
-    public DepartmentDTO convertFromDeptToDeptDto(Department dept) {
+    public DepartmentDTO convertFromDeptToDeptDtoForGet(Department dept) {
 
         DepartmentDTO dto = new DepartmentDTO();
         dto.setDeptName(dept.getDeptName());
@@ -28,9 +29,23 @@ public class DepartmentMapper {
         dto.setEmployees(dept.getEmployees().stream()
                 .map(empMapper::convertFromEmpToEmpDtoNODeptName)
                 .collect(Collectors.toList()));
-
-
         return dto;
     }
-    
+
+    public BaseDepartmentDTO convertFromDeptToBaseDeptDto(Department dept) {
+
+        BaseDepartmentDTO dto = new BaseDepartmentDTO();
+        dto.setDeptName(dept.getDeptName());
+        dto.setDeptId(dept.getDeptId());
+        return dto;
+    }
+
+    public Department convertFromBaseDeptDtoToDept(BaseDepartmentDTO baseDepartmentDTO) {
+
+        Department department = new Department();
+        department.setDeptName(baseDepartmentDTO.getDeptName());
+
+        return department;
+    }
+
 }

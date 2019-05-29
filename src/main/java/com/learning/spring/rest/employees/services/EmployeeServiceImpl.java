@@ -3,7 +3,7 @@ package com.learning.spring.rest.employees.services;
 import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
 import com.learning.spring.rest.employees.dto.BaseEmployeeDTO;
-import com.learning.spring.rest.employees.exceptions.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.mappers.EmployeeMapper;
 import com.learning.spring.rest.employees.model.Department;
 import com.learning.spring.rest.employees.model.Employee;
@@ -65,7 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employeeToBeUpdated = employeeRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
         employeeToBeUpdated.setName(emp.getName());
         employeeToBeUpdated.setSalary(emp.getSalary());
-        employeeToBeUpdated.setBonus(emp.isBonus());
+        employeeToBeUpdated.setBonus(emp.getBonus());
 
         String deptName = emp.getDepartment().getDeptName();
         Department department = departmentRepo.findByDeptName(deptName);

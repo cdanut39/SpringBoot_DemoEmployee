@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
@@ -21,7 +24,6 @@ public class Employee {
 
     @NotBlank(message = "Name cannot be blank")
     @Size(min = 3, max = 16, message = "Name has to be equal to or greater than 3 and less than 16 characters")
-    @Pattern(regexp = "^[A-Z]*")
     private String name;
 
     @Min(value = 2000, message = "Minimum salary is 2000 EURO")
@@ -34,8 +36,15 @@ public class Employee {
     private LocalDate startDate;
 
 
+    public Boolean getBonus() {
+        return bonus;
+    }
 
-    private boolean bonus;
+    public void setBonus(Boolean bonus) {
+        this.bonus = bonus;
+    }
+
+    private Boolean bonus;
 
     @JsonProperty(access = WRITE_ONLY)
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -101,13 +110,6 @@ public class Employee {
         this.department = department;
     }
 
-    public boolean isBonus() {
-        return bonus;
-    }
-
-    public void setBonus(boolean bonus) {
-        this.bonus = bonus;
-    }
 
     public void setDeptName(Employee employee) {
         this.deptName = employee.getDepartment().getDeptName();

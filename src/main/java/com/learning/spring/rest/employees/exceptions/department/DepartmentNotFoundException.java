@@ -1,9 +1,7 @@
-package com.learning.spring.rest.employees.exceptions;
+package com.learning.spring.rest.employees.exceptions.department;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class DepartmentNotFoundException extends Exception {
 

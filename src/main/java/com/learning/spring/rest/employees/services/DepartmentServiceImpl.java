@@ -1,8 +1,10 @@
 package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.DepartmentRepo;
+import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
 import com.learning.spring.rest.employees.dto.DepartmentDTO;
-import com.learning.spring.rest.employees.exceptions.DepartmentNotFoundException;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundException;
 import com.learning.spring.rest.employees.mappers.DepartmentMapper;
 import com.learning.spring.rest.employees.model.Department;
 import org.apache.logging.log4j.LogManager;
@@ -20,13 +22,15 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Autowired
     DepartmentMapper departmentMapper;
 
-    public DepartmentDTO addDepartment(Department department) {
+    public BaseDepartmentDTO addDepartment(Department department) throws DepartmentAlreadyExistsException {
         Department savedDepartment = null;
         Department dept = departmentRepo.findByDeptName(department.getDeptName());
         if (dept == null) {
             savedDepartment = departmentRepo.save(department);
+        } else {
+            throw new DepartmentAlreadyExistsException("Department already exists!");
         }
-        DepartmentDTO departmentDTO = departmentMapper.convertFromDeptToDeptDto(savedDepartment);
+        BaseDepartmentDTO departmentDTO = departmentMapper.convertFromDeptToBaseDeptDto(savedDepartment);
         return departmentDTO;
     }
 
@@ -37,7 +41,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     public DepartmentDTO getDepartmentById(int id) throws DepartmentNotFoundException {
         Department department = departmentRepo.findById(id).orElseThrow(() -> new DepartmentNotFoundException("Department not found with id=" + id, id));
-        DepartmentDTO departmentDTO = departmentMapper.convertFromDeptToDeptDto(department);
+        DepartmentDTO departmentDTO = departmentMapper.convertFromDeptToDeptDtoForGet(department);
         logger.info("Information for department with id=" + id + ": Name={}", department.getDeptName());
         return departmentDTO;
     }
