@@ -1,8 +1,6 @@
 package com.learning.spring.rest.employees.exceptionsHandler;
 
-import com.learning.spring.rest.employees.exceptions.department.DepartmentAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundException;
-import com.learning.spring.rest.employees.exceptions.department.DepartmentNotValidException;
+import com.learning.spring.rest.employees.exceptions.department.*;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import org.springframework.http.HttpStatus;
@@ -34,8 +32,17 @@ public class ErrorHandlerController {
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DepartmentNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleDepartmentNotFoundError(DepartmentNotFoundException dnfe) {
+    @ExceptionHandler(DepartmentNotFoundByIdException.class)
+    public ResponseEntity<ErrorResponse> handleDepartmentNotFoundByIdError(DepartmentNotFoundByIdException dnfe) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
+        errorResp.setErrorMessage(dnfe.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DepartmentNotFoundByNameException.class)
+    public ResponseEntity<ErrorResponse> handleDepartmentNotFoundByNameError(DepartmentNotFoundByNameException dnfe) {
         ErrorResponse errorResp = new ErrorResponse();
         errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
         errorResp.setErrorMessage(dnfe.getMessage());
@@ -60,6 +67,15 @@ public class ErrorHandlerController {
         errorResp.setErrorMessage(daee.getMessage());
         errorResp.setTimestamp(now());
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DefaultDepartmentCanNotBeRemovedException.class)
+    public ResponseEntity<ErrorResponse> handleDefaultDepartmentCanNotBeRemovedError(DefaultDepartmentCanNotBeRemovedException daee) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.FORBIDDEN.value());
+        errorResp.setErrorMessage(daee.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.FORBIDDEN);
     }
 
 }

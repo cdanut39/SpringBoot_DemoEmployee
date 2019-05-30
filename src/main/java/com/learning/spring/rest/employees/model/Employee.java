@@ -1,16 +1,11 @@
 package com.learning.spring.rest.employees.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
-
-import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
 @JsonPropertyOrder({"id", "name", "sex", "deptName", "salary", "bonus", "firstDay"})
 //pentru ordinea afisarii JSON-ului la GET request
@@ -21,14 +16,8 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @NotBlank(message = "Name cannot be blank")
-    @Size(min = 3, max = 16, message = "Name has to be equal to or greater than 3 and less than 16 characters")
     private String name;
-
-    @Min(value = 2000, message = "Minimum salary is 2000 EURO")
     private int salary;
-
     @Enumerated(EnumType.STRING)
     private Gender sex;
 
@@ -46,7 +35,7 @@ public class Employee {
 
     private Boolean bonus;
 
-    @JsonProperty(access = WRITE_ONLY)
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Department department;
 

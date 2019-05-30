@@ -1,6 +1,7 @@
 package com.learning.spring.rest.employees;
 
 import com.learning.spring.rest.employees.dto.DepartmentDTO;
+import com.learning.spring.rest.employees.model.Department;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,5 +25,7 @@ public class EmployeesApplication {
     public static void main(String[] args) {
         SpringApplication.run(EmployeesApplication.class, args);
     }
+
+
 
 }

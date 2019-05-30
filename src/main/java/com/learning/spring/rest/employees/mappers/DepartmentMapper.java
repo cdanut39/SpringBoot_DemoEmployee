@@ -17,8 +17,12 @@ public class DepartmentMapper {
     @Value("${companyName}")
     private String companyName;
 
-    @Autowired
     private EmployeeMapper empMapper;
+
+    @Autowired
+    public DepartmentMapper(EmployeeMapper empMapper) {
+        this.empMapper = empMapper;
+    }
 
     public DepartmentDTO convertFromDeptToDeptDtoForGet(Department dept) {
 

@@ -1,5 +1,8 @@
 package com.learning.spring.rest.employees.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -10,6 +13,11 @@ public class BaseDepartmentDTO {
     private String deptName;
 
     public BaseDepartmentDTO() {
+    }
+
+    @JsonCreator
+    public BaseDepartmentDTO(@JsonProperty(required = true) String deptName) {
+        this.deptName = deptName;
     }
 
     public int getDeptId() {

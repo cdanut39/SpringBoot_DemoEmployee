@@ -3,8 +3,9 @@ package com.learning.spring.rest.employees.controller;
 import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
 import com.learning.spring.rest.employees.dto.DepartmentDTO;
+import com.learning.spring.rest.employees.exceptions.department.DefaultDepartmentCanNotBeRemovedException;
 import com.learning.spring.rest.employees.exceptions.department.DepartmentAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundException;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.department.DepartmentNotValidException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
@@ -58,7 +59,7 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/department/delete/{id}")
-    public ResponseEntity<String> deleteDepartmentById(@PathVariable("id") int id) throws DepartmentNotFoundException {
+    public ResponseEntity<String> deleteDepartmentById(@PathVariable("id") int id) throws DepartmentNotFoundByIdException, DefaultDepartmentCanNotBeRemovedException {
         departmentService.deleteDepartmentById(id);
         logger.info("Successfully removed the department with id={}", id);
         return new ResponseEntity<>("Department with id:" + id + " was successfully removed", HttpStatus.OK);
@@ -66,7 +67,7 @@ public class DepartmentController {
 
     @GetMapping("/department/{id}")
     @ResponseBody
-    public ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable("id") int id) throws DepartmentNotFoundException, EmployeeNotFoundException {
+    public ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable("id") int id) throws DepartmentNotFoundByIdException, EmployeeNotFoundException {
         DepartmentDTO department = departmentService.getDepartmentById(id);
         return new ResponseEntity<>(department, HttpStatus.OK);
     }

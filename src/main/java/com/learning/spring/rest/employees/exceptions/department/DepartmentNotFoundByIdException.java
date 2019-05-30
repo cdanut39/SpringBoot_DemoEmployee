@@ -3,12 +3,12 @@ package com.learning.spring.rest.employees.exceptions.department;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DepartmentNotFoundException extends Exception {
+public class DepartmentNotFoundByIdException extends Exception {
 
-    private static final Logger logger = LogManager.getLogger(DepartmentNotFoundException.class);
+    private static final Logger logger = LogManager.getLogger(DepartmentNotFoundByIdException.class);
 
 
-    public DepartmentNotFoundException(String message, int id) {
+    public DepartmentNotFoundByIdException(String message, int id) {
         super(message);
         logger.error("No department found with id=" + id);
     }

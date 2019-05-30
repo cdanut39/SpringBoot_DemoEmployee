@@ -1,8 +1,8 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dao.EmployeeRepo;
-import com.learning.spring.rest.employees.dto.BaseEmployeeDTO;
-import com.learning.spring.rest.employees.dto.EmployeeWithDeptNameDTO;
+import com.learning.spring.rest.employees.dto.*;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
@@ -60,7 +60,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/employee")
-    public BaseEmployeeDTO addEmployee(@Valid @RequestBody Employee employee, BindingResult result) throws EmployeeNotValidException {
+    public BaseEmployeeDTO addEmployee(@Valid @RequestBody EmployeePOSTReq_DTO employee, BindingResult result) throws EmployeeNotValidException {
         if (result.hasErrors()) {
 
             List<ValidationError> fieldErrors = result.getFieldErrors().stream()
@@ -77,7 +77,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/updateEmployee/{id}")
-    public ResponseEntity<BaseEmployeeDTO> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody Employee employee, BindingResult result) throws EmployeeNotValidException, EmployeeNotFoundException {
+    public ResponseEntity<EmployeePUTResponse_DTO> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody EmployeePUTReq_DTO employee, BindingResult result) throws EmployeeNotValidException, EmployeeNotFoundException {
         if (result.hasErrors()) {
 
             List<ValidationError> validationErrors = result.getFieldErrors().stream()
@@ -90,7 +90,7 @@ public class EmployeeController {
             logger.info("updateEmployee failed ---End");
             throw new EmployeeNotValidException("Employee data not valid", validationErrors);
         }
-        BaseEmployeeDTO updatedEmp = employeeServices.updateEmployee(id, employee);
+        EmployeePUTResponse_DTO updatedEmp = employeeServices.updateEmployee(id, employee);
         return new ResponseEntity<>(updatedEmp, HttpStatus.OK);
     }
 
@@ -100,6 +100,13 @@ public class EmployeeController {
         repo.delete(employee);
         logger.info("Successfully removed employee with id={},{}", employee.getId(), employee.getName());
         return new ResponseEntity<>("Employee " + id + " was successfully removed", HttpStatus.OK);
+    }
+
+    @PutMapping("/employee-{empID}/setDepartment-{deptName}")
+    public ResponseEntity<BaseEmployeeDTO> assignDepartment(@PathVariable("empID") int empId, @PathVariable("deptName") String deptName) throws EmployeeNotFoundException, DepartmentNotFoundByNameException {
+
+        BaseEmployeeDTO updatedEmp = employeeServices.assignDepartment(empId, deptName);
+        return new ResponseEntity<>(updatedEmp, HttpStatus.OK);
     }
 
 
