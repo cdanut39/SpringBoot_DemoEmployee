@@ -2,39 +2,18 @@ package com.learning.spring.rest.employees.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@JsonPropertyOrder({"id", "name", "sex", "deptName", "salary", "bonus", "firstDay"})
-//pentru ordinea afisarii JSON-ului la GET request
 @Entity
-@Table(name = "employees")
-public class Employee {
+@DiscriminatorValue("Employee")
+public class Employee extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
     private int salary;
-    @Enumerated(EnumType.STRING)
-    private Gender sex;
-
+    private Boolean bonus;
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
-
-
-    public Boolean getBonus() {
-        return bonus;
-    }
-
-    public void setBonus(Boolean bonus) {
-        this.bonus = bonus;
-    }
-
-    private Boolean bonus;
-
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Department department;
@@ -46,17 +25,7 @@ public class Employee {
     }
 
     public Employee(int id, String name, int salary) {
-        this.id = id;
-        this.name = name;
         this.salary = salary;
-    }
-
-    public Gender getSex() {
-        return sex;
-    }
-
-    public void setSex(Gender sex) {
-        this.sex = sex;
     }
 
     public LocalDate getStartDate() {
@@ -65,22 +34,6 @@ public class Employee {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getSalary() {
@@ -112,18 +65,12 @@ public class Employee {
         return deptName;
     }
 
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", salary=" + salary +
-                ", department=" + department +
-                '}';
+    public Boolean getBonus() {
+        return bonus;
     }
 
-    public enum Gender {
-        M, F;
+    public void setBonus(Boolean bonus) {
+        this.bonus = bonus;
     }
 
 }

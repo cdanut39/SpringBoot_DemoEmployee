@@ -8,6 +8,8 @@ import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFou
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Department;
 
+import java.util.List;
+
 
 public interface DepartmentService {
 
@@ -17,6 +19,8 @@ public interface DepartmentService {
 
     DepartmentDTO getDepartmentById(int id) throws EmployeeNotFoundException, DepartmentNotFoundByIdException;
 
-    public Department getDefaultDepartment(int id);
+    Department getDefaultDepartment(int id);
+
+    List<DepartmentDTO> getAllDepartments();
 
 }

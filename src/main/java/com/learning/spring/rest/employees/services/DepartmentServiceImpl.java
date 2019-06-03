@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
     private static final Logger logger = LogManager.getLogger(DepartmentServiceImpl.class);
@@ -61,5 +64,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     public Department getDefaultDepartment(int id) {
         return departmentRepo.getOne(id);
 
+    }
+
+    @Override
+    public List<DepartmentDTO> getAllDepartments() {
+        List<Department> departments = departmentRepo.findAll();
+        List<DepartmentDTO> depts = departments.stream().map(departmentMapper::convertFromDeptToDeptDtoForGet).collect(Collectors.toList());
+        return depts;
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface EmployeeRepo extends JpaRepository<Employee, Integer> {
+public interface UserRepo extends JpaRepository<User, Integer> {
 
     //    @Query(value = "Select * from employees order by salary", nativeQuery = true)
     @Query(value = "SELECT e FROM User e ORDER BY salary DESC")

@@ -17,10 +17,10 @@ public class DepartmentMapper {
     @Value("${companyName}")
     private String companyName;
 
-    private EmployeeMapper empMapper;
+    private UserMapper empMapper;
 
     @Autowired
-    public DepartmentMapper(EmployeeMapper empMapper) {
+    public DepartmentMapper(UserMapper empMapper) {
         this.empMapper = empMapper;
     }
 
@@ -31,7 +31,7 @@ public class DepartmentMapper {
         dto.setDeptId(dept.getDeptId());
         dto.setCompanyName(companyName);
         dto.setEmployees(dept.getEmployees().stream()
-                .map(empMapper::convertFromEmpToEmpDtoNODeptName)
+                .map(empMapper::convertFromUserToUserDto)
                 .collect(Collectors.toList()));
         return dto;
     }

@@ -1,6 +1,5 @@
 package com.learning.spring.rest.employees.controller;
 
-import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
 import com.learning.spring.rest.employees.dto.DepartmentDTO;
 import com.learning.spring.rest.employees.exceptions.department.DefaultDepartmentCanNotBeRemovedException;
@@ -12,6 +11,7 @@ import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
 import com.learning.spring.rest.employees.mappers.DepartmentMapper;
 import com.learning.spring.rest.employees.model.Department;
 import com.learning.spring.rest.employees.services.DepartmentService;
+import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.learning.spring.rest.employees.utils.Constants.DEPARTMENT_ADDED;
+import static com.learning.spring.rest.employees.utils.Constants.DEPARTMENT_REMOVED;
+
 @RestController
 public class DepartmentController {
 
@@ -31,18 +34,18 @@ public class DepartmentController {
 
 
     private DepartmentService departmentService;
-    private DepartmentRepo departmentRepo;
     private DepartmentMapper departmentMapper;
+    private Response response;
 
     @Autowired
-    public DepartmentController(DepartmentService departmentService, DepartmentRepo departmentRepo, DepartmentMapper departmentMapper) {
+    public DepartmentController(DepartmentService departmentService, DepartmentMapper departmentMapper, Response response) {
         this.departmentService = departmentService;
-        this.departmentRepo = departmentRepo;
         this.departmentMapper = departmentMapper;
+        this.response = response;
     }
 
     @PostMapping("/department")
-    public ResponseEntity<BaseDepartmentDTO> addDepartment(@Valid @RequestBody BaseDepartmentDTO baseDepartmentDTO, BindingResult result) throws DepartmentNotValidException, DepartmentAlreadyExistsException {
+    public ResponseEntity<Response> addDepartment(@Valid @RequestBody BaseDepartmentDTO baseDepartmentDTO, BindingResult result) throws DepartmentNotValidException, DepartmentAlreadyExistsException {
         if (result.hasErrors()) {
 
             List<ValidationError> fieldErrors = result.getFieldErrors().stream()
@@ -54,21 +57,28 @@ public class DepartmentController {
         }
         Department department = departmentMapper.convertFromBaseDeptDtoToDept(baseDepartmentDTO);
         BaseDepartmentDTO deptDTO = departmentService.addDepartment(department);
-        return new ResponseEntity<>(deptDTO, HttpStatus.OK);
+        response.setMessage(DEPARTMENT_ADDED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
     @DeleteMapping("/department/delete/{id}")
-    public ResponseEntity<String> deleteDepartmentById(@PathVariable("id") int id) throws DepartmentNotFoundByIdException, DefaultDepartmentCanNotBeRemovedException {
+    public ResponseEntity<Response> deleteDepartmentById(@PathVariable("id") int id) throws DepartmentNotFoundByIdException, DefaultDepartmentCanNotBeRemovedException {
         departmentService.deleteDepartmentById(id);
         logger.info("Successfully removed the department with id={}", id);
-        return new ResponseEntity<>("Department with id:" + id + " was successfully removed", HttpStatus.OK);
+        response.setMessage(DEPARTMENT_REMOVED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/department/{id}")
-    @ResponseBody
     public ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable("id") int id) throws DepartmentNotFoundByIdException, EmployeeNotFoundException {
         DepartmentDTO department = departmentService.getDepartmentById(id);
         return new ResponseEntity<>(department, HttpStatus.OK);
+    }
+
+    @GetMapping("/departments")
+    public ResponseEntity<List<DepartmentDTO>> getAllDepartments() {
+
+        return new ResponseEntity<>(departmentService.getAllDepartments(), HttpStatus.OK);
     }
 }

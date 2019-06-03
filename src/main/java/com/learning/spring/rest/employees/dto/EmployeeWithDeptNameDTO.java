@@ -1,6 +1,6 @@
 package com.learning.spring.rest.employees.dto;
 
-public class EmployeeWithDeptNameDTO extends BaseEmployeeDTO {
+public class EmployeeWithDeptNameDTO extends UserDTO {
 
     private String deptName;
 

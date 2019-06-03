@@ -1,12 +1,11 @@
 package com.learning.spring.rest.employees.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.time.LocalDate;
+import javax.persistence.*;
+
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "userType")
 public class User {
 
     @Id
@@ -14,27 +13,34 @@ public class User {
     private int userId;
     private String firstName;
     private String lastName;
-    private Employee.Gender sex;
-    private LocalDate dateOfBirth;
+    @Enumerated(EnumType.STRING)
+    private User.Gender sex;
     private long phoneNumber;
+    private String username;
+    private String password;
+    private String email;
 
 
     public User() {
     }
 
-    public User(String firstName, String lastName, Employee.Gender sex, LocalDate dateOfBirth, long phoneNumber) {
+    public User(int userId, String firstName, String lastName, Gender sex, long phoneNumber, String username, String password, String email) {
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.sex = sex;
-        this.dateOfBirth = dateOfBirth;
         this.phoneNumber = phoneNumber;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+
     }
 
-    public int getId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setId(int userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -62,14 +68,6 @@ public class User {
         this.sex = sex;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public long getPhoneNumber() {
         return phoneNumber;
     }
@@ -78,9 +76,39 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
     public enum Gender {
         M, F;
     }
+
+    public enum UserType {
+        EMPLOYEE, MANAGER, USER, ADMIN;
+    }
+
 }
 
 
