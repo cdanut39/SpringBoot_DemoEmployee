@@ -4,13 +4,14 @@ import com.learning.spring.rest.employees.dto.*;
 import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 
 
 public interface EmployeeService {
 
-//    UserDTO getEmployeeById(int id) throws EmployeeNotFoundException;
+    EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException;
 
-    UserDTO save(EmployeeDTO employee);
+    EmployeeDTO save(EmployeeDTO employee) throws UserAlreadyExistsException;
 
 //    EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO employee) throws EmployeeNotFoundException;
 //

@@ -3,6 +3,9 @@ package com.learning.spring.rest.employees.exceptionsHandler;
 import com.learning.spring.rest.employees.exceptions.department.*;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
+import com.learning.spring.rest.employees.exceptions.manager.ManagerNotValidException;
+import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.user.UserNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,6 +31,35 @@ public class ErrorHandlerController {
         errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
         errorResp.setErrorMessage(enve.getMessage());
         errorResp.setErrors(enve.getFieldErrors());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ManagerNotValidException.class)
+    public ResponseEntity<ErrorResponseValidation> handleManagerNotValidError(ManagerNotValidException mnve) {
+        ErrorResponseValidation errorResp = new ErrorResponseValidation();
+        errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
+        errorResp.setErrorMessage(mnve.getMessage());
+        errorResp.setErrors(mnve.getFieldErrors());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotValidException.class)
+    public ResponseEntity<ErrorResponseValidation> handleUserNotValidError(UserNotValidException unve) {
+        ErrorResponseValidation errorResp = new ErrorResponseValidation();
+        errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
+        errorResp.setErrorMessage(unve.getMessage());
+        errorResp.setErrors(unve.getFieldErrors());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistsError(UserAlreadyExistsException uaee) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
+        errorResp.setErrorMessage(uaee.getMessage());
         errorResp.setTimestamp(now());
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
     }

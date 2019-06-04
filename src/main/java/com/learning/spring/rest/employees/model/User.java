@@ -6,6 +6,7 @@ import javax.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "userType")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -16,21 +17,18 @@ public class User {
     @Enumerated(EnumType.STRING)
     private User.Gender sex;
     private long phoneNumber;
-    private String username;
-    private String password;
     private String email;
-
+    private String password;
 
     public User() {
     }
 
-    public User(int userId, String firstName, String lastName, Gender sex, long phoneNumber, String username, String password, String email) {
+    public User(int userId, String firstName, String lastName, Gender sex, long phoneNumber,  String password, String email) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.sex = sex;
         this.phoneNumber = phoneNumber;
-        this.username = username;
         this.password = password;
         this.email = email;
 
@@ -74,14 +72,6 @@ public class User {
 
     public void setPhoneNumber(long phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

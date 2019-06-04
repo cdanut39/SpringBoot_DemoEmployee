@@ -1,16 +1,20 @@
 package com.learning.spring.rest.employees.mappers;
 
-import com.learning.spring.rest.employees.dto.AdminDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.dto.EmployeePUTResponse_DTO;
+import com.learning.spring.rest.employees.dto.ManagerDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
-import com.learning.spring.rest.employees.model.Admin;
 import com.learning.spring.rest.employees.model.Employee;
+import com.learning.spring.rest.employees.model.Manager;
 import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.services.DepartmentServiceImpl;
+import com.learning.spring.rest.employees.services.ManagerServiceImpl;
 import com.learning.spring.rest.employees.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import static com.learning.spring.rest.employees.utils.DateAndTimeUtils.getCurrentDate;
 
@@ -19,10 +23,12 @@ public class UserMapper {
 
 
     private DepartmentServiceImpl departmentService;
+    private ManagerServiceImpl managerService;
 
     @Autowired
-    public UserMapper(DepartmentServiceImpl departmentService) {
+    public UserMapper(DepartmentServiceImpl departmentService,ManagerServiceImpl managerService) {
         this.departmentService = departmentService;
+        this.managerService=managerService;
     }
 
     public User convertFromUserDtoToUser(UserDTO dto) {
@@ -34,7 +40,6 @@ public class UserMapper {
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
         user.setPhoneNumber(dto.getPhoneNumber());
-        user.setUsername(dto.getUsername());
         return user;
     }
 
@@ -45,9 +50,7 @@ public class UserMapper {
         employeeDTO.setLastName(user.getLastName());
         employeeDTO.setSex(user.getSex());
         employeeDTO.setEmail(user.getEmail());
-        employeeDTO.setPassword(user.getPassword());
         employeeDTO.setPhoneNumber(user.getPhoneNumber());
-        employeeDTO.setUsername(user.getUsername());
 
         return employeeDTO;
 
@@ -61,12 +64,29 @@ public class UserMapper {
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
         userDTO.setPhoneNumber(user.getPhoneNumber());
-        userDTO.setUsername(user.getUsername());
         return new UserDTO();
 
     }
 
-    public <T extends User> convertFromEmpDtoTOEmployee(EmployeeDTO dto) {
+    public EmployeeDTO convertFromEmpTOEmployeeDTO(Employee employee1) {
+
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setUserId(employee1.getUserId());
+        employeeDTO.setFirstName(employee1.getFirstName());
+        employeeDTO.setLastName(employee1.getLastName());
+        employeeDTO.setSex(employee1.getSex());
+        employeeDTO.setEmail(employee1.getEmail());
+        employeeDTO.setPhoneNumber(employee1.getPhoneNumber());
+        employeeDTO.setDeptName(employee1.getDepartment().getDeptName());
+        employeeDTO.setStartDate(getCurrentDate());
+        employeeDTO.setBonus(employee1.getBonus());
+        employeeDTO.setSalary(employee1.getSalary());
+        employeeDTO.setManagerName(employee1.getManager().getFirstName() + " " + employee1.getManager().getLastName());
+        return employeeDTO;
+
+    }
+
+    public Employee convertFromEmpDtoTOEmployee(EmployeeDTO dto) {
 
         Employee employee = new Employee();
         employee.setUserId(dto.getUserId());
@@ -76,30 +96,44 @@ public class UserMapper {
         employee.setEmail(dto.getEmail());
         employee.setPassword(dto.getPassword());
         employee.setPhoneNumber(dto.getPhoneNumber());
-        employee.setUsername(dto.getUsername());
         employee.setDepartment(departmentService.getDefaultDepartment(Constants.DEFAULT_DEPARTMENT));
         employee.setStartDate(getCurrentDate());
         employee.setBonus(dto.getBonus());
         employee.setSalary(dto.getSalary());
+        employee.setManager(managerService.getDefaultManager(Constants.DEFAULT_MANAGER));
         return employee;
 
     }
 
-    public Admin convertFromAdminDtoTOAdmin(AdminDTO dto) {
 
-        Admin admin = new Admin();
-        admin.setUserId(dto.getUserId());
-        admin.setFirstName(dto.getFirstName());
-        admin.setLastName(dto.getLastName());
-        admin.setSex(dto.getSex());
-        admin.setEmail(dto.getEmail());
-        admin.setPassword(dto.getPassword());
-        admin.setPhoneNumber(dto.getPhoneNumber());
-        admin.setUsername(dto.getUsername());
-        admin.setOffice(dto.getOffice());
-        return admin;
+    public Manager convertFromManagerDtoTOManager(ManagerDTO dto) {
+
+        Manager manager = new Manager();
+        manager.setUserId(dto.getUserId());
+        manager.setFirstName(dto.getFirstName());
+        manager.setLastName(dto.getLastName());
+        manager.setSex(dto.getSex());
+        manager.setEmail(dto.getEmail());
+        manager.setPassword(dto.getPassword());
+        manager.setPhoneNumber(dto.getPhoneNumber());
+        return manager;
 
     }
+
+    public ManagerDTO convertFromManagerTOManagerDto(Manager manager) {
+
+        ManagerDTO managerDTO = new ManagerDTO();
+        managerDTO.setUserId(manager.getUserId());
+        managerDTO.setFirstName(manager.getFirstName());
+        managerDTO.setLastName(manager.getLastName());
+        managerDTO.setSex(manager.getSex());
+        managerDTO.setEmail(manager.getEmail());
+        managerDTO.setPhoneNumber(manager.getPhoneNumber());
+        managerDTO.setEmployees(manager.getEmployees().stream().map(this::convertFromEmpToEmpDto).collect(Collectors.toSet()));
+        return managerDTO;
+
+    }
+
 
     public EmployeePUTResponse_DTO convertFromEmpToEmpPutResponseDto(Employee emp) {
 

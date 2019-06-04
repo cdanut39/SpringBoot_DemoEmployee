@@ -21,6 +21,13 @@ public class Employee extends User {
     @Transient
     private String deptName;
 
+    @JsonIgnore
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Manager manager;
+
+    @Transient
+    private String managerName;
+
     public Employee() {
     }
 
@@ -52,7 +59,6 @@ public class Employee extends User {
         this.department = department;
     }
 
-
     public void setDeptName(Employee employee) {
         this.deptName = employee.getDepartment().getDeptName();
     }
@@ -73,4 +79,19 @@ public class Employee extends User {
         this.bonus = bonus;
     }
 
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(Manager manager) {
+        this.managerName = manager.getFirstName() + " " + manager.getLastName();
+    }
 }
