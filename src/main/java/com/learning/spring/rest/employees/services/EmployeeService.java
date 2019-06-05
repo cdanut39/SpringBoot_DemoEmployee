@@ -15,7 +15,9 @@ public interface EmployeeService {
 
 //    EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO employee) throws EmployeeNotFoundException;
 //
-//    UserDTO assignDepartment(int  employeeId, String deptName) throws EmployeeNotFoundException, DepartmentNotFoundByIdException, DepartmentNotFoundByNameException;
+    UserDTO assignDepartment(int  employeeId, BaseDepartmentDTO dept) throws EmployeeNotFoundException, DepartmentNotFoundByIdException, DepartmentNotFoundByNameException;
+
+    void removeEmployee(int id) throws EmployeeNotFoundException;
 
 
 }

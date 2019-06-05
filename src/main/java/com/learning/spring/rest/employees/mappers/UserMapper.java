@@ -11,10 +11,8 @@ import com.learning.spring.rest.employees.services.DepartmentServiceImpl;
 import com.learning.spring.rest.employees.services.ManagerServiceImpl;
 import com.learning.spring.rest.employees.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 import static com.learning.spring.rest.employees.utils.DateAndTimeUtils.getCurrentDate;
 
@@ -26,9 +24,9 @@ public class UserMapper {
     private ManagerServiceImpl managerService;
 
     @Autowired
-    public UserMapper(DepartmentServiceImpl departmentService,ManagerServiceImpl managerService) {
+    public UserMapper(DepartmentServiceImpl departmentService, ManagerServiceImpl managerService) {
         this.departmentService = departmentService;
-        this.managerService=managerService;
+        this.managerService = managerService;
     }
 
     public User convertFromUserDtoToUser(UserDTO dto) {
@@ -81,7 +79,6 @@ public class UserMapper {
         employeeDTO.setStartDate(getCurrentDate());
         employeeDTO.setBonus(employee1.getBonus());
         employeeDTO.setSalary(employee1.getSalary());
-        employeeDTO.setManagerName(employee1.getManager().getFirstName() + " " + employee1.getManager().getLastName());
         return employeeDTO;
 
     }
@@ -94,13 +91,12 @@ public class UserMapper {
         employee.setLastName(dto.getLastName());
         employee.setSex(dto.getSex());
         employee.setEmail(dto.getEmail());
-        employee.setPassword(dto.getPassword());
+        employee.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
         employee.setPhoneNumber(dto.getPhoneNumber());
         employee.setDepartment(departmentService.getDefaultDepartment(Constants.DEFAULT_DEPARTMENT));
         employee.setStartDate(getCurrentDate());
         employee.setBonus(dto.getBonus());
         employee.setSalary(dto.getSalary());
-        employee.setManager(managerService.getDefaultManager(Constants.DEFAULT_MANAGER));
         return employee;
 
     }
@@ -129,7 +125,6 @@ public class UserMapper {
         managerDTO.setSex(manager.getSex());
         managerDTO.setEmail(manager.getEmail());
         managerDTO.setPhoneNumber(manager.getPhoneNumber());
-        managerDTO.setEmployees(manager.getEmployees().stream().map(this::convertFromEmpToEmpDto).collect(Collectors.toSet()));
         return managerDTO;
 
     }

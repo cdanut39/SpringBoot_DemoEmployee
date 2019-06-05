@@ -2,11 +2,15 @@ package com.learning.spring.rest.employees.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Setter
+@Getter
 @DiscriminatorValue("Employee")
 public class Employee extends User {
 
@@ -16,17 +20,18 @@ public class Employee extends User {
     private LocalDate startDate;
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "department_ID")
     private Department department;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "project_ID")
+    private Project project;
 
     @Transient
     private String deptName;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Manager manager;
-
     @Transient
-    private String managerName;
+    private String projectName;
 
     public Employee() {
     }
@@ -79,19 +84,4 @@ public class Employee extends User {
         this.bonus = bonus;
     }
 
-    public Manager getManager() {
-        return manager;
-    }
-
-    public void setManager(Manager manager) {
-        this.manager = manager;
-    }
-
-    public String getManagerName() {
-        return managerName;
-    }
-
-    public void setManagerName(Manager manager) {
-        this.managerName = manager.getFirstName() + " " + manager.getLastName();
-    }
 }

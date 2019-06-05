@@ -13,7 +13,7 @@ public class DepartmentDTO {
     private int deptId;
     private String deptName;
     @JsonProperty(access = READ_ONLY)
-    private List<UserDTO> employees;
+    private List<EmployeeDTO> employees;
 
 
     public int getDeptId() {
@@ -41,11 +41,11 @@ public class DepartmentDTO {
         this.deptName = deptName;
     }
 
-    public List<UserDTO> getEmployees() {
+    public List<EmployeeDTO> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(List<UserDTO> employees) {
+    public void setEmployees(List<EmployeeDTO> employees) {
         this.employees = employees;
     }
 }

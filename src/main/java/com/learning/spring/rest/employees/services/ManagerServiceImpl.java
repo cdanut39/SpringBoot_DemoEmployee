@@ -45,9 +45,4 @@ public class ManagerServiceImpl implements ManagerService {
         return empDto;
     }
 
-    @Override
-    public Manager getDefaultManager(int id) {
-        System.out.println(userRepo.findManagerById(id));
-        return userRepo.findManagerById(id);
-    }
 }

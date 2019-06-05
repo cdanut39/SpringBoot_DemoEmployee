@@ -1,21 +1,20 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dao.UserRepo;
+import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
-import com.learning.spring.rest.employees.dto.EmployeeWithDeptNameDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
 import com.learning.spring.rest.employees.mappers.UserMapper;
-import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,7 +24,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.learning.spring.rest.employees.utils.Constants.EMPLOYEE_ADDED;
+import static com.learning.spring.rest.employees.utils.Constants.*;
 
 @RestController
 public class EmployeeController {
@@ -81,7 +80,7 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @PutMapping("/updateEmployee/{id}")
+    //    @PutMapping("/updateEmployee/{id}")
 //    public ResponseEntity<String> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody EmployeePUTReq_DTO employee, BindingResult result) throws EmployeeNotValidException, EmployeeNotFoundException {
 //        if (result.hasErrors()) {
 //
@@ -99,20 +98,19 @@ public class EmployeeController {
 //        return new ResponseEntity<>(EMPLOYEE_MODIFIED, HttpStatus.OK);
 //    }
 //
-//    @DeleteMapping("/employee/{id}")
-//    public ResponseEntity<String> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
-//        Employee employee = repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id));
-//        repo.delete(employee);
-////        logger.info("Successfully removed employee with id={},{}", employee.getId(), employee.getName());
-//        return new ResponseEntity<>("Employee " + id + " was successfully removed", HttpStatus.OK);
-//    }
-//
-//    @PutMapping("/employee-{empID}/setDepartment-{deptName}")
-//    public ResponseEntity<String> assignDepartment(@PathVariable("empID") int empId, @PathVariable("deptName") String deptName) throws EmployeeNotFoundException, DepartmentNotFoundByNameException {
-//
-//        UserDTO updatedEmp = employeeServices.assignDepartment(empId, deptName);
-//        return new ResponseEntity<>(DEPARTMENT_ASSIGNED, HttpStatus.OK);
-//    }
+    @DeleteMapping("/employee/{id}")
+    public ResponseEntity<Response> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
+        employeeServices.removeEmployee(id);
+        response.setMessage(EMPLOYEE_REMOVED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/employee{empID}/setDepartment")
+    public ResponseEntity<Response> assignDepartment(@PathVariable("empID") int empId, @Valid @RequestBody BaseDepartmentDTO dept) throws EmployeeNotFoundException, DepartmentNotFoundByNameException {
+        employeeServices.assignDepartment(empId, dept);
+        response.setMessage(DEPARTMENT_ASSIGNED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
 }

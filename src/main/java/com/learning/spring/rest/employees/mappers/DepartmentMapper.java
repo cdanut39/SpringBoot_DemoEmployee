@@ -31,7 +31,7 @@ public class DepartmentMapper {
         dto.setDeptId(dept.getDeptId());
         dto.setCompanyName(companyName);
         dto.setEmployees(dept.getEmployees().stream()
-                .map(empMapper::convertFromUserToUserDto)
+                .map(empMapper::convertFromEmpTOEmployeeDTO)
                 .collect(Collectors.toList()));
         return dto;
     }

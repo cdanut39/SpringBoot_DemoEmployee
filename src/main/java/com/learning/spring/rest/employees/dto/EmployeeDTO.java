@@ -15,28 +15,27 @@ public class EmployeeDTO extends UserDTO {
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
     private String deptName;
-    private String managerName;
 
 
     public EmployeeDTO() {
     }
 
 
-    public EmployeeDTO(int salary, Boolean bonus, LocalDate startDate, String deptName, String managerName) {
+    public EmployeeDTO(int salary, Boolean bonus, LocalDate startDate, String deptName) {
         this.salary = salary;
         this.bonus = bonus;
         this.startDate = startDate;
         this.deptName = deptName;
-        this.managerName=managerName;
+
     }
 
-    public EmployeeDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email,  int salary, Boolean bonus, LocalDate startDate, String deptName, String managerName) {
+    public EmployeeDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, int salary, Boolean bonus, LocalDate startDate, String deptName) {
         super(userId, firstName, lastName, sex, phoneNumber, password, email);
         this.salary = salary;
         this.bonus = bonus;
         this.startDate = startDate;
         this.deptName = deptName;
-        this.managerName=managerName;
+
     }
 
     public int getSalary() {
@@ -65,14 +64,6 @@ public class EmployeeDTO extends UserDTO {
 
     public String getDeptName() {
         return deptName;
-    }
-
-    public String getManagerName() {
-        return managerName;
-    }
-
-    public void setManagerName(String managerName) {
-        this.managerName = managerName;
     }
 
     public void setDeptName(String deptName) {

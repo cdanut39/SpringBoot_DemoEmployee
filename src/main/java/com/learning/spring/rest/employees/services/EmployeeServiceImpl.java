@@ -2,10 +2,13 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.DepartmentRepo;
 import com.learning.spring.rest.employees.dao.UserRepo;
+import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
+import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.UserMapper;
+import com.learning.spring.rest.employees.model.Department;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.User;
 import org.apache.logging.log4j.LogManager;
@@ -63,7 +66,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return empDto;
     }
 
-//    @Override
+    //    @Override
 //    public EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO emp) throws EmployeeNotFoundException {
 //
 //        Employee employeeToBeUpdated = userRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
@@ -76,18 +79,32 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        return baseEmployeeDTO;
 //    }
 //
-//    @Override
-//    public EmployeeWithDeptNameDTO assignDepartment(int employeeId, String deptName) throws EmployeeNotFoundException, DepartmentNotFoundByNameException {
-//        Employee employee = userRepo.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + employeeId, employeeId));
-//        Department department = departmentRepo.findByDeptName(deptName);
-//        if (department == null) {
-//            throw new DepartmentNotFoundByNameException("Department not found with name=" + deptName, deptName);
-//        } else {
-//            employee.setDepartment(department);
-//        }
-//        Employee savedEmployee = userRepo.save(employee);
-//        EmployeeWithDeptNameDTO emp = userMapper.convertFromEmpToEmpDto(savedEmployee);
-//        return emp;
-//
-//    }
+    @Override
+    public EmployeeDTO assignDepartment(int employeeId, BaseDepartmentDTO dept) throws EmployeeNotFoundException, DepartmentNotFoundByNameException {
+        Employee employee = userRepo.findEmployeeById(employeeId);
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Employee not found with id=" + employeeId, employeeId);
+        }
+        Department department = departmentRepo.findByDeptName(dept.getDeptName());
+        if (department == null) {
+            throw new DepartmentNotFoundByNameException("Department not found with name=" + dept.getDeptName(), dept.getDeptName());
+        } else {
+            employee.setDepartment(department);
+        }
+        Employee savedEmployee = userRepo.save(employee);
+        EmployeeDTO emp = userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
+        return emp;
+
+    }
+
+    @Override
+    public void removeEmployee(int id) throws EmployeeNotFoundException {
+        Employee employee = userRepo.findEmployeeById(id);
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id);
+        } else {
+            userRepo.delete(employee);
+            logger.info("Successfully removed employee with id={},{}", employee.getUserId(), employee.getFirstName());
+        }
+    }
 }
