@@ -14,27 +14,27 @@ public class EmployeeDTO extends UserDTO {
     private Boolean bonus;
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
-    private String deptName;
+    private String CommunityName;
 
 
     public EmployeeDTO() {
     }
 
 
-    public EmployeeDTO(int salary, Boolean bonus, LocalDate startDate, String deptName) {
+    public EmployeeDTO(int salary, Boolean bonus, LocalDate startDate, String CommunityName) {
         this.salary = salary;
         this.bonus = bonus;
         this.startDate = startDate;
-        this.deptName = deptName;
+        this.CommunityName = CommunityName;
 
     }
 
-    public EmployeeDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, int salary, Boolean bonus, LocalDate startDate, String deptName) {
+    public EmployeeDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, int salary, Boolean bonus, LocalDate startDate, String CommunityName) {
         super(userId, firstName, lastName, sex, phoneNumber, password, email);
         this.salary = salary;
         this.bonus = bonus;
         this.startDate = startDate;
-        this.deptName = deptName;
+        this.CommunityName = CommunityName;
 
     }
 
@@ -62,11 +62,11 @@ public class EmployeeDTO extends UserDTO {
         this.startDate = startDate;
     }
 
-    public String getDeptName() {
-        return deptName;
+    public String getCommunityName() {
+        return CommunityName;
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public void setCommunityName(String CommunityName) {
+        this.CommunityName = CommunityName;
     }
 }

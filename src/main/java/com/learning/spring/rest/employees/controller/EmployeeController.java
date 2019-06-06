@@ -1,10 +1,10 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dao.UserRepo;
-import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
+import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
-import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
@@ -45,16 +45,16 @@ public class EmployeeController {
     }
 
 //    @GetMapping(value = "/employees/orderBy/salary/DESC", produces = {"application/json"})
-//    public List<EmployeeWithDeptNameDTO> getEmployeesOrderdByCriteriaDESC() {
+//    public List<EmployeeWithCommunityNameDTO> getEmployeesOrderdByCriteriaDESC() {
 //        List<Employee> employees = repo.getEmployeesOrderBySalary();
-//        List<EmployeeWithDeptNameDTO> sortedEmployees = employees.stream().map(userMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
+//        List<EmployeeWithCommunityNameDTO> sortedEmployees = employees.stream().map(userMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
 //        return sortedEmployees;
 //    }
 //
 //    @GetMapping(value = "/employees/orderBy/{criteria}/ASC", produces = {"application/json"})
-//    public List<EmployeeWithDeptNameDTO> getEmployeesOrderdByCriteriaASC(@PathVariable("criteria") String criteria) {
+//    public List<EmployeeWithCommunityNameDTO> getEmployeesOrderdByCriteriaASC(@PathVariable("criteria") String criteria) {
 //        List<Employee> employees = repo.findAll(new Sort(Sort.Direction.ASC, criteria));
-//        List<EmployeeWithDeptNameDTO> sortedEmployees = employees.stream().map(userMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
+//        List<EmployeeWithCommunityNameDTO> sortedEmployees = employees.stream().map(userMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
 //        return sortedEmployees;
 //    }
 
@@ -105,10 +105,10 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/employee{empID}/setDepartment")
-    public ResponseEntity<Response> assignDepartment(@PathVariable("empID") int empId, @Valid @RequestBody BaseDepartmentDTO dept) throws EmployeeNotFoundException, DepartmentNotFoundByNameException {
-        employeeServices.assignDepartment(empId, dept);
-        response.setMessage(DEPARTMENT_ASSIGNED);
+    @PutMapping("/employee{empID}/setCommunity")
+    public ResponseEntity<Response> assignCommunity(@PathVariable("empID") int empId, @Valid @RequestBody BaseCommunityDTO Community) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
+        employeeServices.assignCommunity(empId, Community);
+        response.setMessage(Community_ASSIGNED);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

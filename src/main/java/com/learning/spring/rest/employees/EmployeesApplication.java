@@ -1,7 +1,7 @@
 package com.learning.spring.rest.employees;
 
-import com.learning.spring.rest.employees.dto.DepartmentDTO;
-import com.learning.spring.rest.employees.model.Department;
+import com.learning.spring.rest.employees.dto.CommunityDTO;
+import com.learning.spring.rest.employees.model.Community;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

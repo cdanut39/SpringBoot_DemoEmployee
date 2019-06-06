@@ -12,14 +12,14 @@ public class EmployeePUTResponse_DTO {
     @Size(min = 3, max = 32, message = "Name has to be equal to or greater than 3 and less than 32 characters")
     private String name;
     private Employee.Gender sex;
-    private String deptName;
+    private String CommunityName;
 
-    public String getDeptName() {
-        return deptName;
+    public String getCommunityName() {
+        return CommunityName;
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public void setCommunityName(String CommunityName) {
+        this.CommunityName = CommunityName;
     }
 
     public int getId() {

@@ -6,18 +6,18 @@ import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 
-public class DepartmentDTO {
+public class CommunityDTO {
 
     @JsonProperty(access = READ_ONLY)
     private String companyName;
-    private int deptId;
-    private String deptName;
+    private int communityId;
+    private String communityName;
     @JsonProperty(access = READ_ONLY)
     private List<EmployeeDTO> employees;
 
 
-    public int getDeptId() {
-        return deptId;
+    public int getCommunityId() {
+        return communityId;
     }
 
     public void setCompanyName(String companyName) {
@@ -29,16 +29,16 @@ public class DepartmentDTO {
     }
 
 
-    public void setDeptId(int deptId) {
-        this.deptId = deptId;
+    public void setCommunityId(int communityId) {
+        this.communityId = communityId;
     }
 
-    public String getDeptName() {
-        return deptName;
+    public String getCommunityName() {
+        return communityName;
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
     }
 
     public List<EmployeeDTO> getEmployees() {

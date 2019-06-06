@@ -1,6 +1,6 @@
 package com.learning.spring.rest.employees.exceptionsHandler;
 
-import com.learning.spring.rest.employees.exceptions.department.*;
+import com.learning.spring.rest.employees.exceptions.Community.*;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.manager.ManagerNotValidException;
@@ -64,8 +64,8 @@ public class ErrorHandlerController {
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DepartmentNotFoundByIdException.class)
-    public ResponseEntity<ErrorResponse> handleDepartmentNotFoundByIdError(DepartmentNotFoundByIdException dnfe) {
+    @ExceptionHandler(CommunityNotFoundByIdException.class)
+    public ResponseEntity<ErrorResponse> handleCommunityNotFoundByIdError(CommunityNotFoundByIdException dnfe) {
         ErrorResponse errorResp = new ErrorResponse();
         errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
         errorResp.setErrorMessage(dnfe.getMessage());
@@ -73,8 +73,8 @@ public class ErrorHandlerController {
         return new ResponseEntity<>(errorResp, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DepartmentNotFoundByNameException.class)
-    public ResponseEntity<ErrorResponse> handleDepartmentNotFoundByNameError(DepartmentNotFoundByNameException dnfe) {
+    @ExceptionHandler(CommunityNotFoundByNameException.class)
+    public ResponseEntity<ErrorResponse> handleCommunityNotFoundByNameError(CommunityNotFoundByNameException dnfe) {
         ErrorResponse errorResp = new ErrorResponse();
         errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
         errorResp.setErrorMessage(dnfe.getMessage());
@@ -82,8 +82,8 @@ public class ErrorHandlerController {
         return new ResponseEntity<>(errorResp, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DepartmentNotValidException.class)
-    public ResponseEntity<ErrorResponseValidation> handleDepartmentNotValidError(DepartmentNotValidException dnve) {
+    @ExceptionHandler(CommunityNotValidException.class)
+    public ResponseEntity<ErrorResponseValidation> handleCommunityNotValidError(CommunityNotValidException dnve) {
         ErrorResponseValidation errorResp = new ErrorResponseValidation();
         errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
         errorResp.setErrorMessage(dnve.getMessage());
@@ -92,8 +92,8 @@ public class ErrorHandlerController {
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DepartmentAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleDeparmentAlreadyExistsError(DepartmentAlreadyExistsException daee) {
+    @ExceptionHandler(CommunityAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleDeparmentAlreadyExistsError(CommunityAlreadyExistsException daee) {
         ErrorResponse errorResp = new ErrorResponse();
         errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
         errorResp.setErrorMessage(daee.getMessage());
@@ -101,8 +101,8 @@ public class ErrorHandlerController {
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DefaultDepartmentCanNotBeRemovedException.class)
-    public ResponseEntity<ErrorResponse> handleDefaultDepartmentCanNotBeRemovedError(DefaultDepartmentCanNotBeRemovedException daee) {
+    @ExceptionHandler(DefaultCommunityCanNotBeRemovedException.class)
+    public ResponseEntity<ErrorResponse> handleDefaultCommunityCanNotBeRemovedError(DefaultCommunityCanNotBeRemovedException daee) {
         ErrorResponse errorResp = new ErrorResponse();
         errorResp.setReasonCode(HttpStatus.FORBIDDEN.value());
         errorResp.setErrorMessage(daee.getMessage());

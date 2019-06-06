@@ -20,15 +20,15 @@ public class Employee extends User {
     private LocalDate startDate;
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "department_ID")
-    private Department department;
+    @JoinColumn(name = "community_ID")
+    private Community community;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "project_ID")
     private Project project;
 
     @Transient
-    private String deptName;
+    private String CommunityName;
 
     @Transient
     private String projectName;
@@ -56,24 +56,24 @@ public class Employee extends User {
         this.salary = salary;
     }
 
-    public Department getDepartment() {
-        return department;
+    public Community getCommunity() {
+        return community;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public void setCommunity(Community community) {
+        this.community = community;
     }
 
-    public void setDeptName(Employee employee) {
-        this.deptName = employee.getDepartment().getDeptName();
+    public void setCommunityName(Employee employee) {
+        this.CommunityName = employee.getCommunity().getCommunityName();
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public void setCommunityName(String CommunityName) {
+        this.CommunityName = CommunityName;
     }
 
-    public String getDeptName() {
-        return deptName;
+    public String getCommunityName() {
+        return CommunityName;
     }
 
     public Boolean getBonus() {

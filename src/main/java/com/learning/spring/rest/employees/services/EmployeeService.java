@@ -1,8 +1,8 @@
 package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dto.*;
-import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByIdException;
-import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByIdException;
+import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 
@@ -15,7 +15,7 @@ public interface EmployeeService {
 
 //    EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO employee) throws EmployeeNotFoundException;
 //
-    UserDTO assignDepartment(int  employeeId, BaseDepartmentDTO dept) throws EmployeeNotFoundException, DepartmentNotFoundByIdException, DepartmentNotFoundByNameException;
+    UserDTO assignCommunity(int  employeeId, BaseCommunityDTO Community) throws EmployeeNotFoundException, CommunityNotFoundByIdException, CommunityNotFoundByNameException;
 
     void removeEmployee(int id) throws EmployeeNotFoundException;
 

@@ -7,7 +7,7 @@ import com.learning.spring.rest.employees.dto.UserDTO;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Manager;
 import com.learning.spring.rest.employees.model.User;
-import com.learning.spring.rest.employees.services.DepartmentServiceImpl;
+import com.learning.spring.rest.employees.services.CommunityServiceImpl;
 import com.learning.spring.rest.employees.services.ManagerServiceImpl;
 import com.learning.spring.rest.employees.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import static com.learning.spring.rest.employees.utils.DateAndTimeUtils.getCurre
 public class UserMapper {
 
 
-    private DepartmentServiceImpl departmentService;
+    private CommunityServiceImpl CommunityService;
     private ManagerServiceImpl managerService;
 
     @Autowired
-    public UserMapper(DepartmentServiceImpl departmentService, ManagerServiceImpl managerService) {
-        this.departmentService = departmentService;
+    public UserMapper(CommunityServiceImpl CommunityService, ManagerServiceImpl managerService) {
+        this.CommunityService = CommunityService;
         this.managerService = managerService;
     }
 
@@ -75,7 +75,7 @@ public class UserMapper {
         employeeDTO.setSex(employee1.getSex());
         employeeDTO.setEmail(employee1.getEmail());
         employeeDTO.setPhoneNumber(employee1.getPhoneNumber());
-        employeeDTO.setDeptName(employee1.getDepartment().getDeptName());
+        employeeDTO.setCommunityName(employee1.getCommunity().getCommunityName());
         employeeDTO.setStartDate(getCurrentDate());
         employeeDTO.setBonus(employee1.getBonus());
         employeeDTO.setSalary(employee1.getSalary());
@@ -93,7 +93,7 @@ public class UserMapper {
         employee.setEmail(dto.getEmail());
         employee.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
         employee.setPhoneNumber(dto.getPhoneNumber());
-        employee.setDepartment(departmentService.getDefaultDepartment(Constants.DEFAULT_DEPARTMENT));
+        employee.setCommunity(CommunityService.getDefaultCommunity(Constants.DEFAULT_Community));
         employee.setStartDate(getCurrentDate());
         employee.setBonus(dto.getBonus());
         employee.setSalary(dto.getSalary());
@@ -136,7 +136,7 @@ public class UserMapper {
 //        dto.setId(emp.getId());
 //        dto.setName(emp.getName());
 //        dto.setSex(emp.getSex());
-//        dto.setDeptName(emp.getDepartment().getDeptName());
+//        dto.setCommunityName(emp.getCommunity().getCommunityName());
 //        return dto;
         return new EmployeePUTResponse_DTO();
 

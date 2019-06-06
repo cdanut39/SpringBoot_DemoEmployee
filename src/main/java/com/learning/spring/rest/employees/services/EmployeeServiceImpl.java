@@ -1,14 +1,14 @@
 package com.learning.spring.rest.employees.services;
 
-import com.learning.spring.rest.employees.dao.DepartmentRepo;
+import com.learning.spring.rest.employees.dao.CommunityRepo;
 import com.learning.spring.rest.employees.dao.UserRepo;
-import com.learning.spring.rest.employees.dto.BaseDepartmentDTO;
+import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
-import com.learning.spring.rest.employees.exceptions.department.DepartmentNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.UserMapper;
-import com.learning.spring.rest.employees.model.Department;
+import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.User;
 import org.apache.logging.log4j.LogManager;
@@ -25,16 +25,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     private static final Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
 
     private UserRepo userRepo;
-    private DepartmentRepo departmentRepo;
+    private CommunityRepo CommunityRepo;
     private UserMapper userMapper;
-    private DepartmentServiceImpl departmentService;
+    private CommunityServiceImpl CommunityService;
 
     @Autowired
-    public EmployeeServiceImpl(UserRepo UserRepo, DepartmentRepo departmentRepo, UserMapper userMapper, DepartmentServiceImpl departmentService) {
+    public EmployeeServiceImpl(UserRepo UserRepo, CommunityRepo CommunityRepo, UserMapper userMapper, CommunityServiceImpl CommunityService) {
         this.userRepo = UserRepo;
-        this.departmentRepo = departmentRepo;
+        this.CommunityRepo = CommunityRepo;
         this.userMapper = userMapper;
-        this.departmentService = departmentService;
+        this.CommunityService = CommunityService;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employee == null) {
             throw new EmployeeNotFoundException("Employee not found with id=" + id, id);
         }
-        employee.setDeptName(employee);
+        employee.setCommunityName(employee);
         EmployeeDTO userDTO = userMapper.convertFromEmpTOEmployeeDTO(employee);
 //        logger.info("Information for employee with id=" + id + ": Name={}, Salary={}", employee.getName(), employee.getSalary());
         return userDTO;
@@ -80,16 +80,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 //    }
 //
     @Override
-    public EmployeeDTO assignDepartment(int employeeId, BaseDepartmentDTO dept) throws EmployeeNotFoundException, DepartmentNotFoundByNameException {
+    public EmployeeDTO assignCommunity(int employeeId, BaseCommunityDTO baseCommunityDTO) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
         Employee employee = userRepo.findEmployeeById(employeeId);
         if (employee == null) {
             throw new EmployeeNotFoundException("Employee not found with id=" + employeeId, employeeId);
         }
-        Department department = departmentRepo.findByDeptName(dept.getDeptName());
-        if (department == null) {
-            throw new DepartmentNotFoundByNameException("Department not found with name=" + dept.getDeptName(), dept.getDeptName());
+        Community community = CommunityRepo.findByCommunityName(baseCommunityDTO.getCommunityName());
+        if (community == null) {
+            throw new CommunityNotFoundByNameException("Community not found with name=" + community.getCommunityName(), community.getCommunityName());
         } else {
-            employee.setDepartment(department);
+            employee.setCommunity(community);
         }
         Employee savedEmployee = userRepo.save(employee);
         EmployeeDTO emp = userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
