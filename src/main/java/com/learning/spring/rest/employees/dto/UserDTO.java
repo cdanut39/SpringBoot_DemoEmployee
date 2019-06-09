@@ -2,14 +2,15 @@ package com.learning.spring.rest.employees.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.learning.spring.rest.employees.model.Employee;
+import com.learning.spring.rest.employees.model.Role;
 import com.learning.spring.rest.employees.model.User;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 public class UserDTO {
 
@@ -22,17 +23,19 @@ public class UserDTO {
     private String lastName;
     @Enumerated(EnumType.STRING)
     private User.Gender sex;
-//    @Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}")
+    //    @Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}")
     private long phoneNumber;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @Email
     private String email;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Set<Role> roles;
 
     public UserDTO() {
     }
 
-    public UserDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber,  String password, @Email String email) {
+    public UserDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, Set<Role> roles) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -40,6 +43,7 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.email = email;
+        this.roles = roles;
     }
 
     public int getUserId() {
@@ -98,5 +102,11 @@ public class UserDTO {
         this.email = email;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
 
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }

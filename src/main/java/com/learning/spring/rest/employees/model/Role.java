@@ -1,5 +1,7 @@
 package com.learning.spring.rest.employees.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -10,15 +12,17 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int roleId;
 
-    private String roleName;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum roleName;
 
-    @OneToMany(mappedBy = "role")
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER)
     private Set<User> users;
 
     public Role() {
     }
 
-    public Role(String roleName) {
+    public Role(RoleEnum roleName) {
         this.roleName = roleName;
     }
 
@@ -31,10 +35,10 @@ public class Role {
     }
 
     public String getRoleName() {
-        return roleName;
+        return roleName.name();
     }
 
-    public void setRoleName(String roleName) {
+    public void setRoleName(RoleEnum roleName) {
         this.roleName = roleName;
     }
 
@@ -44,5 +48,11 @@ public class Role {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+
+    public enum RoleEnum{
+        ADMIN,MANAGER,EMPLOYEE;
+
     }
 }

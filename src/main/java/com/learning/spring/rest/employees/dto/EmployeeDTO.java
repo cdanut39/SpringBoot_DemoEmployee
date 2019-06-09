@@ -1,12 +1,14 @@
 package com.learning.spring.rest.employees.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.learning.spring.rest.employees.model.Role;
 import com.learning.spring.rest.employees.model.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Set;
 
 public class EmployeeDTO extends UserDTO {
 
@@ -14,28 +16,26 @@ public class EmployeeDTO extends UserDTO {
     private Boolean bonus;
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
-    private String CommunityName;
+    private String communityName;
 
 
     public EmployeeDTO() {
     }
 
 
-    public EmployeeDTO(int salary, Boolean bonus, LocalDate startDate, String CommunityName) {
+    public EmployeeDTO(int salary, Boolean bonus, LocalDate startDate, String communityName) {
         this.salary = salary;
         this.bonus = bonus;
         this.startDate = startDate;
-        this.CommunityName = CommunityName;
-
+        this.communityName = communityName;
     }
 
-    public EmployeeDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, int salary, Boolean bonus, LocalDate startDate, String CommunityName) {
-        super(userId, firstName, lastName, sex, phoneNumber, password, email);
+    public EmployeeDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, Set<Role> roles, int salary, Boolean bonus, LocalDate startDate, String communityName) {
+        super(userId, firstName, lastName, sex, phoneNumber, password, email, roles);
         this.salary = salary;
         this.bonus = bonus;
         this.startDate = startDate;
-        this.CommunityName = CommunityName;
-
+        this.communityName = communityName;
     }
 
     public int getSalary() {
@@ -63,10 +63,10 @@ public class EmployeeDTO extends UserDTO {
     }
 
     public String getCommunityName() {
-        return CommunityName;
+        return communityName;
     }
 
     public void setCommunityName(String CommunityName) {
-        this.CommunityName = CommunityName;
+        this.communityName = CommunityName;
     }
 }

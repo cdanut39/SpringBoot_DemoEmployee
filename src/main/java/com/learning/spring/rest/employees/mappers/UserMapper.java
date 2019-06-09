@@ -1,11 +1,13 @@
 package com.learning.spring.rest.employees.mappers;
 
+import com.learning.spring.rest.employees.dao.RoleRepo;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.dto.EmployeePUTResponse_DTO;
 import com.learning.spring.rest.employees.dto.ManagerDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Manager;
+import com.learning.spring.rest.employees.model.Role;
 import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.services.CommunityServiceImpl;
 import com.learning.spring.rest.employees.services.ManagerServiceImpl;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.learning.spring.rest.employees.utils.DateAndTimeUtils.getCurrentDate;
+import static com.learning.spring.rest.employees.utils.RolesUtility.getEmployeeRoles;
+import static com.learning.spring.rest.employees.utils.RolesUtility.getManagerRoles;
 
 @Component
 public class UserMapper {
@@ -22,11 +26,13 @@ public class UserMapper {
 
     private CommunityServiceImpl CommunityService;
     private ManagerServiceImpl managerService;
+    private RoleRepo roleRepo;
 
     @Autowired
-    public UserMapper(CommunityServiceImpl CommunityService, ManagerServiceImpl managerService) {
+    public UserMapper(CommunityServiceImpl CommunityService, ManagerServiceImpl managerService, RoleRepo roleRepo) {
         this.CommunityService = CommunityService;
         this.managerService = managerService;
+        this.roleRepo=roleRepo;
     }
 
     public User convertFromUserDtoToUser(UserDTO dto) {
@@ -38,6 +44,7 @@ public class UserMapper {
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
         user.setPhoneNumber(dto.getPhoneNumber());
+        user.setRoles(dto.getRoles());
         return user;
     }
 
@@ -62,6 +69,7 @@ public class UserMapper {
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
         userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setRoles(user.getRoles());
         return new UserDTO();
 
     }
@@ -79,6 +87,9 @@ public class UserMapper {
         employeeDTO.setStartDate(getCurrentDate());
         employeeDTO.setBonus(employee1.getBonus());
         employeeDTO.setSalary(employee1.getSalary());
+
+
+        employeeDTO.setRoles(getEmployeeRoles());
         return employeeDTO;
 
     }
@@ -97,6 +108,7 @@ public class UserMapper {
         employee.setStartDate(getCurrentDate());
         employee.setBonus(dto.getBonus());
         employee.setSalary(dto.getSalary());
+        employee.setRoles(getEmployeeRoles());
         return employee;
 
     }
@@ -110,8 +122,9 @@ public class UserMapper {
         manager.setLastName(dto.getLastName());
         manager.setSex(dto.getSex());
         manager.setEmail(dto.getEmail());
-        manager.setPassword(dto.getPassword());
+        manager.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
         manager.setPhoneNumber(dto.getPhoneNumber());
+        manager.setRoles(getManagerRoles());
         return manager;
 
     }
@@ -125,6 +138,7 @@ public class UserMapper {
         managerDTO.setSex(manager.getSex());
         managerDTO.setEmail(manager.getEmail());
         managerDTO.setPhoneNumber(manager.getPhoneNumber());
+        managerDTO.setRoles(getManagerRoles());
         return managerDTO;
 
     }

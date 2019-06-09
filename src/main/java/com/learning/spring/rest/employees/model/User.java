@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 
 @AllArgsConstructor
@@ -30,9 +31,12 @@ public class User {
     private String email;
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name="role_ID")
-    private Role role;
+    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name="user_roles",
+            joinColumns = {@JoinColumn(name="user_id", referencedColumnName="userId")},
+            inverseJoinColumns = {@JoinColumn(name="role_id", referencedColumnName="roleId")}
+    )
+    private Set<Role> roles;
 
     public enum Gender {
         M, F;

@@ -4,6 +4,7 @@ package com.learning.spring.rest.employees.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -25,7 +26,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private MyUserDetailsService userDetailsService;
 
     @Bean
     public AuthenticationProvider authProvider() {
@@ -41,9 +42,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST, "/register/**").permitAll()
-//                .antMatchers(HttpMethod.GET, "/communities").hasRole("USER")
-                .anyRequest().hasRole("USER")
-                .and().formLogin();
+                .antMatchers(HttpMethod.GET, "/communities").hasAnyRole("ADMIN","MANAGER")
+                .antMatchers(HttpMethod.GET, "/employee/**").hasRole("EMPLOYEE")
+                .anyRequest().authenticated()
+                .and().httpBasic();
+
     }
 
 
