@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.exceptions.Community;
+package com.learning.spring.rest.employees.exceptions.community;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +10,6 @@ public class CommunityNotFoundByNameException extends Exception {
 
     public CommunityNotFoundByNameException(String message, String CommunityName) {
         super(message);
-        logger.error("No Community found with name=" + CommunityName);
+        logger.error("No community found with name=" + CommunityName);
     }
 }

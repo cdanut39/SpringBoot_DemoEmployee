@@ -4,7 +4,7 @@ package com.learning.spring.rest.employees.controller;
 import com.learning.spring.rest.employees.dto.ManagerDTO;
 import com.learning.spring.rest.employees.exceptions.manager.ManagerNotValidException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
+import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
 import com.learning.spring.rest.employees.services.ManagerServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;

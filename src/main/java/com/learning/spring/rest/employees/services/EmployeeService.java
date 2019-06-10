@@ -1,8 +1,8 @@
 package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dto.*;
-import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByIdException;
-import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
+import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 

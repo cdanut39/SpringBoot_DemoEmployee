@@ -13,17 +13,15 @@ public class Request {
     private int requestId;
     private String title;
     private String description;
-//    private Employee owner;
     private LocalDateTime createdAt;
     private boolean isActive;
 
     public Request() {
     }
 
-    public Request(String title, String description, Employee owner, LocalDateTime createdAt, boolean isActive) {
+    public Request(String title, String description, LocalDateTime createdAt, boolean isActive) {
         this.title = title;
         this.description = description;
-//        this.owner = owner;
         this.createdAt = createdAt;
         this.isActive = isActive;
     }
@@ -51,14 +49,6 @@ public class Request {
     public void setDescription(String description) {
         this.description = description;
     }
-
-//    public Employee getOwner() {
-//        return owner;
-//    }
-
-//    public void setOwner(Employee owner) {
-//        this.owner = owner;
-//    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

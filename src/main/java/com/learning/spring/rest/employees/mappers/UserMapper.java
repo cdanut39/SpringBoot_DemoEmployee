@@ -2,41 +2,37 @@ package com.learning.spring.rest.employees.mappers;
 
 import com.learning.spring.rest.employees.dao.RoleRepo;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
-import com.learning.spring.rest.employees.dto.EmployeePUTResponse_DTO;
 import com.learning.spring.rest.employees.dto.ManagerDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Manager;
-import com.learning.spring.rest.employees.model.Role;
 import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.services.CommunityServiceImpl;
-import com.learning.spring.rest.employees.services.ManagerServiceImpl;
 import com.learning.spring.rest.employees.utils.Constants;
+import com.learning.spring.rest.employees.utils.RolesUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.learning.spring.rest.employees.utils.DateAndTimeUtils.getCurrentDate;
-import static com.learning.spring.rest.employees.utils.RolesUtility.getEmployeeRoles;
-import static com.learning.spring.rest.employees.utils.RolesUtility.getManagerRoles;
 
 @Component
 public class UserMapper {
 
+    private RolesUtility rolesUtility = new RolesUtility();
 
-    private CommunityServiceImpl CommunityService;
-    private ManagerServiceImpl managerService;
+    private CommunityServiceImpl communityService;
     private RoleRepo roleRepo;
 
     @Autowired
-    public UserMapper(CommunityServiceImpl CommunityService, ManagerServiceImpl managerService, RoleRepo roleRepo) {
-        this.CommunityService = CommunityService;
-        this.managerService = managerService;
-        this.roleRepo=roleRepo;
+    public UserMapper(CommunityServiceImpl communityService, RoleRepo roleRepo) {
+        this.communityService = communityService;
+        this.roleRepo = roleRepo;
     }
 
     public User convertFromUserDtoToUser(UserDTO dto) {
         User user = new User();
+
         user.setUserId(dto.getUserId());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
@@ -45,12 +41,13 @@ public class UserMapper {
         user.setPassword(dto.getPassword());
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setRoles(dto.getRoles());
+
         return user;
     }
 
     public EmployeeDTO convertFromEmpToEmpDto(User user) {
-
         EmployeeDTO employeeDTO = new EmployeeDTO();
+
         employeeDTO.setFirstName(user.getFirstName());
         employeeDTO.setLastName(user.getLastName());
         employeeDTO.setSex(user.getSex());
@@ -58,11 +55,11 @@ public class UserMapper {
         employeeDTO.setPhoneNumber(user.getPhoneNumber());
 
         return employeeDTO;
-
     }
 
     public UserDTO convertFromUserToUserDto(User user) {
         UserDTO userDTO = new UserDTO();
+
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setSex(user.getSex());
@@ -70,13 +67,14 @@ public class UserMapper {
         userDTO.setPassword(user.getPassword());
         userDTO.setPhoneNumber(user.getPhoneNumber());
         userDTO.setRoles(user.getRoles());
-        return new UserDTO();
 
+        return new UserDTO();
     }
 
-    public EmployeeDTO convertFromEmpTOEmployeeDTO(Employee employee1) {
 
+    public EmployeeDTO convertFromEmpTOEmployeeDTO(Employee employee1) {
         EmployeeDTO employeeDTO = new EmployeeDTO();
+
         employeeDTO.setUserId(employee1.getUserId());
         employeeDTO.setFirstName(employee1.getFirstName());
         employeeDTO.setLastName(employee1.getLastName());
@@ -87,16 +85,15 @@ public class UserMapper {
         employeeDTO.setStartDate(getCurrentDate());
         employeeDTO.setBonus(employee1.getBonus());
         employeeDTO.setSalary(employee1.getSalary());
+        employeeDTO.setRoles(rolesUtility.getEmpRoles(roleRepo));
 
-
-        employeeDTO.setRoles(getEmployeeRoles());
         return employeeDTO;
-
     }
 
-    public Employee convertFromEmpDtoTOEmployee(EmployeeDTO dto) {
 
+    public Employee convertFromEmpDtoTOEmployee(EmployeeDTO dto) {
         Employee employee = new Employee();
+
         employee.setUserId(dto.getUserId());
         employee.setFirstName(dto.getFirstName());
         employee.setLastName(dto.getLastName());
@@ -104,19 +101,19 @@ public class UserMapper {
         employee.setEmail(dto.getEmail());
         employee.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
         employee.setPhoneNumber(dto.getPhoneNumber());
-        employee.setCommunity(CommunityService.getDefaultCommunity(Constants.DEFAULT_Community));
+        employee.setCommunity(communityService.getDefaultCommunity(Constants.DEFAULT_COMMUNITY));
         employee.setStartDate(getCurrentDate());
         employee.setBonus(dto.getBonus());
         employee.setSalary(dto.getSalary());
-        employee.setRoles(getEmployeeRoles());
-        return employee;
+        employee.setRoles(rolesUtility.getEmpRoles(roleRepo));
 
+        return employee;
     }
 
 
     public Manager convertFromManagerDtoTOManager(ManagerDTO dto) {
-
         Manager manager = new Manager();
+
         manager.setUserId(dto.getUserId());
         manager.setFirstName(dto.getFirstName());
         manager.setLastName(dto.getLastName());
@@ -124,36 +121,24 @@ public class UserMapper {
         manager.setEmail(dto.getEmail());
         manager.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
         manager.setPhoneNumber(dto.getPhoneNumber());
-        manager.setRoles(getManagerRoles());
-        return manager;
+        manager.setRoles(rolesUtility.getManagerRoles(roleRepo));
 
+        return manager;
     }
 
-    public ManagerDTO convertFromManagerTOManagerDto(Manager manager) {
 
+    public ManagerDTO convertFromManagerTOManagerDto(Manager manager) {
         ManagerDTO managerDTO = new ManagerDTO();
+
         managerDTO.setUserId(manager.getUserId());
         managerDTO.setFirstName(manager.getFirstName());
         managerDTO.setLastName(manager.getLastName());
         managerDTO.setSex(manager.getSex());
         managerDTO.setEmail(manager.getEmail());
         managerDTO.setPhoneNumber(manager.getPhoneNumber());
-        managerDTO.setRoles(getManagerRoles());
+        managerDTO.setRoles(rolesUtility.getManagerRoles(roleRepo));
+
         return managerDTO;
-
-    }
-
-
-    public EmployeePUTResponse_DTO convertFromEmpToEmpPutResponseDto(Employee emp) {
-
-//        EmployeePUTResponse_DTO dto = new EmployeePUTResponse_DTO();
-//        dto.setId(emp.getId());
-//        dto.setName(emp.getName());
-//        dto.setSex(emp.getSex());
-//        dto.setCommunityName(emp.getCommunity().getCommunityName());
-//        return dto;
-        return new EmployeePUTResponse_DTO();
-
     }
 
 }

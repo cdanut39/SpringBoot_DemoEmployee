@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.exceptionsHandler;
+package com.learning.spring.rest.employees.exceptions_handler;
 
 public class ValidationError {
 

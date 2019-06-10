@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.exceptions.Community;
+package com.learning.spring.rest.employees.exceptions.community;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

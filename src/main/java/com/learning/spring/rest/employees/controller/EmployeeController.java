@@ -1,15 +1,13 @@
 package com.learning.spring.rest.employees.controller;
 
-import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
-import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
-import com.learning.spring.rest.employees.mappers.UserMapper;
+import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;
@@ -31,16 +29,12 @@ public class EmployeeController {
 
     private static final Logger logger = LogManager.getLogger(EmployeeController.class);
 
-    private UserRepo repo;
     private EmployeeServiceImpl employeeServices;
-    private UserMapper userMapper;
     private Response response;
 
     @Autowired
-    public EmployeeController(UserRepo repo, EmployeeServiceImpl employeeServices, UserMapper userMapper, Response response) {
-        this.repo = repo;
+    public EmployeeController(EmployeeServiceImpl employeeServices, Response response) {
         this.employeeServices = employeeServices;
-        this.userMapper = userMapper;
         this.response = response;
     }
 
@@ -106,9 +100,9 @@ public class EmployeeController {
     }
 
     @PutMapping("/employee{empID}/setCommunity")
-    public ResponseEntity<Response> assignCommunity(@PathVariable("empID") int empId, @Valid @RequestBody BaseCommunityDTO Community) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
-        employeeServices.assignCommunity(empId, Community);
-        response.setMessage(Community_ASSIGNED);
+    public ResponseEntity<Response> assignCommunity(@PathVariable("empID") int empId, @Valid @RequestBody BaseCommunityDTO community) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
+        employeeServices.assignCommunity(empId, community);
+        response.setMessage(COMMUNITY_ASSIGNED);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -1,6 +1,6 @@
-package com.learning.spring.rest.employees.exceptionsHandler;
+package com.learning.spring.rest.employees.exceptions_handler;
 
-import com.learning.spring.rest.employees.exceptions.Community.*;
+import com.learning.spring.rest.employees.exceptions.community.*;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.manager.ManagerNotValidException;

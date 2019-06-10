@@ -2,12 +2,12 @@ package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.CommunityDTO;
-import com.learning.spring.rest.employees.exceptions.Community.DefaultCommunityCanNotBeRemovedException;
-import com.learning.spring.rest.employees.exceptions.Community.CommunityAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByIdException;
-import com.learning.spring.rest.employees.exceptions.Community.CommunityNotValidException;
+import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
+import com.learning.spring.rest.employees.exceptions.community.CommunityNotValidException;
+import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
+import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
 import com.learning.spring.rest.employees.mappers.CommunityMapper;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.services.CommunityService;
@@ -24,8 +24,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.learning.spring.rest.employees.utils.Constants.Community_ADDED;
-import static com.learning.spring.rest.employees.utils.Constants.Community_REMOVED;
+import static com.learning.spring.rest.employees.utils.Constants.COMMUNITY_ADDED;
+import static com.learning.spring.rest.employees.utils.Constants.COMMUNITY_REMOVED;
 
 @RestController
 public class CommunityController {
@@ -34,13 +34,13 @@ public class CommunityController {
 
 
     private CommunityService communityService;
-    private CommunityMapper CommunityMapper;
+    private CommunityMapper communityMapper;
     private Response response;
 
     @Autowired
-    public CommunityController(CommunityService CommunityService, CommunityMapper CommunityMapper, Response response) {
-        this.communityService = CommunityService;
-        this.CommunityMapper = CommunityMapper;
+    public CommunityController(CommunityService communityService, CommunityMapper communityMapper, Response response) {
+        this.communityService = communityService;
+        this.communityMapper = communityMapper;
         this.response = response;
     }
 
@@ -51,13 +51,13 @@ public class CommunityController {
             List<ValidationError> fieldErrors = result.getFieldErrors().stream()
                     .map(e -> new ValidationError(e.getField(), e.getRejectedValue().toString(), e.getDefaultMessage()))
                     .collect(Collectors.toList());
-            logger.error("Invalid data for adding new Community");
-            throw new CommunityNotValidException("Community data not valid", fieldErrors);
+            logger.error("Invalid data for adding new community");
+            throw new CommunityNotValidException("community data not valid", fieldErrors);
 
         }
-        Community Community = CommunityMapper.convertFromBaseCommunityDtoToCommunity(baseCommunityDTO);
-        BaseCommunityDTO CommunityDTO = communityService.addCommunity(Community);
-        response.setMessage(Community_ADDED);
+        Community community = communityMapper.convertFromBaseCommunityDtoToCommunity(baseCommunityDTO);
+        communityService.addCommunity(community);
+        response.setMessage(COMMUNITY_ADDED);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
@@ -65,15 +65,15 @@ public class CommunityController {
     @DeleteMapping("/community/delete/{id}")
     public ResponseEntity<Response> deleteCommunityById(@PathVariable("id") int id) throws CommunityNotFoundByIdException, DefaultCommunityCanNotBeRemovedException {
         communityService.deleteCommunityById(id);
-        logger.info("Successfully removed the Community with id={}", id);
-        response.setMessage(Community_REMOVED);
+        logger.info("Successfully removed the community with id={}", id);
+        response.setMessage(COMMUNITY_REMOVED);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/community/{id}")
     public ResponseEntity<CommunityDTO> getCommunityById(@PathVariable("id") int id) throws CommunityNotFoundByIdException, EmployeeNotFoundException {
-        CommunityDTO Community = communityService.getCommunityById(id);
-        return new ResponseEntity<>(Community, HttpStatus.OK);
+        CommunityDTO community = communityService.getCommunityById(id);
+        return new ResponseEntity<>(community, HttpStatus.OK);
     }
 
     @GetMapping("/communities")

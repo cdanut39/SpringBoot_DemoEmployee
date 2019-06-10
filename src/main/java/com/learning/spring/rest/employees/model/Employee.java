@@ -28,16 +28,12 @@ public class Employee extends User {
     private Project project;
 
     @Transient
-    private String CommunityName;
+    private String communityName;
 
     @Transient
     private String projectName;
 
     public Employee() {
-    }
-
-    public Employee(int id, String name, int salary) {
-        this.salary = salary;
     }
 
     public LocalDate getStartDate() {
@@ -65,15 +61,15 @@ public class Employee extends User {
     }
 
     public void setCommunityName(Employee employee) {
-        this.CommunityName = employee.getCommunity().getCommunityName();
+        this.communityName = employee.getCommunity().getCommunityName();
     }
 
-    public void setCommunityName(String CommunityName) {
-        this.CommunityName = CommunityName;
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
     }
 
     public String getCommunityName() {
-        return CommunityName;
+        return communityName;
     }
 
     public Boolean getBonus() {

@@ -24,32 +24,32 @@ public class CommunityMapper {
         this.empMapper = empMapper;
     }
 
-    public CommunityDTO convertFromCommunityToCommunityDtoForGet(Community Community) {
+    public CommunityDTO convertFromCommunityToCommunityDtoForGet(Community community) {
 
         CommunityDTO dto = new CommunityDTO();
-        dto.setCommunityName(Community.getCommunityName());
-        dto.setCommunityId(Community.getCommunityId());
+        dto.setCommunityName(community.getCommunityName());
+        dto.setCommunityId(community.getCommunityId());
         dto.setCompanyName(companyName);
-        dto.setEmployees(Community.getEmployees().stream()
+        dto.setEmployees(community.getEmployees().stream()
                 .map(empMapper::convertFromEmpTOEmployeeDTO)
                 .collect(Collectors.toList()));
         return dto;
     }
 
-    public BaseCommunityDTO convertFromCommunityToBaseCommunityDto(Community Community) {
+    public BaseCommunityDTO convertFromCommunityToBaseCommunityDto(Community community) {
 
         BaseCommunityDTO dto = new BaseCommunityDTO();
-        dto.setCommunityName(Community.getCommunityName());
-        dto.setCommunityId(Community.getCommunityId());
+        dto.setCommunityName(community.getCommunityName());
+        dto.setCommunityId(community.getCommunityId());
         return dto;
     }
 
     public Community convertFromBaseCommunityDtoToCommunity(BaseCommunityDTO baseCommunityDTO) {
 
-        Community Community = new Community();
-        Community.setCommunityName(baseCommunityDTO.getCommunityName());
+        Community community = new Community();
+        community.setCommunityName(baseCommunityDTO.getCommunityName());
 
-        return Community;
+        return community;
     }
 
 }

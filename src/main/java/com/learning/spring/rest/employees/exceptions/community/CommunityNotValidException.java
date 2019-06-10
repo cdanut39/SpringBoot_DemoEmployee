@@ -1,6 +1,6 @@
-package com.learning.spring.rest.employees.exceptions.Community;
+package com.learning.spring.rest.employees.exceptions.community;
 
-import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
+import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

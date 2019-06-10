@@ -51,7 +51,7 @@ public class Community {
 
     @Override
     public String toString() {
-        return "Community{" +
+        return "community{" +
                 "CommunityId=" + communityId +
                 ", CommunityName='" + communityName + "}";
     }

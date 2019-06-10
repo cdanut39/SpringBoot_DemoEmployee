@@ -24,8 +24,8 @@ public class ManagerServiceImpl implements ManagerService {
     private UserMapper userMapper;
 
     @Autowired
-    public ManagerServiceImpl(UserRepo UserRepo, @Lazy UserMapper userMapper) {
-        this.userRepo = UserRepo;
+    public ManagerServiceImpl(UserRepo userRepo, @Lazy UserMapper userMapper) {
+        this.userRepo = userRepo;
         this.userMapper = userMapper;
     }
 

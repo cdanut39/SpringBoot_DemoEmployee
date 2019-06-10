@@ -12,8 +12,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int roleId;
 
-    @Enumerated(EnumType.STRING)
-    private RoleEnum roleName;
+    private String roleName;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER)
@@ -22,7 +21,7 @@ public class Role {
     public Role() {
     }
 
-    public Role(RoleEnum roleName) {
+    public Role(String roleName) {
         this.roleName = roleName;
     }
 
@@ -35,10 +34,10 @@ public class Role {
     }
 
     public String getRoleName() {
-        return roleName.name();
+        return roleName;
     }
 
-    public void setRoleName(RoleEnum roleName) {
+    public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
 

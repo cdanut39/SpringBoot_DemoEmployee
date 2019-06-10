@@ -16,8 +16,8 @@ public class BaseCommunityDTO {
     }
 
     @JsonCreator
-    public BaseCommunityDTO(@JsonProperty(required = true) String CommunityName) {
-        this.communityName = CommunityName;
+    public BaseCommunityDTO(@JsonProperty(required = true) String communityName) {
+        this.communityName = communityName;
     }
 
     public int getCommunityId() {

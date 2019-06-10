@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.exceptions.Community;
+package com.learning.spring.rest.employees.exceptions.community;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,7 +9,7 @@ public class DefaultCommunityCanNotBeRemovedException extends Exception {
 
     public DefaultCommunityCanNotBeRemovedException(String message) {
         super(message);
-        logger.error("Community can not be removed");
+        logger.error("community can not be removed");
     }
     }
 

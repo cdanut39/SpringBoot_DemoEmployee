@@ -4,7 +4,7 @@ import com.learning.spring.rest.employees.dao.CommunityRepo;
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
-import com.learning.spring.rest.employees.exceptions.Community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.UserMapper;
@@ -25,16 +25,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     private static final Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
 
     private UserRepo userRepo;
-    private CommunityRepo CommunityRepo;
+    private CommunityRepo communityRepo;
     private UserMapper userMapper;
-    private CommunityServiceImpl CommunityService;
 
     @Autowired
-    public EmployeeServiceImpl(UserRepo UserRepo, CommunityRepo CommunityRepo, UserMapper userMapper, CommunityServiceImpl CommunityService) {
-        this.userRepo = UserRepo;
-        this.CommunityRepo = CommunityRepo;
+    public EmployeeServiceImpl(UserRepo userRepo, CommunityRepo communityRepo, UserMapper userMapper) {
+        this.userRepo = userRepo;
+        this.communityRepo = communityRepo;
         this.userMapper = userMapper;
-        this.CommunityService = CommunityService;
     }
 
     @Override
@@ -85,9 +83,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employee == null) {
             throw new EmployeeNotFoundException("Employee not found with id=" + employeeId, employeeId);
         }
-        Community community = CommunityRepo.findByCommunityName(baseCommunityDTO.getCommunityName());
+        Community community = communityRepo.findByCommunityName(baseCommunityDTO.getCommunityName());
         if (community == null) {
-            throw new CommunityNotFoundByNameException("Community not found with name=" + community.getCommunityName(), community.getCommunityName());
+            throw new CommunityNotFoundByNameException("community not found with name=" + community.getCommunityName(), community.getCommunityName());
         } else {
             employee.setCommunity(community);
         }

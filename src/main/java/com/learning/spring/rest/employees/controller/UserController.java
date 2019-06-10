@@ -3,7 +3,7 @@ package com.learning.spring.rest.employees.controller;
 import com.learning.spring.rest.employees.dto.UserDTO;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.user.UserNotValidException;
-import com.learning.spring.rest.employees.exceptionsHandler.ValidationError;
+import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
 import com.learning.spring.rest.employees.services.UserServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;
@@ -48,7 +48,7 @@ public class UserController {
 
         }
 
-        UserDTO savedUser = userService.save(userDTO);
+        userService.save(userDTO);
         response.setMessage(USER_ADDED);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
