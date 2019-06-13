@@ -1,7 +1,7 @@
 package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.dto.CommunityDTO;
+import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
 import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
@@ -17,10 +17,10 @@ public interface CommunityService {
 
     void deleteCommunityById(int id) throws CommunityNotFoundByIdException, DefaultCommunityCanNotBeRemovedException;
 
-    CommunityDTO getCommunityById(int id) throws EmployeeNotFoundException, CommunityNotFoundByIdException;
+    CommunityRequestDTO getCommunityById(int id) throws EmployeeNotFoundException, CommunityNotFoundByIdException;
 
     Community getDefaultCommunity(int id);
 
-    List<CommunityDTO> getAllCommunities();
+    List<CommunityRequestDTO> getAllCommunities();
 
 }

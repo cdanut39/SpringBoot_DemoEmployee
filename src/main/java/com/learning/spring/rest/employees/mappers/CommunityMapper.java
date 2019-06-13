@@ -1,7 +1,7 @@
 package com.learning.spring.rest.employees.mappers;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.dto.CommunityDTO;
+import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
 import com.learning.spring.rest.employees.model.Community;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +24,9 @@ public class CommunityMapper {
         this.empMapper = empMapper;
     }
 
-    public CommunityDTO convertFromCommunityToCommunityDtoForGet(Community community) {
+    public CommunityRequestDTO convertFromCommunityToCommunityDtoForGet(Community community) {
 
-        CommunityDTO dto = new CommunityDTO();
+        CommunityRequestDTO dto = new CommunityRequestDTO();
         dto.setCommunityName(community.getCommunityName());
         dto.setCommunityId(community.getCommunityId());
         dto.setCompanyName(companyName);

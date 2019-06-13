@@ -34,13 +34,24 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST, "/register/**").permitAll()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST, "/community").permitAll()
                 .antMatchers(HttpMethod.GET, "/communities").hasAnyRole("ADMIN", "MANAGER")
+                .antMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER")
                 .antMatchers(HttpMethod.GET, "/employee/**").hasRole("EMPLOYEE")
                 .anyRequest().authenticated()
                 .and().httpBasic();
 
     }
 
+
+    private static final String[] AUTH_WHITELIST = {
+
+            // -- swagger ui
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/webjars/**"
+    };
 
 }

@@ -17,7 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
+import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.getMap;
+import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.reversed;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -105,4 +110,27 @@ public class EmployeeServiceImpl implements EmployeeService {
             logger.info("Successfully removed employee with id={},{}", employee.getUserId(), employee.getFirstName());
         }
     }
+
+    @Override
+    public List<EmployeeDTO> getAllEmployees() {
+        List<Employee> allEmployees = userRepo.findAllEmployees();
+        List<EmployeeDTO> employeeDTOList = allEmployees.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
+        return employeeDTOList;
+    }
+
+    @Override
+    public List<EmployeeDTO> getEmployeesSortedByCriteria(String criteria, String direction) {
+
+        List<Employee> employees = userRepo.findAllEmployees();
+        List<Employee> sortedList;
+
+        if (direction.equals("DESC")) {
+            employees.sort(reversed(getMap().get(criteria)));
+        } else employees.sort(getMap().get(criteria));
+        sortedList = employees;
+        List<EmployeeDTO> employeeDTOList = sortedList.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
+        return employeeDTOList;
+    }
+
 }
+

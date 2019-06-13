@@ -1,7 +1,7 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.dto.CommunityDTO;
+import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
 import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotValidException;
@@ -71,13 +71,13 @@ public class CommunityController {
     }
 
     @GetMapping("/community/{id}")
-    public ResponseEntity<CommunityDTO> getCommunityById(@PathVariable("id") int id) throws CommunityNotFoundByIdException, EmployeeNotFoundException {
-        CommunityDTO community = communityService.getCommunityById(id);
+    public ResponseEntity<CommunityRequestDTO> getCommunityById(@PathVariable("id") int id) throws CommunityNotFoundByIdException, EmployeeNotFoundException {
+        CommunityRequestDTO community = communityService.getCommunityById(id);
         return new ResponseEntity<>(community, HttpStatus.OK);
     }
 
     @GetMapping("/communities")
-    public ResponseEntity<List<CommunityDTO>> getAllCommunitys() {
+    public ResponseEntity<List<CommunityRequestDTO>> getAllCommunities() {
 
         return new ResponseEntity<>(communityService.getAllCommunities(), HttpStatus.OK);
     }

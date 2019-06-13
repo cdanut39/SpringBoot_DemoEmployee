@@ -1,15 +1,22 @@
 package com.learning.spring.rest.employees.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Min;
 import java.time.LocalDate;
 
 public class EmployeeDTO extends UserDTO {
 
+    @Min(value = 2000, message = "Minimum salary is 2000 EUR")
+    @ApiModelProperty(required = true)
     private int salary;
+    @ApiModelProperty(required = true)
     private Boolean bonus;
+    @ApiModelProperty(readOnly = true, notes = "employee first day in company")
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
+
     private String communityName;
 
 

@@ -2,7 +2,7 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.CommunityRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.dto.CommunityDTO;
+import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
 import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
@@ -53,11 +53,11 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public CommunityDTO getCommunityById(int id) throws CommunityNotFoundByIdException {
+    public CommunityRequestDTO getCommunityById(int id) throws CommunityNotFoundByIdException {
         Community community = communityRepo.findById(id).orElseThrow(() -> new CommunityNotFoundByIdException("community not found with id=" + id, id));
-        CommunityDTO communityDTO = communityMapper.convertFromCommunityToCommunityDtoForGet(community);
+        CommunityRequestDTO communityRequestDTO = communityMapper.convertFromCommunityToCommunityDtoForGet(community);
         logger.info("Information for community with id=" + id + ": Name={}", community.getCommunityName());
-        return communityDTO;
+        return communityRequestDTO;
     }
 
     @Override
@@ -67,9 +67,9 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<CommunityDTO> getAllCommunities() {
+    public List<CommunityRequestDTO> getAllCommunities() {
         List<Community> communityRepoAll = communityRepo.findAll();
-        List<CommunityDTO> communities = communityRepoAll.stream().map(communityMapper::convertFromCommunityToCommunityDtoForGet).collect(Collectors.toList());
+        List<CommunityRequestDTO> communities = communityRepoAll.stream().map(communityMapper::convertFromCommunityToCommunityDtoForGet).collect(Collectors.toList());
         return communities;
     }
 }

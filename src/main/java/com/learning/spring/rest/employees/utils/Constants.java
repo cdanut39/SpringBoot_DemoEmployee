@@ -9,10 +9,10 @@ public class Constants {
     public static final String MANAGER_ADDED = "Successfully added new manager";
 
     public static final String EMPLOYEE_MODIFIED = "Employee's details were successfully updated";
-    public static final String COMMUNITY_ASSIGNED = "community was successfully assigned";
+    public static final String COMMUNITY_ASSIGNED = "Community was successfully assigned";
 
     public static final String COMMUNITY_ADDED = "New community was successfully added";
-    public static final String COMMUNITY_REMOVED = "community was successfully removed";
+    public static final String COMMUNITY_REMOVED = "Community was successfully removed";
 
 
     public static final String USER_EXISTS = "User already exists! Use another email address";

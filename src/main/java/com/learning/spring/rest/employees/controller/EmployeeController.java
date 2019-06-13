@@ -10,6 +10,9 @@ import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsExcep
 import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,16 @@ public class EmployeeController {
 //        return sortedEmployees;
 //    }
 
+    @GetMapping(value = "/employees/orderBy/{criteria}/{direction}")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@PathVariable("criteria") String criteria, @PathVariable("direction") String direction) {
+        return new ResponseEntity<>(employeeServices.getEmployeesSortedByCriteria(criteria, direction), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/employees")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        return new ResponseEntity<>(employeeServices.getAllEmployees(), HttpStatus.OK);
+    }
+
     @GetMapping("/employee/{id}")
     public ResponseEntity<UserDTO> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
 
@@ -60,6 +73,15 @@ public class EmployeeController {
     }
 
     @PostMapping("/register/employee")
+    @ApiOperation(
+            value = "Add a new employee",
+            notes = "Can be called only by users with ADMIN or MANAGER roles."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Employee added successfully"),
+            @ApiResponse(code = 400, message = "Employee data not valid"),
+            @ApiResponse(code = 404, message = "Employee not found")
+    })
     public ResponseEntity<Response> addEmployee(@Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, UserAlreadyExistsException {
         if (result.hasErrors()) {
 

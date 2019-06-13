@@ -1,18 +1,20 @@
 package com.learning.spring.rest.employees.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 
-public class CommunityDTO {
+public class CommunityRequestDTO {
 
     @JsonProperty(access = READ_ONLY)
     private String companyName;
+    @JsonProperty(access = READ_ONLY)
     private int communityId;
     private String communityName;
-    @JsonProperty(access = READ_ONLY)
+    @JsonIgnore
     private List<EmployeeDTO> employees;
 
 
