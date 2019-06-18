@@ -39,8 +39,7 @@ public class CommunityServiceImpl implements CommunityService {
         } else {
             throw new CommunityAlreadyExistsException("Community already exists!");
         }
-        BaseCommunityDTO communityDTO = communityMapper.convertFromCommunityToBaseCommunityDto(savedCommunity);
-        return communityDTO;
+        return communityMapper.convertFromCommunityToBaseCommunityDto(savedCommunity);
     }
 
     @Override
@@ -69,7 +68,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public List<CommunityRequestDTO> getAllCommunities() {
         List<Community> communityRepoAll = communityRepo.findAll();
-        List<CommunityRequestDTO> communities = communityRepoAll.stream().map(communityMapper::convertFromCommunityToCommunityDtoForGet).collect(Collectors.toList());
-        return communities;
+        return communityRepoAll.stream().map(communityMapper::convertFromCommunityToCommunityDtoForGet).collect(Collectors.toList());
     }
 }

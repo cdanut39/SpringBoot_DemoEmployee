@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
             userToBeSaved = userMapper.convertFromUserDtoToUser(userDTO);
         }
         User savedUser = userRepo.save(userToBeSaved);
-        UserDTO dto = userMapper.convertFromUserToUserDto(savedUser);
-        return dto;
+        return userMapper.convertFromUserToUserDto(savedUser);
     }
 }

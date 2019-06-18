@@ -41,8 +41,7 @@ public class ManagerServiceImpl implements ManagerService {
             managerToBeSaved = userMapper.convertFromManagerDtoTOManager(managerDTO);
         }
         Manager savedManager = userRepo.save(managerToBeSaved);
-        ManagerDTO empDto = userMapper.convertFromManagerTOManagerDto(savedManager);
-        return empDto;
+        return userMapper.convertFromManagerTOManagerDto(savedManager);
     }
 
 }

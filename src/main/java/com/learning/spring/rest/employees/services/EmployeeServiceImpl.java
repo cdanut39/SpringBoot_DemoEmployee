@@ -30,7 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private static final Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
 
     private UserRepo userRepo;
-    private CommunityRepo communityRepo;
+    private CommunityRepo communityRepo;   //de modificat (trebuie pus direct in communityService)
     private UserMapper userMapper;
 
     @Autowired
@@ -47,16 +47,15 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("Employee not found with id=" + id, id);
         }
         employee.setCommunityName(employee);
-        EmployeeDTO userDTO = userMapper.convertFromEmpTOEmployeeDTO(employee);
-//        logger.info("Information for employee with id=" + id + ": Name={}, Salary={}", employee.getName(), employee.getSalary());
-        return userDTO;
+        //        logger.info("Information for employee with id=" + id + ": Name={}, Salary={}", employee.getName(), employee.getSalary());
+        return userMapper.convertFromEmpTOEmployeeDTO(employee);
     }
 
 
     @Transactional
     @Override
     public EmployeeDTO save(EmployeeDTO employeeDto) throws UserAlreadyExistsException {
-        Employee employeeToBeSaved = null;
+        Employee employeeToBeSaved;
         String email = employeeDto.getEmail();
         User user = userRepo.findByEmail(email);
         if (user != null) {
@@ -65,8 +64,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto);
         }
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
-        EmployeeDTO empDto = userMapper.convertFromEmpToEmpDto(savedEmployee);
-        return empDto;
+        return userMapper.convertFromEmpToEmpDto(savedEmployee);
     }
 
     //    @Override
@@ -95,8 +93,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setCommunity(community);
         }
         Employee savedEmployee = userRepo.save(employee);
-        EmployeeDTO emp = userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
-        return emp;
+        return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
 
     }
 
@@ -114,8 +111,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDTO> getAllEmployees() {
         List<Employee> allEmployees = userRepo.findAllEmployees();
-        List<EmployeeDTO> employeeDTOList = allEmployees.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
-        return employeeDTOList;
+        return allEmployees.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -128,8 +124,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employees.sort(reversed(getMap().get(criteria)));
         } else employees.sort(getMap().get(criteria));
         sortedList = employees;
-        List<EmployeeDTO> employeeDTOList = sortedList.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
-        return employeeDTOList;
+        return sortedList.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
     }
 
 }

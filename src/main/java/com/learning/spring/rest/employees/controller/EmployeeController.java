@@ -121,7 +121,7 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/employee{empID}/setCommunity")
+    @PutMapping("/employee/{empID}/setCommunity")
     public ResponseEntity<Response> assignCommunity(@PathVariable("empID") int empId, @Valid @RequestBody BaseCommunityDTO community) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
         employeeServices.assignCommunity(empId, community);
         response.setMessage(COMMUNITY_ASSIGNED);
