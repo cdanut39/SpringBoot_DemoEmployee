@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
 import static com.learning.spring.rest.employees.utils.Constants.USER_ADDED;
 
 @RestController
@@ -39,12 +40,9 @@ public class UserController {
     @PostMapping("/register/user")
     public ResponseEntity<Response> addUser(@Valid @RequestBody UserDTO userDTO, BindingResult result) throws UserNotValidException, UserAlreadyExistsException {
         if (result.hasErrors()) {
-
-            List<ValidationError> fieldErrors = result.getFieldErrors().stream()
-                    .map(e -> new ValidationError(e.getField(), e.getRejectedValue().toString(), e.getDefaultMessage()))
-                    .collect(Collectors.toList());
+            List<ValidationError> errors = getErrors(result);
             logger.error("Invalid data for adding new user");
-            throw new UserNotValidException("User data not valid", fieldErrors);
+            throw new UserNotValidException("User data not valid", errors);
 
         }
 

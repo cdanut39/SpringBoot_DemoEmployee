@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
 import static com.learning.spring.rest.employees.utils.Constants.COMMUNITY_ADDED;
 import static com.learning.spring.rest.employees.utils.Constants.COMMUNITY_REMOVED;
 
@@ -47,13 +48,9 @@ public class CommunityController {
     @PostMapping("/community")
     public ResponseEntity<Response> addCommunity(@Valid @RequestBody BaseCommunityDTO baseCommunityDTO, BindingResult result) throws CommunityNotValidException, CommunityAlreadyExistsException {
         if (result.hasErrors()) {
-
-            List<ValidationError> fieldErrors = result.getFieldErrors().stream()
-                    .map(e -> new ValidationError(e.getField(), e.getRejectedValue().toString(), e.getDefaultMessage()))
-                    .collect(Collectors.toList());
+            List<ValidationError> errors = getErrors(result);
             logger.error("Invalid data for adding new community");
-            throw new CommunityNotValidException("community data not valid", fieldErrors);
-
+            throw new CommunityNotValidException("community data not valid", errors);
         }
         Community community = communityMapper.convertFromBaseCommunityDtoToCommunity(baseCommunityDTO);
         communityService.addCommunity(community);

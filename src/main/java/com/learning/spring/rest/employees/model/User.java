@@ -22,12 +22,12 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Integer userId;
     private String firstName;
     private String lastName;
     @Enumerated(EnumType.STRING)
     private User.Gender sex;
-    private long phoneNumber;
+    private Long phoneNumber;
     private String email;
     private String password;
 

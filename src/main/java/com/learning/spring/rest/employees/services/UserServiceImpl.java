@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
 
 @Service
@@ -36,10 +38,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO save(UserDTO userDTO) throws UserAlreadyExistsException {
-        User userToBeSaved = null;
+        User userToBeSaved;
         String email = userDTO.getEmail();
-        User user = userRepo.findByEmail(email);
-        if (user != null) {
+        Optional<User> user = userRepo.findByEmail(email);
+        if (user.isPresent()) {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
         } else {
             userToBeSaved = userMapper.convertFromUserDtoToUser(userDTO);

@@ -3,6 +3,7 @@ package com.learning.spring.rest.employees.services;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
+import com.learning.spring.rest.employees.exceptions.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
@@ -26,4 +27,6 @@ public interface EmployeeService {
     List<EmployeeDTO> getAllEmployees();
 
     List<EmployeeDTO> getEmployeesSortedByCriteria(String criteria, String direction);
+
+    List<EmployeeDTO> searchEmployeeBy(String lastName, String community) throws NoResultsException;
 }

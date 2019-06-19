@@ -1,5 +1,6 @@
 package com.learning.spring.rest.employees.exceptions_handler;
 
+import com.learning.spring.rest.employees.exceptions.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.community.*;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
@@ -110,4 +111,12 @@ public class ErrorHandlerController {
         return new ResponseEntity<>(errorResp, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(NoResultsException.class)
+    public ResponseEntity<ErrorResponse> handleNoResultFoundError(NoResultsException nre) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.OK.value());
+        errorResp.setErrorMessage(nre.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.OK);
+    }
 }

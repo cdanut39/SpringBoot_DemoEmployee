@@ -1,6 +1,5 @@
 package com.learning.spring.rest.employees.services;
 
-import com.learning.spring.rest.employees.dao.CommunityRepo;
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
@@ -14,10 +13,13 @@ import com.learning.spring.rest.employees.model.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
@@ -30,13 +32,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     private static final Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
 
     private UserRepo userRepo;
-    private CommunityRepo communityRepo;   //de modificat (trebuie pus direct in communityService)
+    private CommunityServiceImpl communityService;
     private UserMapper userMapper;
 
     @Autowired
-    public EmployeeServiceImpl(UserRepo userRepo, CommunityRepo communityRepo, UserMapper userMapper) {
+    public EmployeeServiceImpl(UserRepo userRepo, CommunityServiceImpl communityService, UserMapper userMapper) {
         this.userRepo = userRepo;
-        this.communityRepo = communityRepo;
+        this.communityService = communityService;
         this.userMapper = userMapper;
     }
 
@@ -57,8 +59,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO save(EmployeeDTO employeeDto) throws UserAlreadyExistsException {
         Employee employeeToBeSaved;
         String email = employeeDto.getEmail();
-        User user = userRepo.findByEmail(email);
-        if (user != null) {
+        Optional<User> user = userRepo.findByEmail(email);
+        if (user.isPresent()) {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
         } else {
             employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto);
@@ -86,12 +88,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employee == null) {
             throw new EmployeeNotFoundException("Employee not found with id=" + employeeId, employeeId);
         }
-        Community community = communityRepo.findByCommunityName(baseCommunityDTO.getCommunityName());
-        if (community == null) {
-            throw new CommunityNotFoundByNameException("community not found with name=" + community.getCommunityName(), community.getCommunityName());
-        } else {
-            employee.setCommunity(community);
-        }
+        Community community = communityService.findByName(baseCommunityDTO);
+        employee.setCommunity(community);
         Employee savedEmployee = userRepo.save(employee);
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
 
@@ -125,6 +123,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else employees.sort(getMap().get(criteria));
         sortedList = employees;
         return sortedList.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EmployeeDTO> searchEmployeeBy(String lastName, String communityName) {
+        Employee emp = new Employee();
+        emp.setLastName(lastName);
+        Community community = communityService.findByName(communityName);
+        emp.setCommunity(community);
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase();
+        Example<Employee> example = Example.of(emp, exampleMatcher);
+        List<Employee> employees = userRepo.findAll(example);
+        return employees.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
     }
 
 }

@@ -7,11 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Integer> {
 
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     @Query(value = "Select * from users where user_type='Employee' and user_id=?", nativeQuery = true)
     Employee findEmployeeById(int id);

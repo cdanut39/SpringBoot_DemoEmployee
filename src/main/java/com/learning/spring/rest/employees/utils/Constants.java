@@ -19,4 +19,6 @@ public class Constants {
 
     public static final String EMPLOYEE_REMOVED = "Employee was successfully removed";
 
+    public static final String NO_RESULTS= "No results were found based on your filters";
+
 }

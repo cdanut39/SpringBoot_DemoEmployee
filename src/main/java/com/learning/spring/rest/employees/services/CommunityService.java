@@ -2,6 +2,7 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
+import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
@@ -22,5 +23,7 @@ public interface CommunityService {
     Community getDefaultCommunity(int id);
 
     List<CommunityRequestDTO> getAllCommunities();
+
+    Community findByName(BaseCommunityDTO communityDTO) throws CommunityNotFoundByNameException;
 
 }

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
 
 
@@ -32,10 +34,10 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public ManagerDTO save(ManagerDTO managerDTO) throws UserAlreadyExistsException {
-        Manager managerToBeSaved = null;
+        Manager managerToBeSaved;
         String email = managerDTO.getEmail();
-        User user = userRepo.findByEmail(email);
-        if (user != null) {
+        Optional<User> user = userRepo.findByEmail(email);
+        if (user.isPresent()) {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
         } else {
             managerToBeSaved = userMapper.convertFromManagerDtoTOManager(managerDTO);

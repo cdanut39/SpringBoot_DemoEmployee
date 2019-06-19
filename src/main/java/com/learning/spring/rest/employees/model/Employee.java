@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @DiscriminatorValue("Employee")
 public class Employee extends User {
 
-    private int salary;
+    private Integer salary;
     private Boolean bonus;
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
@@ -44,11 +44,11 @@ public class Employee extends User {
         this.startDate = startDate;
     }
 
-    public int getSalary() {
+    public Integer getSalary() {
         return salary;
     }
 
-    public void setSalary(int salary) {
+    public void setSalary(Integer salary) {
         this.salary = salary;
     }
 

@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
 import static com.learning.spring.rest.employees.utils.Constants.MANAGER_ADDED;
 
 @RestController
@@ -41,12 +42,9 @@ public class ManagerController {
     @PostMapping("/register/manager")
     public ResponseEntity<Response> addManager(@Valid @RequestBody ManagerDTO employee, BindingResult result) throws ManagerNotValidException, UserAlreadyExistsException {
         if (result.hasErrors()) {
-
-            List<ValidationError> fieldErrors = result.getFieldErrors().stream()
-                    .map(e -> new ValidationError(e.getField(), e.getRejectedValue().toString(), e.getDefaultMessage()))
-                    .collect(Collectors.toList());
+            List<ValidationError> errors = getErrors(result);
             logger.error("Invalid data for adding new manager");
-            throw new ManagerNotValidException("Manager data not valid", fieldErrors);
+            throw new ManagerNotValidException("Manager data not valid", errors);
         }
         managerService.save(employee);
         response.setMessage(MANAGER_ADDED);
