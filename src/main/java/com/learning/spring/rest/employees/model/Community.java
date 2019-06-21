@@ -1,5 +1,7 @@
 package com.learning.spring.rest.employees.model;
 
+import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -19,6 +21,14 @@ public class Community {
     private List<Employee> employees;
 
     public Community() {
+    }
+    public Community(int id) {
+        this.communityId=id;
+    }
+
+    public Community(int communityId, @Size String communityName) {
+        this.communityId = communityId;
+        this.communityName = communityName;
     }
 
     public int getCommunityId() {

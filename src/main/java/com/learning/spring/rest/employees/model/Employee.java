@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -34,6 +35,30 @@ public class Employee extends User {
     private String projectName;
 
     public Employee() {
+    }
+
+    public Employee(Integer userId, String firstName, String lastName, Gender sex,
+                    Long phoneNumber, String email, String password, Set<Role> roles, Integer salary, Boolean bonus,
+                    LocalDate startDate, Community community, Project project, String communityName, String projectName) {
+        super(userId, firstName, lastName, sex, phoneNumber, email, password, roles);
+
+        this.salary = salary;
+        this.bonus = bonus;
+        this.startDate = startDate;
+        this.community = community;
+        this.project = project;
+        this.communityName = communityName;
+        this.projectName = projectName;
+    }
+
+    public Employee(Integer salary, Boolean bonus, LocalDate startDate, Community community, Project project, String communityName, String projectName) {
+        this.salary = salary;
+        this.bonus = bonus;
+        this.startDate = startDate;
+        this.community = community;
+        this.project = project;
+        this.communityName = communityName;
+        this.projectName = projectName;
     }
 
     public LocalDate getStartDate() {

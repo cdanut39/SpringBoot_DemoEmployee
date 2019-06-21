@@ -3,6 +3,7 @@ package com.learning.spring.rest.employees.services;
 import com.learning.spring.rest.employees.dao.CommunityRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
+import com.learning.spring.rest.employees.exceptions.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
@@ -15,10 +16,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.learning.spring.rest.employees.utils.Constants.NO_RESULTS;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -34,6 +38,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    @Transactional
     public BaseCommunityDTO addCommunity(Community comm) throws CommunityAlreadyExistsException {
         Community savedCommunity;
         Optional<Community> community = communityRepo.findByCommunityName(comm.getCommunityName());
@@ -80,7 +85,10 @@ public class CommunityServiceImpl implements CommunityService {
                 () -> new CommunityNotFoundByNameException("Community not found with name " + communityDTO.getCommunityName(), communityDTO.getCommunityName()));
     }
 
-    public Community findByName(String communityName)   {
-        return communityRepo.findByCommunityName(communityName).orElse(null);
+    public BaseCommunityDTO findByName(String communityName) throws NoResultsException {
+        Community community = communityRepo.findByCommunityName(communityName).orElse(null);
+        if (community == null) {
+            throw new NoResultsException(NO_RESULTS);
+        } else return communityMapper.convertFromCommunityToBaseCommunityDto(community);
     }
 }

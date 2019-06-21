@@ -46,6 +46,20 @@ public class UserDTO {
     public UserDTO() {
     }
 
+    public UserDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32,
+            message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName,
+                   @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters")
+                           String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, Set<Role> roles) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sex = sex;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+    }
+
     public int getUserId() {
         return userId;
     }

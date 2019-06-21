@@ -3,9 +3,11 @@ package com.learning.spring.rest.employees.services;
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
+import com.learning.spring.rest.employees.exceptions.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.mappers.CommunityMapper;
 import com.learning.spring.rest.employees.mappers.UserMapper;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
@@ -34,23 +36,25 @@ public class EmployeeServiceImpl implements EmployeeService {
     private UserRepo userRepo;
     private CommunityServiceImpl communityService;
     private UserMapper userMapper;
+    private CommunityMapper communityMapper;
 
     @Autowired
-    public EmployeeServiceImpl(UserRepo userRepo, CommunityServiceImpl communityService, UserMapper userMapper) {
+    public EmployeeServiceImpl(UserRepo userRepo, CommunityServiceImpl communityService, UserMapper userMapper, CommunityMapper communityMapper) {
         this.userRepo = userRepo;
         this.communityService = communityService;
         this.userMapper = userMapper;
+        this.communityMapper = communityMapper;
     }
 
     @Override
     public EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException {
-        Employee employee = userRepo.findEmployeeById(id);
-        if (employee == null) {
+        Optional<Employee> employee = userRepo.findEmployeeById(id);
+        if (!employee.isPresent()) {
             throw new EmployeeNotFoundException("Employee not found with id=" + id, id);
         }
-        employee.setCommunityName(employee);
-        //        logger.info("Information for employee with id=" + id + ": Name={}, Salary={}", employee.getName(), employee.getSalary());
-        return userMapper.convertFromEmpTOEmployeeDTO(employee);
+        Employee emp = employee.get();
+        emp.setCommunityName(emp);
+        return userMapper.convertFromEmpTOEmployeeDTO(emp);
     }
 
 
@@ -69,40 +73,30 @@ public class EmployeeServiceImpl implements EmployeeService {
         return userMapper.convertFromEmpToEmpDto(savedEmployee);
     }
 
-    //    @Override
-//    public EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO emp) throws EmployeeNotFoundException {
-//
-//        Employee employeeToBeUpdated = userRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
-////        employeeToBeUpdated.setName(emp.getName());
-//        employeeToBeUpdated.setSalary(emp.getSalary());
-//        employeeToBeUpdated.setBonus(emp.isBonus());
-//        userRepo.save(employeeToBeUpdated);
-//        EmployeePUTResponse_DTO baseEmployeeDTO = userMapper.convertFromEmpToEmpPutResponseDto(employeeToBeUpdated);
-//        logger.info("Details of employee with id:{} were successfully updated!", id);
-//        return baseEmployeeDTO;
-//    }
-//
+
     @Override
     public EmployeeDTO assignCommunity(int employeeId, BaseCommunityDTO baseCommunityDTO) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
-        Employee employee = userRepo.findEmployeeById(employeeId);
-        if (employee == null) {
+        Optional<Employee> employee = userRepo.findEmployeeById(employeeId);
+        if (!employee.isPresent()) {
             throw new EmployeeNotFoundException("Employee not found with id=" + employeeId, employeeId);
         }
+        Employee emp = employee.get();
         Community community = communityService.findByName(baseCommunityDTO);
-        employee.setCommunity(community);
-        Employee savedEmployee = userRepo.save(employee);
+        emp.setCommunity(community);
+        Employee savedEmployee = userRepo.save(emp);
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
 
     }
 
     @Override
     public void removeEmployee(int id) throws EmployeeNotFoundException {
-        Employee employee = userRepo.findEmployeeById(id);
-        if (employee == null) {
+        Optional<Employee> employee = userRepo.findEmployeeById(id);
+        if (!employee.isPresent()) {
             throw new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id);
         } else {
-            userRepo.delete(employee);
-            logger.info("Successfully removed employee with id={},{}", employee.getUserId(), employee.getFirstName());
+            Employee emp = employee.get();
+            userRepo.delete(emp);
+            logger.info("Successfully removed employee with id={},{}", emp.getUserId(), emp.getFirstName());
         }
     }
 
@@ -126,16 +120,29 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> searchEmployeeBy(String lastName, String communityName) {
+    public List<EmployeeDTO> searchEmployeeBy(String lastName, String communityName) throws NoResultsException {
         Employee emp = new Employee();
         emp.setLastName(lastName);
-        Community community = communityService.findByName(communityName);
-        emp.setCommunity(community);
+        BaseCommunityDTO communityDTO = communityService.findByName(communityName);
+        emp.setCommunity(communityMapper.convertFromBaseCommunityDtoToCommunity(communityDTO));
         ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase();
         Example<Employee> example = Example.of(emp, exampleMatcher);
         List<Employee> employees = userRepo.findAll(example);
         return employees.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
     }
-
 }
 
+
+//    @Override
+//    public EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO emp) throws EmployeeNotFoundException {
+//
+//        Employee employeeToBeUpdated = userRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
+////        employeeToBeUpdated.setName(emp.getName());
+//        employeeToBeUpdated.setSalary(emp.getSalary());
+//        employeeToBeUpdated.setBonus(emp.isBonus());
+//        userRepo.save(employeeToBeUpdated);
+//        EmployeePUTResponse_DTO baseEmployeeDTO = userMapper.convertFromEmpToEmpPutResponseDto(employeeToBeUpdated);
+//        logger.info("Details of employee with id:{} were successfully updated!", id);
+//        return baseEmployeeDTO;
+//    }
+//

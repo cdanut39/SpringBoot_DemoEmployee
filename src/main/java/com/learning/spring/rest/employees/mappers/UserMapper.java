@@ -30,7 +30,7 @@ public class UserMapper {
         this.roleRepo = roleRepo;
     }
 
-    public User convertFromUserDtoToUser(UserDTO dto) {
+    public static User convertFromUserDtoToUser(UserDTO dto) {
         User user = new User();
 
         user.setUserId(dto.getUserId());

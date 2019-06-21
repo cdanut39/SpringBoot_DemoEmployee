@@ -46,7 +46,7 @@ public class CommunityMapper {
 
     public Community convertFromBaseCommunityDtoToCommunity(BaseCommunityDTO baseCommunityDTO) {
 
-        Community community = new Community();
+        Community community = new Community(baseCommunityDTO.getCommunityId());
         community.setCommunityName(baseCommunityDTO.getCommunityName());
 
         return community;

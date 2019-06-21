@@ -10,6 +10,7 @@ import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundEx
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
+import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
 import io.swagger.annotations.ApiOperation;
