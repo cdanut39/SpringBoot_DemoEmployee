@@ -139,4 +139,10 @@ public class EmployeeServiceTests {
         verify(userRepo, times(1)).delete(employee);
     }
 
+    @Test(expected = EmployeeNotFoundException.class)
+    public void deleteEmployeeInvalidIdTest() throws EmployeeNotFoundException {
+        when(userRepo.findEmployeeById(1)).thenReturn(Optional.empty());
+        employeeService.removeEmployee(1);
+    }
+
 }
