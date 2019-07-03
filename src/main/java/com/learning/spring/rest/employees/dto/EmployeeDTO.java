@@ -43,6 +43,13 @@ public class EmployeeDTO extends UserDTO {
         this.startDate = startDate;
         this.communityName = communityName;
     }
+    public EmployeeDTO(@NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32,
+            message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters") String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, @Min(value = 2000, message = "Minimum salary is 2000 EUR") int salary, Boolean bonus) {
+        super(firstName, lastName, sex, phoneNumber, password, email);
+        this.salary = salary;
+        this.bonus = bonus;
+
+    }
 
 
     public int getSalary() {

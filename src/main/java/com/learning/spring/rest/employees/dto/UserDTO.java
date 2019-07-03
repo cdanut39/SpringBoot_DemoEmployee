@@ -60,6 +60,15 @@ public class UserDTO {
         this.roles = roles;
     }
 
+    public UserDTO(String firstName, String lastName, User.Gender sex, long phoneNumber, String password, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sex = sex;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.email = email;
+    }
+
     public int getUserId() {
         return userId;
     }

@@ -12,11 +12,13 @@ import com.learning.spring.rest.employees.mappers.UserMapper;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.User;
+import com.learning.spring.rest.employees.utils.RandomPassword;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.learning.spring.rest.employees.utils.Constants.PASSWORD_LENGTH;
 import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
 import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.getMap;
 import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.reversed;
@@ -37,13 +40,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private CommunityServiceImpl communityService;
     private UserMapper userMapper;
     private CommunityMapper communityMapper;
+    private MailServiceImpl mailService;
 
     @Autowired
-    public EmployeeServiceImpl(UserRepo userRepo, CommunityServiceImpl communityService, UserMapper userMapper, CommunityMapper communityMapper) {
+    public EmployeeServiceImpl(UserRepo userRepo, CommunityServiceImpl communityService, UserMapper userMapper, CommunityMapper communityMapper, MailServiceImpl mailService) {
         this.userRepo = userRepo;
         this.communityService = communityService;
         this.userMapper = userMapper;
         this.communityMapper = communityMapper;
+        this.mailService = mailService;
     }
 
     @Override
@@ -62,15 +67,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDTO save(EmployeeDTO employeeDto) throws UserAlreadyExistsException {
         Employee employeeToBeSaved;
+        String randomPassword = RandomPassword.generatePassword(PASSWORD_LENGTH);
         String email = employeeDto.getEmail();
         Optional<User> user = userRepo.findByEmail(email);
         if (user.isPresent()) {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
         } else {
-            employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto);
+            employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto, randomPassword);
         }
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
-        return userMapper.convertFromEmpToEmpDto(savedEmployee);
+        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), randomPassword)).start();
+        return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
     }
 
 
@@ -130,19 +137,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employees = userRepo.findAll(example);
         return employees.stream().map(userMapper::convertFromEmpTOEmployeeDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public EmployeeDTO updateEmployee(int id, EmployeeDTO emp) throws EmployeeNotFoundException {
+
+        Employee employeeToBeUpdated = userRepo.findEmployeeById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
+        employeeToBeUpdated.setLastName(emp.getLastName());
+        employeeToBeUpdated.setSalary(emp.getSalary());
+        employeeToBeUpdated.setPassword(new BCryptPasswordEncoder().encode(emp.getPassword()));
+        employeeToBeUpdated.setPhoneNumber(emp.getPhoneNumber());
+        employeeToBeUpdated.setBonus(emp.getBonus());
+        userRepo.save(employeeToBeUpdated);
+        EmployeeDTO baseEmployeeDTO = userMapper.convertFromEmpTOEmployeeDTO(employeeToBeUpdated);
+        logger.info("Details of employee with id:{} were successfully updated!", id);
+        return baseEmployeeDTO;
+    }
 }
 
 
-//    @Override
-//    public EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO emp) throws EmployeeNotFoundException {
-//
-//        Employee employeeToBeUpdated = userRepo.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
-////        employeeToBeUpdated.setName(emp.getName());
-//        employeeToBeUpdated.setSalary(emp.getSalary());
-//        employeeToBeUpdated.setBonus(emp.isBonus());
-//        userRepo.save(employeeToBeUpdated);
-//        EmployeePUTResponse_DTO baseEmployeeDTO = userMapper.convertFromEmpToEmpPutResponseDto(employeeToBeUpdated);
-//        logger.info("Details of employee with id:{} were successfully updated!", id);
-//        return baseEmployeeDTO;
-//    }
-//
+

@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class BaseCommunityDTO {
     @JsonIgnore
     private int communityId;
-    @Size(min = 3, max = 16, message = "Name has to be equal to or greater than 3 and less than 16 characters")
+    @Size(min = 2, max = 16, message = "Name has to be equal to or greater than 2 and less than 16 characters")
     @Pattern(regexp = "^[A-Z]*")
     private String communityName;
 
@@ -37,4 +37,6 @@ public class BaseCommunityDTO {
     public void setCommunityName(String communityName) {
         this.communityName = communityName;
     }
+
+
 }

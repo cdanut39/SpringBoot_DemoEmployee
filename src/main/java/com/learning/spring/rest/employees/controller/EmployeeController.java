@@ -10,7 +10,6 @@ import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundEx
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
-import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
 import io.swagger.annotations.ApiOperation;
@@ -43,20 +42,6 @@ public class EmployeeController {
         this.employeeServices = employeeServices;
         this.response = response;
     }
-
-//    @GetMapping(value = "/employees/orderBy/salary/DESC", produces = {"application/json"})
-//    public List<EmployeeWithCommunityNameDTO> getEmployeesOrderdByCriteriaDESC() {
-//        List<Employee> employees = repo.getEmployeesOrderBySalary();
-//        List<EmployeeWithCommunityNameDTO> sortedEmployees = employees.stream().map(userMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
-//        return sortedEmployees;
-//    }
-//
-//    @GetMapping(value = "/employees/orderBy/{criteria}/ASC", produces = {"application/json"})
-//    public List<EmployeeWithCommunityNameDTO> getEmployeesOrderdByCriteriaASC(@PathVariable("criteria") String criteria) {
-//        List<Employee> employees = repo.findAll(new Sort(Sort.Direction.ASC, criteria));
-//        List<EmployeeWithCommunityNameDTO> sortedEmployees = employees.stream().map(userMapper::convertFromEmpToEmpDto).collect(Collectors.toList());
-//        return sortedEmployees;
-//    }
 
     @GetMapping(value = "/employees/orderBy/{criteria}/{direction}")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@PathVariable("criteria") String criteria, @PathVariable("direction") String direction) {
@@ -96,24 +81,18 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //    @PutMapping("/updateEmployee/{id}")
-//    public ResponseEntity<String> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody EmployeePUTReq_DTO employee, BindingResultErrors result) throws EmployeeNotValidException, EmployeeNotFoundException {
-//        if (result.hasErrors()) {
-//
-//            List<ValidationError> validationErrors = result.getFieldErrors().stream()
-//                    .map(e -> new ValidationError(e.getField(), e.getRejectedValue().toString(), e.getDefaultMessage()))
-//                    .collect(Collectors.toList());
-//            logger.info("updateEmployee failed ---Start");
-//            for (ValidationError validationError : validationErrors) {
-//                logger.error("Invalid data for field: {}", validationError.getField());
-//            }
-//            logger.info("updateEmployee failed ---End");
-//            throw new EmployeeNotValidException("Employee data not valid", validationErrors);
-//        }
-//        EmployeePUTResponse_DTO updatedEmp = employeeServices.updateEmployee(id, employee);
-//        return new ResponseEntity<>(EMPLOYEE_MODIFIED, HttpStatus.OK);
-//    }
-//
+    @PutMapping("/employee/update/{id}")
+    public ResponseEntity<Response> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, EmployeeNotFoundException {
+        if (result.hasErrors()) {
+            List<ValidationError> errors = getErrors(result);
+            logger.error("Invalid data for adding new employee");
+            throw new EmployeeNotValidException("Employee data not valid", errors);
+        }
+        employeeServices.updateEmployee(id, employee);
+        response.setMessage(EMPLOYEE_MODIFIED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @DeleteMapping("/employee/{id}")
     public ResponseEntity<Response> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
         employeeServices.removeEmployee(id);
@@ -135,9 +114,9 @@ public class EmployeeController {
 
     @GetMapping(value = "/search")
     public ResponseEntity<List<EmployeeDTO>> searchEmployees(@RequestParam(value = "lastname") String lastname, @RequestParam(value = "community", required = false) String community) throws NoResultsException {
-        List<EmployeeDTO> employeeDTOList=employeeServices.searchEmployeeBy(lastname, community);
-        if(employeeDTOList.isEmpty()){
-           throw new NoResultsException(NO_RESULTS);
+        List<EmployeeDTO> employeeDTOList = employeeServices.searchEmployeeBy(lastname, community);
+        if (employeeDTOList.isEmpty()) {
+            throw new NoResultsException(NO_RESULTS);
         }
         return new ResponseEntity<>(employeeDTOList, HttpStatus.OK);
     }

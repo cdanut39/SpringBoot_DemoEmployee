@@ -18,8 +18,8 @@ public interface EmployeeService {
 
     EmployeeDTO save(EmployeeDTO employee) throws UserAlreadyExistsException;
 
-    //    EmployeePUTResponse_DTO updateEmployee(int id, EmployeePUTReq_DTO employee) throws EmployeeNotFoundException;
-//
+    EmployeeDTO updateEmployee(int id, EmployeeDTO employee) throws EmployeeNotFoundException;
+
     UserDTO assignCommunity(int employeeId, BaseCommunityDTO Community) throws EmployeeNotFoundException, CommunityNotFoundByIdException, CommunityNotFoundByNameException;
 
     void removeEmployee(int id) throws EmployeeNotFoundException;

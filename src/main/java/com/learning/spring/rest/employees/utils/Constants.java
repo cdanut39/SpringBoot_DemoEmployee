@@ -21,4 +21,6 @@ public class Constants {
 
     public static final String NO_RESULTS= "No results were found based on your filters";
 
+    public static final int PASSWORD_LENGTH=10;
+
 }

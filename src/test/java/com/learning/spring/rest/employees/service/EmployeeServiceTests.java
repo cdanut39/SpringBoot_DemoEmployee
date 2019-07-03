@@ -11,6 +11,7 @@ import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.services.CommunityServiceImpl;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
+import com.learning.spring.rest.employees.services.MailServiceImpl;
 import com.learning.spring.rest.employees.utils.RolesUtility;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,7 +35,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class EmployeeServiceTests {
 
-
     @InjectMocks
     EmployeeServiceImpl employeeService;
 
@@ -46,6 +46,8 @@ public class EmployeeServiceTests {
     private UserMapper userMapper;
     @Mock
     private CommunityMapper communityMapper;
+    @Mock
+    private MailServiceImpl mailService;
 
     private EmployeeDTO DTO;
 
@@ -93,19 +95,15 @@ public class EmployeeServiceTests {
 
     @Test
     public void saveEmployeeTest() throws UserAlreadyExistsException {
-//        EmployeeDTO DTO = new EmployeeDTO(1, "Danut", "CRISTEA",
-//                User.Gender.M, 12345L, "parola", "dan@sv.ro", RolesUtility.getEmployeeRoleTypes(),
-//                2500, true, LocalDate.now(), "Bench");
-
         Employee employee = new Employee(1, "Danut", "CRISTEA",
                 User.Gender.M, 12345L, "dan@sv.ro", "parola", RolesUtility.getEmployeeRoleTypes(),
                 2500, true, LocalDate.now(), new Community(1, "Bench"), null, "Bench", null);
 
         when(userRepo.findByEmail(employee.getEmail())).thenReturn(Optional.empty());
         when(userRepo.save(employee)).thenReturn(employee);
-        when(userMapper.convertFromEmpToEmpDto(any(Employee.class))).thenReturn(DTO);
-        when(userMapper.convertFromEmpDtoTOEmployee(any(EmployeeDTO.class))).thenReturn(employee);
-
+        when(userMapper.convertFromEmpTOEmployeeDTO(any(Employee.class))).thenReturn(DTO);
+        when(userMapper.convertFromEmpDtoTOEmployee(any(EmployeeDTO.class), any(String.class))).thenReturn(employee);
+        doNothing().when(mailService).sendEmail(any(String.class), any(String.class), any(String.class));
         EmployeeDTO employeeDTO = employeeService.save(DTO);
         Assert.assertEquals(employeeDTO.getEmail(), DTO.getEmail());
     }
@@ -113,9 +111,6 @@ public class EmployeeServiceTests {
 
     @Test(expected = UserAlreadyExistsException.class)
     public void saveExistingEmployeeTest() throws UserAlreadyExistsException {
-//        EmployeeDTO DTO = new EmployeeDTO(1, "Danut", "CRISTEA",
-//                User.Gender.M, 12345L, "parola", "dan@sv.ro", RolesUtility.getEmployeeRoleTypes(),
-//                2500, true, LocalDate.now(), "Bench");
 
         Employee employee = new Employee(1, "Danut", "CRISTEA",
                 User.Gender.M, 12345L, "dan@sv.ro", "parola", RolesUtility.getEmployeeRoleTypes(),
@@ -123,8 +118,8 @@ public class EmployeeServiceTests {
 
         when(userRepo.findByEmail(employee.getEmail())).thenReturn(Optional.of(employee));
         when(userRepo.save(employee)).thenReturn(employee);
-        when(userMapper.convertFromEmpToEmpDto(any(Employee.class))).thenReturn(DTO);
-        when(userMapper.convertFromEmpDtoTOEmployee(any(EmployeeDTO.class))).thenReturn(employee);
+        when(userMapper.convertFromEmpTOEmployeeDTO(any(Employee.class))).thenReturn(DTO);
+        when(userMapper.convertFromEmpDtoTOEmployee(any(EmployeeDTO.class), eq("parola"))).thenReturn(employee);
 
         EmployeeDTO employeeDTO = employeeService.save(DTO);
     }

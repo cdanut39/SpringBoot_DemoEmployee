@@ -9,6 +9,7 @@ import com.learning.spring.rest.employees.model.Manager;
 import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.services.CommunityServiceImpl;
 import com.learning.spring.rest.employees.utils.Constants;
+import com.learning.spring.rest.employees.utils.RandomPassword;
 import com.learning.spring.rest.employees.utils.RolesUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -72,26 +73,26 @@ public class UserMapper {
     }
 
 
-    public EmployeeDTO convertFromEmpTOEmployeeDTO(Employee employee1) {
+    public EmployeeDTO convertFromEmpTOEmployeeDTO(Employee employee) {
         EmployeeDTO employeeDTO = new EmployeeDTO();
 
-        employeeDTO.setUserId(employee1.getUserId());
-        employeeDTO.setFirstName(employee1.getFirstName());
-        employeeDTO.setLastName(employee1.getLastName());
-        employeeDTO.setSex(employee1.getSex());
-        employeeDTO.setEmail(employee1.getEmail());
-        employeeDTO.setPhoneNumber(employee1.getPhoneNumber());
-        employeeDTO.setCommunityName(employee1.getCommunity().getCommunityName());
+        employeeDTO.setUserId(employee.getUserId());
+        employeeDTO.setFirstName(employee.getFirstName());
+        employeeDTO.setLastName(employee.getLastName());
+        employeeDTO.setSex(employee.getSex());
+        employeeDTO.setEmail(employee.getEmail());
+        employeeDTO.setPhoneNumber(employee.getPhoneNumber());
+        employeeDTO.setCommunityName(employee.getCommunity().getCommunityName());
         employeeDTO.setStartDate(getCurrentDate());
-        employeeDTO.setBonus(employee1.getBonus());
-        employeeDTO.setSalary(employee1.getSalary());
+        employeeDTO.setBonus(employee.getBonus());
+        employeeDTO.setSalary(employee.getSalary());
         employeeDTO.setRoles(rolesUtility.getEmpRoles(roleRepo));
 
         return employeeDTO;
     }
 
 
-    public Employee convertFromEmpDtoTOEmployee(EmployeeDTO dto) {
+    public Employee convertFromEmpDtoTOEmployee(EmployeeDTO dto,String randomPassword) {
         Employee employee = new Employee();
 
         employee.setUserId(dto.getUserId());
@@ -99,7 +100,7 @@ public class UserMapper {
         employee.setLastName(dto.getLastName());
         employee.setSex(dto.getSex());
         employee.setEmail(dto.getEmail());
-        employee.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
+        employee.setPassword(new BCryptPasswordEncoder().encode(randomPassword));
         employee.setPhoneNumber(dto.getPhoneNumber());
         employee.setCommunity(communityService.getDefaultCommunity(Constants.DEFAULT_COMMUNITY));
         employee.setStartDate(getCurrentDate());

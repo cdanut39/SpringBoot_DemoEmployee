@@ -1,4 +1,4 @@
-insert into community values (1,'Bench');
+insert into community values (1,'BENCH');
 ALTER SEQUENCE community_community_id_seq RESTART WITH 2;
 
 insert into users (email, first_name, last_name, password, phone_number, sex, user_type) values ('admin@softvision.ro', 'admin', 'admin', 'masterPassword', '1234567890', 'M', 'Admin');
