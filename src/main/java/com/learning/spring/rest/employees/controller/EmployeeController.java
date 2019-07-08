@@ -35,32 +35,18 @@ public class EmployeeController {
     private static final Logger logger = LogManager.getLogger(EmployeeController.class);
 
     private EmployeeServiceImpl employeeServices;
-    private Response response;
 
     @Autowired
     public EmployeeController(EmployeeServiceImpl employeeServices, Response response) {
         this.employeeServices = employeeServices;
-        this.response = response;
     }
 
-    @GetMapping(value = "/employees/orderBy/{criteria}/{direction}")
-    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@PathVariable("criteria") String criteria, @PathVariable("direction") String direction) {
-        return new ResponseEntity<>(employeeServices.getEmployeesSortedByCriteria(criteria, direction), HttpStatus.OK);
-    }
 
-    @GetMapping(value = "/employees")
-    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
-        return new ResponseEntity<>(employeeServices.getAllEmployees(), HttpStatus.OK);
-    }
-
-    @GetMapping("/employee/{id}")
-    public ResponseEntity<UserDTO> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
-
-        EmployeeDTO getEmployee = employeeServices.getEmployeeById(id);
-        return new ResponseEntity<>(getEmployee, HttpStatus.OK);
-    }
-
-    @PostMapping("/register/employee")
+    /**
+     *
+     * POST
+     *
+     */
     @ApiOperation(
             value = "Add a new employee",
             notes = "Can be called only by users with ADMIN or MANAGER roles."
@@ -70,7 +56,9 @@ public class EmployeeController {
             @ApiResponse(code = 400, message = "Employee data not valid"),
             @ApiResponse(code = 404, message = "Employee not found")
     })
-    public ResponseEntity<Response> addEmployee(@Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, UserAlreadyExistsException {
+    @PostMapping("/register/employee")
+    public ResponseEntity<Response> addEmployee(@Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, UserAlreadyExistsException, CommunityNotFoundByNameException {
+        Response response=new Response();
         if (result.hasErrors()) {
             List<ValidationError> errors = getErrors(result);
             logger.error("Invalid data for adding new employee");
@@ -81,35 +69,21 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/employee/update/{id}")
-    public ResponseEntity<Response> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, EmployeeNotFoundException {
-        if (result.hasErrors()) {
-            List<ValidationError> errors = getErrors(result);
-            logger.error("Invalid data for adding new employee");
-            throw new EmployeeNotValidException("Employee data not valid", errors);
-        }
-        employeeServices.updateEmployee(id, employee);
-        response.setMessage(EMPLOYEE_MODIFIED);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    /**
+     *
+     * GET
+     *
+     */
+    @GetMapping("/employee/{id}")
+    public ResponseEntity<UserDTO> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
+        EmployeeDTO getEmployee = employeeServices.getEmployeeById(id);
+        return new ResponseEntity<>(getEmployee, HttpStatus.OK);
     }
 
-    @DeleteMapping("/employee/{id}")
-    public ResponseEntity<Response> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
-        employeeServices.removeEmployee(id);
-        response.setMessage(EMPLOYEE_REMOVED);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PutMapping("/employee/{empID}/setCommunity")
-    public ResponseEntity<Response> assignCommunity(@PathVariable("empID") int empId, @Valid @RequestBody BaseCommunityDTO community, BindingResult result) throws EmployeeNotFoundException, CommunityNotFoundByNameException, CommunityNotValidException {
-        if (result.hasErrors()) {
-            List<ValidationError> errors = getErrors(result);
-            logger.error("Invalid data for adding new community");
-            throw new CommunityNotValidException("community data not valid", errors);
-        }
-        employeeServices.assignCommunity(empId, community);
-        response.setMessage(COMMUNITY_ASSIGNED);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @GetMapping(value = "/employees")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        return new ResponseEntity<>(employeeServices.getAllEmployees(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/search")
@@ -120,6 +94,64 @@ public class EmployeeController {
         }
         return new ResponseEntity<>(employeeDTOList, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/getEmployees")
+    public ResponseEntity<List<EmployeeDTO>> getEmployeesWithPagination(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy") String criteria) {
+        return new ResponseEntity<>(employeeServices.getEmployeesWithPagination(page, size, criteria), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/employees/orderBy/{criteria}/{direction}")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(@PathVariable("criteria") String criteria, @PathVariable("direction") String direction) {
+        return new ResponseEntity<>(employeeServices.getEmployeesSortedByCriteria(criteria, direction), HttpStatus.OK);
+    }
+
+
+    /**
+     *
+     * PUT
+     *
+     */
+    @PutMapping("/employee/update/{id}")
+    public ResponseEntity<Response> updateEmployee(@PathVariable("id") int id, @Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, EmployeeNotFoundException {
+        Response response=new Response();
+        if (result.hasErrors()) {
+            List<ValidationError> errors = getErrors(result);
+            logger.error("Invalid data for adding new employee");
+            throw new EmployeeNotValidException("Employee data not valid", errors);
+        }
+        employeeServices.updateEmployee(id, employee);
+        response.setMessage(EMPLOYEE_MODIFIED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/employee/{empID}/setCommunity")
+    public ResponseEntity<Response> assignCommunity(@PathVariable("empID") int empId, @Valid @RequestBody BaseCommunityDTO community, BindingResult result) throws EmployeeNotFoundException, CommunityNotFoundByNameException, CommunityNotValidException {
+        Response response=new Response();
+        if (result.hasErrors()) {
+            List<ValidationError> errors = getErrors(result);
+            logger.error("Invalid data for adding new community");
+            throw new CommunityNotValidException("community data not valid", errors);
+        }
+        employeeServices.assignCommunity(empId, community);
+        response.setMessage(COMMUNITY_ASSIGNED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    /**
+     *
+     * DELETE
+     *
+     */
+    @DeleteMapping("/employee/{id}")
+    public ResponseEntity<Response> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
+        Response response=new Response();
+        employeeServices.removeEmployee(id);
+        response.setMessage(EMPLOYEE_REMOVED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 
 
 }

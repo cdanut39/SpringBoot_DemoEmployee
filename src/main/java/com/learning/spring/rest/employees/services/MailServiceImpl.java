@@ -26,13 +26,14 @@ public class MailServiceImpl implements MailService {
         return mailSender;
     }
 
-    public void sendEmail(String to, String recipient, String password) {
+    @Override
+    public void sendEmail(String to, String recipient,String emailAddress, String password) {
         setEmailConfig();
         SimpleMailMessage simpleMail = new SimpleMailMessage();
         simpleMail.setFrom("admin@sv.ro");
         simpleMail.setTo(to);
         simpleMail.setSubject("Welcome to Employee Management App");
-        simpleMail.setText("Hello "+recipient+",\n\n\t"+"Your account on EMA platform has been created. For login, please use the password:"+ password+"." +
+        simpleMail.setText("Hello "+recipient+",\n\n\t"+"Your account on EMA platform has been created. For login, please use the email address:"+emailAddress+" and the password:"+ password+"." +
                 " We strongly recommend to change your password.\n\nRegards," +
                 "\nAdministration");
         mailSender.send(simpleMail);

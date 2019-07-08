@@ -23,4 +23,6 @@ public class Constants {
 
     public static final int PASSWORD_LENGTH=10;
 
+    public static final String EMPLOYEE_404="Employee not found with id=";
+
 }

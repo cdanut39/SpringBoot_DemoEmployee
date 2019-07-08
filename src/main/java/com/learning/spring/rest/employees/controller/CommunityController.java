@@ -1,15 +1,12 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
 import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotValidException;
 import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
 import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
-import com.learning.spring.rest.employees.mappers.CommunityMapper;
-import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.services.CommunityService;
 import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
 import static com.learning.spring.rest.employees.utils.Constants.COMMUNITY_ADDED;
@@ -33,49 +29,57 @@ public class CommunityController {
 
     private static final Logger logger = LogManager.getLogger(CommunityController.class);
 
-
     private CommunityService communityService;
-    private CommunityMapper communityMapper;
-    private Response response;
 
     @Autowired
-    public CommunityController(CommunityService communityService, CommunityMapper communityMapper, Response response) {
+    public CommunityController(CommunityService communityService, Response response) {
         this.communityService = communityService;
-        this.communityMapper = communityMapper;
-        this.response = response;
     }
 
+
+    /**
+     * POST
+     */
     @PostMapping("/community")
     public ResponseEntity<Response> addCommunity(@Valid @RequestBody BaseCommunityDTO baseCommunityDTO, BindingResult result) throws CommunityNotValidException, CommunityAlreadyExistsException {
+        Response response = new Response();
         if (result.hasErrors()) {
             List<ValidationError> errors = getErrors(result);
             logger.error("Invalid data for adding new community");
             throw new CommunityNotValidException("community data not valid", errors);
         }
-        Community community = communityMapper.convertFromBaseCommunityDtoToCommunity(baseCommunityDTO);
-        communityService.addCommunity(community);
+        communityService.addCommunity(baseCommunityDTO);
         response.setMessage(COMMUNITY_ADDED);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
+    /**
+     * GET
+     */
+    @GetMapping("/community/{id}")
+    public ResponseEntity<BaseCommunityDTO> getCommunityById(@PathVariable("id") int id) throws CommunityNotFoundByIdException, EmployeeNotFoundException {
+        BaseCommunityDTO community = communityService.getCommunityById(id);
+        return new ResponseEntity<>(community, HttpStatus.OK);
+    }
+
+    @GetMapping("/communities")
+    public ResponseEntity<List<BaseCommunityDTO>> getAllCommunities() {
+
+        return new ResponseEntity<>(communityService.getAllCommunities(), HttpStatus.OK);
+    }
+
+
+    /**
+     * DELETE
+     */
     @DeleteMapping("/community/delete/{id}")
     public ResponseEntity<Response> deleteCommunityById(@PathVariable("id") int id) throws CommunityNotFoundByIdException, DefaultCommunityCanNotBeRemovedException {
+        Response response = new Response();
         communityService.deleteCommunityById(id);
         logger.info("Successfully removed the community with id={}", id);
         response.setMessage(COMMUNITY_REMOVED);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/community/{id}")
-    public ResponseEntity<CommunityRequestDTO> getCommunityById(@PathVariable("id") int id) throws CommunityNotFoundByIdException, EmployeeNotFoundException {
-        CommunityRequestDTO community = communityService.getCommunityById(id);
-        return new ResponseEntity<>(community, HttpStatus.OK);
-    }
 
-    @GetMapping("/communities")
-    public ResponseEntity<List<CommunityRequestDTO>> getAllCommunities() {
-
-        return new ResponseEntity<>(communityService.getAllCommunities(), HttpStatus.OK);
-    }
 }

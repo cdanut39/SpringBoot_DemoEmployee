@@ -6,11 +6,9 @@ import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsExcep
 import com.learning.spring.rest.employees.mappers.UserMapper;
 import com.learning.spring.rest.employees.model.Manager;
 import com.learning.spring.rest.employees.model.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -20,19 +18,21 @@ import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
-    private static final Logger logger = LogManager.getLogger(ManagerServiceImpl.class);
 
     private UserRepo userRepo;
+    private RoleService roleService;
     private UserMapper userMapper;
 
     @Autowired
-    public ManagerServiceImpl(UserRepo userRepo, @Lazy UserMapper userMapper) {
+    public ManagerServiceImpl(UserRepo userRepo, RoleService roleService) {
         this.userRepo = userRepo;
-        this.userMapper = userMapper;
+        this.roleService = roleService;
+        userMapper = new UserMapper();
     }
 
 
     @Override
+    @Transactional
     public ManagerDTO save(ManagerDTO managerDTO) throws UserAlreadyExistsException {
         Manager managerToBeSaved;
         String email = managerDTO.getEmail();
@@ -41,6 +41,7 @@ public class ManagerServiceImpl implements ManagerService {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
         } else {
             managerToBeSaved = userMapper.convertFromManagerDtoTOManager(managerDTO);
+            managerToBeSaved.setRoles(roleService.getManagerRoles());
         }
         Manager savedManager = userRepo.save(managerToBeSaved);
         return userMapper.convertFromManagerTOManagerDto(savedManager);

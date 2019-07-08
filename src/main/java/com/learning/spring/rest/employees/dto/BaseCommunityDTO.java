@@ -1,14 +1,15 @@
 package com.learning.spring.rest.employees.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+@JsonPropertyOrder(value = {"communityId","communityName"})
 public class BaseCommunityDTO {
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int communityId;
     @Size(min = 2, max = 16, message = "Name has to be equal to or greater than 2 and less than 16 characters")
     @Pattern(regexp = "^[A-Z]*")

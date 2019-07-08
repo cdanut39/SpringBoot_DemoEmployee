@@ -11,7 +11,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -19,23 +18,29 @@ public class UserDTO {
 
     @ApiModelProperty(readOnly = true)
     private int userId;
+
     @ApiModelProperty(required = true)
     @NotBlank(message = "Name cannot be blank")
     @Size(min = 3, max = 32, message = "First name has to be equal to or greater than 3 and less than 20 characters")
     private String firstName;
+
     @ApiModelProperty(required = true)
     @NotBlank(message = "Name cannot be blank")
     @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters")
     private String lastName;
+
     @ApiModelProperty(required = true)
     @Enumerated(EnumType.STRING)
     private User.Gender sex;
+
     @ApiModelProperty(required = true)
 //    @Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}")
     private long phoneNumber;
+
     @ApiModelProperty(required = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
     @ApiModelProperty(required = true)
     @Email
     private String email;
@@ -46,27 +51,15 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(int userId, @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32,
-            message = "First name has to be equal to or greater than 3 and less than 20 characters") String firstName,
-                   @NotBlank(message = "Name cannot be blank") @Size(min = 3, max = 32, message = "Last name has to be equal to or greater than 3 and less than 20 characters")
-                           String lastName, User.Gender sex, long phoneNumber, String password, @Email String email, Set<Role> roles) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.sex = sex;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-        this.email = email;
-        this.roles = roles;
-    }
-
-    public UserDTO(String firstName, String lastName, User.Gender sex, long phoneNumber, String password, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.sex = sex;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-        this.email = email;
+    public UserDTO(UserDTOBuilder<?> builder) {
+        userId = builder.userId;
+        firstName = builder.firstName;
+        lastName = builder.lastName;
+        sex = builder.sex;
+        email = builder.email;
+        password = builder.password;
+        phoneNumber = builder.phoneNumber;
+        roles = builder.roles;
     }
 
     public int getUserId() {
@@ -131,5 +124,66 @@ public class UserDTO {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+
+    public abstract static class UserDTOBuilder<T extends UserDTOBuilder<T>> {
+        private int userId;
+        private String firstName;
+        private String lastName;
+        private User.Gender sex;
+        private long phoneNumber;
+        private String password;
+        private String email;
+        private Set<Role> roles;
+
+        public abstract T getThis();
+
+        public UserDTOBuilder() {
+        }
+
+        public T setUserId(int userId) {
+            this.userId = userId;
+            return getThis();
+        }
+
+        public T setFirstName(String firstName) {
+            this.firstName = firstName;
+            return getThis();
+        }
+
+        public T setLastName(String lastName) {
+            this.lastName = lastName;
+            return getThis();
+        }
+
+        public T setSex(User.Gender sex) {
+            this.sex = sex;
+            return getThis();
+        }
+
+        public T setPhoneNumber(long phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return getThis();
+        }
+
+        public T setPassword(String password) {
+            this.password = password;
+            return getThis();
+        }
+
+        public T setEmail(String email) {
+            this.email = email;
+            return getThis();
+        }
+
+        public T setRoles(Set<Role> roles) {
+            this.roles = roles;
+            return getThis();
+        }
+
+        public UserDTO build() {
+            return new UserDTO(this);
+        }
     }
 }

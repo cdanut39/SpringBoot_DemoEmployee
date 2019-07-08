@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Set;
 
 @Entity
 @Setter
@@ -15,8 +14,6 @@ import java.util.Set;
 @DiscriminatorValue("Employee")
 public class Employee extends User {
 
-    private Integer salary;
-    private Boolean bonus;
     @JsonProperty(value = "firstDay")
     private LocalDate startDate;
     @JsonIgnore
@@ -38,12 +35,11 @@ public class Employee extends User {
     }
 
     public Employee(Integer userId, String firstName, String lastName, Gender sex,
-                    Long phoneNumber, String email, String password, Set<Role> roles, Integer salary, Boolean bonus,
+                    Long phoneNumber, String email, String password,
                     LocalDate startDate, Community community, Project project, String communityName, String projectName) {
-        super(userId, firstName, lastName, sex, phoneNumber, email, password, roles);
+        super(userId, firstName, lastName, sex, phoneNumber, email, password);
 
-        this.salary = salary;
-        this.bonus = bonus;
+
         this.startDate = startDate;
         this.community = community;
         this.project = project;
@@ -51,9 +47,7 @@ public class Employee extends User {
         this.projectName = projectName;
     }
 
-    public Employee(Integer salary, Boolean bonus, LocalDate startDate, Community community, Project project, String communityName, String projectName) {
-        this.salary = salary;
-        this.bonus = bonus;
+    public Employee(LocalDate startDate, Community community, Project project, String communityName, String projectName) {
         this.startDate = startDate;
         this.community = community;
         this.project = project;
@@ -69,13 +63,6 @@ public class Employee extends User {
         this.startDate = startDate;
     }
 
-    public Integer getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Integer salary) {
-        this.salary = salary;
-    }
 
     public Community getCommunity() {
         return community;
@@ -95,14 +82,6 @@ public class Employee extends User {
 
     public String getCommunityName() {
         return communityName;
-    }
-
-    public Boolean getBonus() {
-        return bonus;
-    }
-
-    public void setBonus(Boolean bonus) {
-        this.bonus = bonus;
     }
 
 }

@@ -13,11 +13,10 @@ import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.utils.RandomPassword;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,46 +25,40 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.learning.spring.rest.employees.utils.Constants.PASSWORD_LENGTH;
-import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
+import static com.learning.spring.rest.employees.utils.Constants.*;
 import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.getMap;
 import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.reversed;
 
 @Service
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private static final Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
 
     private UserRepo userRepo;
     private CommunityServiceImpl communityService;
-    private UserMapper userMapper;
     private CommunityMapper communityMapper;
     private MailServiceImpl mailService;
+    private RoleService roleService;
+    private UserMapper userMapper;
+
 
     @Autowired
-    public EmployeeServiceImpl(UserRepo userRepo, CommunityServiceImpl communityService, UserMapper userMapper, CommunityMapper communityMapper, MailServiceImpl mailService) {
+    public EmployeeServiceImpl(UserRepo userRepo, CommunityServiceImpl communityService, MailServiceImpl mailService, RoleService roleService) {
         this.userRepo = userRepo;
         this.communityService = communityService;
-        this.userMapper = userMapper;
-        this.communityMapper = communityMapper;
         this.mailService = mailService;
+        this.roleService = roleService;
+
+        userMapper = new UserMapper();
+        communityMapper = new CommunityMapper();
     }
 
-    @Override
-    public EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException {
-        Optional<Employee> employee = userRepo.findEmployeeById(id);
-        if (!employee.isPresent()) {
-            throw new EmployeeNotFoundException("Employee not found with id=" + id, id);
-        }
-        Employee emp = employee.get();
-        emp.setCommunityName(emp);
-        return userMapper.convertFromEmpTOEmployeeDTO(emp);
-    }
-
-
+    /**
+     * POST
+     */
     @Transactional
     @Override
-    public EmployeeDTO save(EmployeeDTO employeeDto) throws UserAlreadyExistsException {
+    public EmployeeDTO save(EmployeeDTO employeeDto) throws UserAlreadyExistsException, CommunityNotFoundByNameException {
         Employee employeeToBeSaved;
         String randomPassword = RandomPassword.generatePassword(PASSWORD_LENGTH);
         String email = employeeDto.getEmail();
@@ -73,38 +66,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (user.isPresent()) {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
         } else {
-            employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto, randomPassword);
+            Community community = communityService.findByName(employeeDto.getCommunityName());
+            employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto);
+            employeeToBeSaved.setPassword(new BCryptPasswordEncoder().encode(randomPassword));
+            employeeToBeSaved.setCommunity(community);
+            employeeToBeSaved.setRoles(roleService.getEmpRoles());
         }
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
-        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), randomPassword)).start();
+//        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), randomPassword)).start();
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
     }
 
-
+    /**
+     * GET
+     */
     @Override
-    public EmployeeDTO assignCommunity(int employeeId, BaseCommunityDTO baseCommunityDTO) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
-        Optional<Employee> employee = userRepo.findEmployeeById(employeeId);
-        if (!employee.isPresent()) {
-            throw new EmployeeNotFoundException("Employee not found with id=" + employeeId, employeeId);
-        }
-        Employee emp = employee.get();
-        Community community = communityService.findByName(baseCommunityDTO);
-        emp.setCommunity(community);
-        Employee savedEmployee = userRepo.save(emp);
-        return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
-
-    }
-
-    @Override
-    public void removeEmployee(int id) throws EmployeeNotFoundException {
+    public EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException {
         Optional<Employee> employee = userRepo.findEmployeeById(id);
         if (!employee.isPresent()) {
-            throw new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id);
-        } else {
-            Employee emp = employee.get();
-            userRepo.delete(emp);
-            logger.info("Successfully removed employee with id={},{}", emp.getUserId(), emp.getFirstName());
+            throw new EmployeeNotFoundException(EMPLOYEE_404 + id, id);
         }
+        return userMapper.convertFromEmpTOEmployeeDTO(employee.get());
     }
 
     @Override
@@ -130,7 +112,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDTO> searchEmployeeBy(String lastName, String communityName) throws NoResultsException {
         Employee emp = new Employee();
         emp.setLastName(lastName);
-        BaseCommunityDTO communityDTO = communityService.findByName(communityName);
+        BaseCommunityDTO communityDTO = communityService.searchByName(communityName);
         emp.setCommunity(communityMapper.convertFromBaseCommunityDtoToCommunity(communityDTO));
         ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase();
         Example<Employee> example = Example.of(emp, exampleMatcher);
@@ -139,19 +121,61 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
+    public List<EmployeeDTO> getEmployeesWithPagination(int page, int size, String criteria) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(criteria));
+        return userRepo.findAllEmployees(pageable).stream().map(emp -> userMapper.convertFromEmpTOEmployeeDTO(emp)).collect(Collectors.toList());
+    }
+
+    /**
+     * PUT
+     */
+    @Override
+    @Transactional
     public EmployeeDTO updateEmployee(int id, EmployeeDTO emp) throws EmployeeNotFoundException {
 
-        Employee employeeToBeUpdated = userRepo.findEmployeeById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id=" + id, id));
+        Employee employeeToBeUpdated = userRepo.findEmployeeById(id).orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_404 + id, id));
         employeeToBeUpdated.setLastName(emp.getLastName());
-        employeeToBeUpdated.setSalary(emp.getSalary());
         employeeToBeUpdated.setPassword(new BCryptPasswordEncoder().encode(emp.getPassword()));
         employeeToBeUpdated.setPhoneNumber(emp.getPhoneNumber());
-        employeeToBeUpdated.setBonus(emp.getBonus());
         userRepo.save(employeeToBeUpdated);
-        EmployeeDTO baseEmployeeDTO = userMapper.convertFromEmpTOEmployeeDTO(employeeToBeUpdated);
-        logger.info("Details of employee with id:{} were successfully updated!", id);
-        return baseEmployeeDTO;
+        EmployeeDTO employeeDTO = userMapper.convertFromEmpTOEmployeeDTO(employeeToBeUpdated);
+        log.info("Details of employee with id:{} were successfully updated!", id);
+        return employeeDTO;
     }
+
+
+    @Override
+    @Transactional
+    public EmployeeDTO assignCommunity(int employeeId, BaseCommunityDTO baseCommunityDTO) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
+        Optional<Employee> employee = userRepo.findEmployeeById(employeeId);
+        if (!employee.isPresent()) {
+            throw new EmployeeNotFoundException(EMPLOYEE_404 + employeeId, employeeId);
+        }
+        Employee emp = employee.get();
+        Community community = communityService.findByName(baseCommunityDTO.getCommunityName());
+        emp.setCommunity(community);
+        Employee savedEmployee = userRepo.save(emp);
+        return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
+
+    }
+
+    /**
+     * DELETE
+     */
+    @Override
+    public void removeEmployee(int id) throws EmployeeNotFoundException {
+        Optional<Employee> employee = userRepo.findEmployeeById(id);
+        if (!employee.isPresent()) {
+            throw new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id);
+        } else {
+            Employee emp = employee.get();
+            userRepo.delete(emp);
+            log.info("Successfully removed employee with id={},{}", emp.getUserId(), emp.getFirstName());
+        }
+    }
+
+
 }
 
 

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
 import static com.learning.spring.rest.employees.utils.Constants.MANAGER_ADDED;
@@ -38,7 +37,11 @@ public class ManagerController {
         this.response = response;
     }
 
-
+    /**
+     *
+     * POST
+     *
+     */
     @PostMapping("/register/manager")
     public ResponseEntity<Response> addManager(@Valid @RequestBody ManagerDTO employee, BindingResult result) throws ManagerNotValidException, UserAlreadyExistsException {
         if (result.hasErrors()) {

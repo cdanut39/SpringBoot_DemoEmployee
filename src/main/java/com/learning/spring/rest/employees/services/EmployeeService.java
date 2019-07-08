@@ -16,11 +16,11 @@ public interface EmployeeService {
 
     EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException;
 
-    EmployeeDTO save(EmployeeDTO employee) throws UserAlreadyExistsException;
+    EmployeeDTO save(EmployeeDTO employee) throws UserAlreadyExistsException, CommunityNotFoundByNameException;
 
     EmployeeDTO updateEmployee(int id, EmployeeDTO employee) throws EmployeeNotFoundException;
 
-    UserDTO assignCommunity(int employeeId, BaseCommunityDTO Community) throws EmployeeNotFoundException, CommunityNotFoundByIdException, CommunityNotFoundByNameException;
+    UserDTO assignCommunity(int employeeId, BaseCommunityDTO community) throws EmployeeNotFoundException, CommunityNotFoundByIdException, CommunityNotFoundByNameException;
 
     void removeEmployee(int id) throws EmployeeNotFoundException;
 
@@ -29,4 +29,6 @@ public interface EmployeeService {
     List<EmployeeDTO> getEmployeesSortedByCriteria(String criteria, String direction);
 
     List<EmployeeDTO> searchEmployeeBy(String lastName, String community) throws NoResultsException;
+
+    List<EmployeeDTO> getEmployeesWithPagination(int page, int size, String criteria);
 }

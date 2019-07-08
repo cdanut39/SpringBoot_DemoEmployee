@@ -1,6 +1,5 @@
 package com.learning.spring.rest.employees.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +8,6 @@ import javax.persistence.*;
 import java.util.Set;
 
 
-@AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,10 +29,10 @@ public class User {
     private String email;
     private String password;
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name="user_roles",
-            joinColumns = {@JoinColumn(name="user_id", referencedColumnName="userId")},
-            inverseJoinColumns = {@JoinColumn(name="role_id", referencedColumnName="roleId")}
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "userId")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "roleId")}
     )
     private Set<Role> roles;
 
@@ -42,10 +40,15 @@ public class User {
         M, F;
     }
 
-    public enum UserType {
-        EMPLOYEE, MANAGER, ADMIN
+    public User(Integer userId, String firstName, String lastName, Gender sex, Long phoneNumber, String email, String password) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sex = sex;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
     }
-
 }
 
 

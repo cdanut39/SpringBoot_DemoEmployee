@@ -2,7 +2,6 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.CommunityRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.dto.CommunityRequestDTO;
 import com.learning.spring.rest.employees.exceptions.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
@@ -32,14 +31,15 @@ public class CommunityServiceImpl implements CommunityService {
     private CommunityMapper communityMapper;
 
     @Autowired
-    public CommunityServiceImpl(CommunityRepo communityRepo, @Lazy CommunityMapper communityMapper) {
+    public CommunityServiceImpl(CommunityRepo communityRepo) {
         this.communityRepo = communityRepo;
-        this.communityMapper = communityMapper;
+        communityMapper=new CommunityMapper();
     }
 
     @Override
     @Transactional
-    public BaseCommunityDTO addCommunity(Community comm) throws CommunityAlreadyExistsException {
+    public BaseCommunityDTO addCommunity(BaseCommunityDTO baseCommunityDTO) throws CommunityAlreadyExistsException {
+        Community comm = communityMapper.convertFromBaseCommunityDtoToCommunity(baseCommunityDTO);
         Community savedCommunity;
         Optional<Community> community = communityRepo.findByCommunityName(comm.getCommunityName());
         if (community.isPresent()) {
@@ -50,21 +50,13 @@ public class CommunityServiceImpl implements CommunityService {
         return communityMapper.convertFromCommunityToBaseCommunityDto(savedCommunity);
     }
 
-    @Override
-    public void deleteCommunityById(int id) throws CommunityNotFoundByIdException, DefaultCommunityCanNotBeRemovedException {
-        if (id == Constants.DEFAULT_COMMUNITY) {
-            throw new DefaultCommunityCanNotBeRemovedException("Default community can not be removed");
-        }
-        Community community = communityRepo.findById(id).orElseThrow(() -> new CommunityNotFoundByIdException("community not found with id=" + id, id));
-        communityRepo.delete(community);
-    }
 
     @Override
-    public CommunityRequestDTO getCommunityById(int id) throws CommunityNotFoundByIdException {
+    public BaseCommunityDTO getCommunityById(int id) throws CommunityNotFoundByIdException {
         Community community = communityRepo.findById(id).orElseThrow(() -> new CommunityNotFoundByIdException("community not found with id=" + id, id));
-        CommunityRequestDTO communityRequestDTO = communityMapper.convertFromCommunityToCommunityDtoForGet(community);
+        BaseCommunityDTO baseCommunityDTO = communityMapper.convertFromCommunityToBaseCommunityDto(community);
         logger.info("Information for community with id=" + id + ": Name={}", community.getCommunityName());
-        return communityRequestDTO;
+        return baseCommunityDTO;
     }
 
     @Override
@@ -74,21 +66,39 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<CommunityRequestDTO> getAllCommunities() {
+    public List<BaseCommunityDTO> getAllCommunities() {
         List<Community> communityRepoAll = communityRepo.findAll();
-        return communityRepoAll.stream().map(communityMapper::convertFromCommunityToCommunityDtoForGet).collect(Collectors.toList());
+        return communityRepoAll.stream().map(communityMapper::convertFromCommunityToBaseCommunityDto).collect(Collectors.toList());
     }
+
 
     @Override
-    public Community findByName(BaseCommunityDTO communityDTO) throws CommunityNotFoundByNameException {
-        return communityRepo.findByCommunityName(communityDTO.getCommunityName()).orElseThrow(
-                () -> new CommunityNotFoundByNameException("Community not found with name " + communityDTO.getCommunityName(), communityDTO.getCommunityName()));
+    public Community findByName(String communityName) throws CommunityNotFoundByNameException {
+        return communityRepo.findByCommunityName(communityName).orElseThrow(
+                () -> new CommunityNotFoundByNameException("Community not found with name " + communityName, communityName));
     }
 
-    public BaseCommunityDTO findByName(String communityName) throws NoResultsException {
+    /**
+     * Only used for search feature due to exception message, which is custom
+     *
+     * @param communityName
+     * @return
+     * @throws NoResultsException
+     */
+
+    public BaseCommunityDTO searchByName(String communityName) throws NoResultsException {
         Community community = communityRepo.findByCommunityName(communityName).orElse(null);
         if (community == null) {
             throw new NoResultsException(NO_RESULTS);
         } else return communityMapper.convertFromCommunityToBaseCommunityDto(community);
+    }
+
+    @Override
+    public void deleteCommunityById(int id) throws CommunityNotFoundByIdException, DefaultCommunityCanNotBeRemovedException {
+        if (id == Constants.DEFAULT_COMMUNITY) {
+            throw new DefaultCommunityCanNotBeRemovedException("Default community can not be removed");
+        }
+        Community community = communityRepo.findById(id).orElseThrow(() -> new CommunityNotFoundByIdException("community not found with id=" + id, id));
+        communityRepo.delete(community);
     }
 }

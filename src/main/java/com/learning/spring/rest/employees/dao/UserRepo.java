@@ -2,6 +2,7 @@ package com.learning.spring.rest.employees.dao;
 
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,5 +21,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     @Query(value = "Select * from users where user_type='Employee'", nativeQuery = true)
     List<Employee> findAllEmployees();
 
+    @Query(value = "Select * from users where user_type='Employee'", nativeQuery = true)
+    List<Employee> findAllEmployees(Pageable pageable);
 
 }
