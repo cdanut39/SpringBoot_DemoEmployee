@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 @SpringBootTest
-public class CommunityControllerTests {
+public class CommunityControllerTest {
 
     @Mock
     private CommunityServiceImpl communityService;
@@ -47,7 +47,6 @@ public class CommunityControllerTests {
     @Test
     public void addCommunityTest() throws Exception {
 
-        Community community = new Community(1, "ABC");
         BaseCommunityDTO baseCommunityDTO = new BaseCommunityDTO("ABC");
         when(communityService.addCommunity(baseCommunityDTO)).thenReturn(baseCommunityDTO);
         doNothing().when(response).setMessage(COMMUNITY_ADDED);

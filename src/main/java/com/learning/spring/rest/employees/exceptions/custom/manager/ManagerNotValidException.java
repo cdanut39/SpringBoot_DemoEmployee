@@ -1,14 +1,14 @@
-package com.learning.spring.rest.employees.exceptions.employee;
+package com.learning.spring.rest.employees.exceptions.custom.manager;
 
-import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
+import com.learning.spring.rest.employees.exceptions.handler.ValidationError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class EmployeeNotValidException extends Exception {
+public class ManagerNotValidException extends Exception {
 
-    private static final Logger logger = LogManager.getLogger(EmployeeNotValidException.class);
+    private static final Logger logger = LogManager.getLogger(ManagerNotValidException.class);
 
     private List<ValidationError> fieldErrors;
 
@@ -20,7 +20,7 @@ public class EmployeeNotValidException extends Exception {
         this.fieldErrors = fieldErrors;
     }
 
-    public EmployeeNotValidException(String message, List<ValidationError> fieldErrors) {
+    public ManagerNotValidException(String message, List<ValidationError> fieldErrors) {
         super(message);
         this.fieldErrors = fieldErrors;
     }

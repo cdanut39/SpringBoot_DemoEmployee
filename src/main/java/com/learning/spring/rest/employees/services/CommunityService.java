@@ -1,11 +1,11 @@
 package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
-import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
-import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByIdException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.custom.community.DefaultCommunityCanNotBeRemovedException;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.model.Community;
 
 import java.util.List;

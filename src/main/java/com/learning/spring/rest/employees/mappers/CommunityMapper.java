@@ -4,7 +4,6 @@ import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.model.Community;
 import org.springframework.stereotype.Component;
 
-@Component
 public class CommunityMapper {
 
     public BaseCommunityDTO convertFromCommunityToBaseCommunityDto(Community community) {

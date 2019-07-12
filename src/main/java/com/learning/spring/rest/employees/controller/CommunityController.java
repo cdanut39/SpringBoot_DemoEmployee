@@ -1,12 +1,12 @@
 package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotValidException;
-import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
-import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByIdException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.community.DefaultCommunityCanNotBeRemovedException;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.handler.ValidationError;
 import com.learning.spring.rest.employees.services.CommunityService;
 import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
-import static com.learning.spring.rest.employees.utils.Constants.COMMUNITY_ADDED;
-import static com.learning.spring.rest.employees.utils.Constants.COMMUNITY_REMOVED;
+import static com.learning.spring.rest.employees.utils.Constants.*;
 
 @RestController
 public class CommunityController {
@@ -32,7 +31,7 @@ public class CommunityController {
     private CommunityService communityService;
 
     @Autowired
-    public CommunityController(CommunityService communityService, Response response) {
+    public CommunityController(CommunityService communityService) {
         this.communityService = communityService;
     }
 
@@ -46,7 +45,7 @@ public class CommunityController {
         if (result.hasErrors()) {
             List<ValidationError> errors = getErrors(result);
             logger.error("Invalid data for adding new community");
-            throw new CommunityNotValidException("community data not valid", errors);
+            throw new CommunityNotValidException(COMMUNITY_NOT_VALID, errors);
         }
         communityService.addCommunity(baseCommunityDTO);
         response.setMessage(COMMUNITY_ADDED);

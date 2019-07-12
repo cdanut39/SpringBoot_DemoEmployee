@@ -2,6 +2,7 @@ package com.learning.spring.rest.employees.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,8 +35,9 @@ public class Employee extends User {
     public Employee() {
     }
 
+    @Builder
     public Employee(Integer userId, String firstName, String lastName, Gender sex,
-                    Long phoneNumber, String email, String password,
+                    String phoneNumber, String email, String password,
                     LocalDate startDate, Community community, Project project, String communityName, String projectName) {
         super(userId, firstName, lastName, sex, phoneNumber, email, password);
 

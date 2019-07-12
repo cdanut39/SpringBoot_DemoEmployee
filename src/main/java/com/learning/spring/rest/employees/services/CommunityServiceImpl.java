@@ -2,18 +2,17 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.CommunityRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
-import com.learning.spring.rest.employees.exceptions.NoResultsException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
-import com.learning.spring.rest.employees.exceptions.community.DefaultCommunityCanNotBeRemovedException;
+import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByIdException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.custom.community.DefaultCommunityCanNotBeRemovedException;
 import com.learning.spring.rest.employees.mappers.CommunityMapper;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.utils.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,7 @@ public class CommunityServiceImpl implements CommunityService {
     @Autowired
     public CommunityServiceImpl(CommunityRepo communityRepo) {
         this.communityRepo = communityRepo;
-        communityMapper=new CommunityMapper();
+        communityMapper = new CommunityMapper();
     }
 
     @Override
@@ -98,7 +97,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (id == Constants.DEFAULT_COMMUNITY) {
             throw new DefaultCommunityCanNotBeRemovedException("Default community can not be removed");
         }
-        Community community = communityRepo.findById(id).orElseThrow(() -> new CommunityNotFoundByIdException("community not found with id=" + id, id));
+        Community community = communityRepo.findById(id).orElseThrow(() -> new CommunityNotFoundByIdException("Community not found with id=" + id, id));
         communityRepo.delete(community);
     }
 }

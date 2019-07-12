@@ -5,9 +5,7 @@ import com.learning.spring.rest.employees.dto.ManagerDTO;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Manager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 
-@Component
 public class UserMapper {
 
     public UserMapper() {
@@ -40,6 +38,7 @@ public class UserMapper {
         employee.setPhoneNumber(dto.getPhoneNumber());
         employee.setStartDate(dto.getStartDate());
         employee.setCommunityName(dto.getCommunityName());
+
 
         return employee;
     }

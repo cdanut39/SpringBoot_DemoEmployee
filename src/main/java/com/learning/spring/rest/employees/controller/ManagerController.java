@@ -2,9 +2,9 @@ package com.learning.spring.rest.employees.controller;
 
 
 import com.learning.spring.rest.employees.dto.ManagerDTO;
-import com.learning.spring.rest.employees.exceptions.manager.ManagerNotValidException;
-import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions_handler.ValidationError;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.handler.ValidationError;
 import com.learning.spring.rest.employees.services.ManagerServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
 import org.apache.logging.log4j.LogManager;
@@ -29,12 +29,11 @@ public class ManagerController {
     private static final Logger logger = LogManager.getLogger(EmployeeController.class);
 
     private ManagerServiceImpl managerService;
-    private Response response;
 
     @Autowired
-    public ManagerController(ManagerServiceImpl managerService, Response response) {
+    public ManagerController(ManagerServiceImpl managerService) {
         this.managerService = managerService;
-        this.response = response;
+
     }
 
     /**
@@ -44,6 +43,7 @@ public class ManagerController {
      */
     @PostMapping("/register/manager")
     public ResponseEntity<Response> addManager(@Valid @RequestBody ManagerDTO employee, BindingResult result) throws ManagerNotValidException, UserAlreadyExistsException {
+       Response response=new Response();
         if (result.hasErrors()) {
             List<ValidationError> errors = getErrors(result);
             logger.error("Invalid data for adding new manager");

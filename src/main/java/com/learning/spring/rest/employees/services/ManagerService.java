@@ -2,7 +2,7 @@ package com.learning.spring.rest.employees.services;
 
 
 import com.learning.spring.rest.employees.dto.ManagerDTO;
-import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 
 public interface ManagerService {
 

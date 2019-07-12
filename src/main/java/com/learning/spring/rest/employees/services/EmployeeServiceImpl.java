@@ -3,10 +3,10 @@ package com.learning.spring.rest.employees.services;
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
-import com.learning.spring.rest.employees.exceptions.NoResultsException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
-import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.CommunityMapper;
 import com.learning.spring.rest.employees.mappers.UserMapper;
 import com.learning.spring.rest.employees.model.Community;
@@ -74,6 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
 //        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), randomPassword)).start();
+        log.info("User successfully registered, email:" + email + ", password:" + randomPassword);
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
     }
 
@@ -84,7 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException {
         Optional<Employee> employee = userRepo.findEmployeeById(id);
         if (!employee.isPresent()) {
-            throw new EmployeeNotFoundException(EMPLOYEE_404 + id, id);
+            throw new EmployeeNotFoundException(EMPLOYEE_404_ID + id, id);
         }
         return userMapper.convertFromEmpTOEmployeeDTO(employee.get());
     }
@@ -132,12 +133,12 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     @Transactional
-    public EmployeeDTO updateEmployee(int id, EmployeeDTO emp) throws EmployeeNotFoundException {
+    public EmployeeDTO updateEmployee(int id, EmployeeDTO dto) throws EmployeeNotFoundException {
 
-        Employee employeeToBeUpdated = userRepo.findEmployeeById(id).orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_404 + id, id));
-        employeeToBeUpdated.setLastName(emp.getLastName());
-        employeeToBeUpdated.setPassword(new BCryptPasswordEncoder().encode(emp.getPassword()));
-        employeeToBeUpdated.setPhoneNumber(emp.getPhoneNumber());
+        Employee employeeToBeUpdated = userRepo.findEmployeeById(id).orElseThrow(() -> new EmployeeNotFoundException(EMPLOYEE_404_ID + id, id));
+        employeeToBeUpdated.setLastName(dto.getLastName());
+        employeeToBeUpdated.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
+        employeeToBeUpdated.setPhoneNumber(dto.getPhoneNumber());
         userRepo.save(employeeToBeUpdated);
         EmployeeDTO employeeDTO = userMapper.convertFromEmpTOEmployeeDTO(employeeToBeUpdated);
         log.info("Details of employee with id:{} were successfully updated!", id);
@@ -150,7 +151,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDTO assignCommunity(int employeeId, BaseCommunityDTO baseCommunityDTO) throws EmployeeNotFoundException, CommunityNotFoundByNameException {
         Optional<Employee> employee = userRepo.findEmployeeById(employeeId);
         if (!employee.isPresent()) {
-            throw new EmployeeNotFoundException(EMPLOYEE_404 + employeeId, employeeId);
+            throw new EmployeeNotFoundException(EMPLOYEE_404_ID + employeeId, employeeId);
         }
         Employee emp = employee.get();
         Community community = communityService.findByName(baseCommunityDTO.getCommunityName());

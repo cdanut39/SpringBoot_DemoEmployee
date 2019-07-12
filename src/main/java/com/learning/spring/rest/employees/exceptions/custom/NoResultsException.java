@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.exceptions;
+package com.learning.spring.rest.employees.exceptions.custom;
 
 public class NoResultsException extends Exception {
 

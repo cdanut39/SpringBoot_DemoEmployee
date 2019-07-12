@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.exceptions_handler;
+package com.learning.spring.rest.employees.exceptions.handler;
 
 import java.util.List;
 

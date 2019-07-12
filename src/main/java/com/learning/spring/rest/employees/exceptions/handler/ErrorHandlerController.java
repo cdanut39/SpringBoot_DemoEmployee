@@ -1,12 +1,12 @@
-package com.learning.spring.rest.employees.exceptions_handler;
+package com.learning.spring.rest.employees.exceptions.handler;
 
-import com.learning.spring.rest.employees.exceptions.NoResultsException;
-import com.learning.spring.rest.employees.exceptions.community.*;
-import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotValidException;
-import com.learning.spring.rest.employees.exceptions.manager.ManagerNotValidException;
-import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.user.UserNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.*;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

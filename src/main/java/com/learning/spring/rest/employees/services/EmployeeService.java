@@ -3,11 +3,11 @@ package com.learning.spring.rest.employees.services;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
-import com.learning.spring.rest.employees.exceptions.NoResultsException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByIdException;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
-import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByIdException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 
 import java.util.List;
 

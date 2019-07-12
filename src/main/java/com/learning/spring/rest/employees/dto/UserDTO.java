@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Role;
 import com.learning.spring.rest.employees.model.User;
+import com.learning.spring.rest.employees.utils.validators.RoPhoneNumberConstraint;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -31,11 +33,12 @@ public class UserDTO {
 
     @ApiModelProperty(required = true)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private User.Gender sex;
 
     @ApiModelProperty(required = true)
-//    @Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}")
-    private long phoneNumber;
+    @RoPhoneNumberConstraint
+    private String phoneNumber;
 
     @ApiModelProperty(required = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -43,6 +46,7 @@ public class UserDTO {
 
     @ApiModelProperty(required = true)
     @Email
+    @NotBlank
     private String email;
 
     @JsonIgnore
@@ -50,6 +54,7 @@ public class UserDTO {
 
     public UserDTO() {
     }
+
 
     public UserDTO(UserDTOBuilder<?> builder) {
         userId = builder.userId;
@@ -94,11 +99,11 @@ public class UserDTO {
         this.sex = sex;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -132,7 +137,7 @@ public class UserDTO {
         private String firstName;
         private String lastName;
         private User.Gender sex;
-        private long phoneNumber;
+        private String phoneNumber;
         private String password;
         private String email;
         private Set<Role> roles;
@@ -162,7 +167,7 @@ public class UserDTO {
             return getThis();
         }
 
-        public T setPhoneNumber(long phoneNumber) {
+        public T setPhoneNumber(String  phoneNumber) {
             this.phoneNumber = phoneNumber;
             return getThis();
         }

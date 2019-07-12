@@ -1,4 +1,4 @@
-package com.learning.spring.rest.employees.exceptions.employee;
+package com.learning.spring.rest.employees.exceptions.custom.employee;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

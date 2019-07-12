@@ -11,9 +11,7 @@ public class Community {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int communityId;
-    @Size
     private String communityName;
-    private static final String COMPANY_NAME = "Softvision";
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Employee> employees;
@@ -25,7 +23,7 @@ public class Community {
         this.communityId = id;
     }
 
-    public Community(int communityId, @Size String communityName) {
+    public Community(int communityId, String communityName) {
         this.communityId = communityId;
         this.communityName = communityName;
     }
@@ -54,9 +52,6 @@ public class Community {
         this.employees = employees;
     }
 
-    public static String getCompanyName() {
-        return COMPANY_NAME;
-    }
 
     @Override
     public String toString() {

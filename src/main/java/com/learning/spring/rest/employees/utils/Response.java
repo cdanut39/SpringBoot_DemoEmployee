@@ -1,8 +1,5 @@
 package com.learning.spring.rest.employees.utils;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class Response {
 
     private String message;

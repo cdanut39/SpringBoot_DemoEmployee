@@ -25,7 +25,7 @@ public class User {
     private String lastName;
     @Enumerated(EnumType.STRING)
     private User.Gender sex;
-    private Long phoneNumber;
+    private String phoneNumber;
     private String email;
     private String password;
 
@@ -40,7 +40,7 @@ public class User {
         M, F;
     }
 
-    public User(Integer userId, String firstName, String lastName, Gender sex, Long phoneNumber, String email, String password) {
+    public User(Integer userId, String firstName, String lastName, Gender sex, String phoneNumber, String email, String password) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;

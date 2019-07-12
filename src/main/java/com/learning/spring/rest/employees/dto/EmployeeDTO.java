@@ -3,15 +3,18 @@ package com.learning.spring.rest.employees.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class EmployeeDTO extends UserDTO {
 
-
     @ApiModelProperty(readOnly = true, notes = "employee first day in company")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @NotNull
     private LocalDate startDate;
 
+    @NotBlank
     private String communityName;
 
     public EmployeeDTO() {

@@ -1,14 +1,15 @@
 package com.learning.spring.rest.employees.service;
 
 import com.learning.spring.rest.employees.dao.UserRepo;
+import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
-import com.learning.spring.rest.employees.exceptions.community.CommunityNotFoundByNameException;
-import com.learning.spring.rest.employees.exceptions.employee.EmployeeNotFoundException;
-import com.learning.spring.rest.employees.exceptions.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
+import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Role;
-import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.services.CommunityServiceImpl;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.services.MailServiceImpl;
@@ -20,10 +21,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
 import java.util.*;
 
+import static com.learning.spring.rest.employees.model.User.Gender.M;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -53,19 +56,20 @@ public class EmployeeServiceTest {
     @Before
     public void setUp() {
         EmployeeDTO.EmployeeDTOBuilder builder = new EmployeeDTO.EmployeeDTOBuilder();
-        DTO = builder.setUserId(1).setFirstName("Danut").setCommunityName("QA").setLastName("Cristea").setEmail("dancristea@sv.ro").
-                setPhoneNumber(123456789).setSex(User.Gender.M).build();
+        DTO = builder.setUserId(1).setFirstName("Danut").setCommunityName("QA").setLastName("Cristea").
+                setEmail("dancristea@sv.ro").setPassword("parola").setPhoneNumber("333333333").setSex(M).build();
     }
 
     @Test
     public void getAllEmployeesTest() {
-        Employee employee1 = new Employee(1, "Danut", "Cristea",
-                User.Gender.M, 123456789L, "dancristea@sv.ro", "parola",
-                LocalDate.now(), new Community(1, "QA"), null, "ITC", null);
 
-        Employee employee2 = new Employee(2, "Georgian", "Cristea",
-                User.Gender.M, 12345L, "georgian@sv.ro", "parola",
-                LocalDate.now(), new Community(2, "ABC"), null, "ITC", null);
+
+        Employee employee1 = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+
+        Employee employee2 = Employee.builder().userId(2).firstName("Georgian").lastName("Cristea").email("georgiancristea@sv.ro").sex(M).
+                phoneNumber("45646575786").community(new Community(2, "QA")).build();
+
 
         List<Employee> employeeList = Arrays.asList(employee1, employee2);
         when(userRepo.findAllEmployees()).thenReturn(employeeList);
@@ -78,13 +82,12 @@ public class EmployeeServiceTest {
 
     @Test
     public void getEmployeeByValidIdTest() throws EmployeeNotFoundException {
-        Employee employee1 = new Employee(1, "Danut", "CRISTEA",
-                User.Gender.M, 12345L, "dancristea@sv.ro", "parola",
-                LocalDate.now(), new Community(1, "ITC"), null, "ITC", null);
+        Employee employee1 = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
 
         when(userRepo.findEmployeeById(employee1.getUserId())).thenReturn(Optional.of(employee1));
-        employeeService.getEmployeeById(1);
-        assertEquals("dancristea@sv.ro", employee1.getEmail());
+        EmployeeDTO employeeDTO = employeeService.getEmployeeById(1);
+        assertEquals("dancristea@sv.ro", employeeDTO.getEmail());
     }
 
     @Test(expected = EmployeeNotFoundException.class)
@@ -95,9 +98,8 @@ public class EmployeeServiceTest {
 
     @Test
     public void saveEmployeeTest() throws UserAlreadyExistsException, CommunityNotFoundByNameException {
-        Employee employee = new Employee(1, "Danut", "CRISTEA",
-                User.Gender.M, 12345L, "dancristea@sv.ro", "parola",
-                LocalDate.now(), new Community(1, "Bench"), null, "Bench", null);
+        Employee employee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
         Role EMPLOYEE_ROLE = new Role(Role.RoleEnum.EMPLOYEE.name());
         Set<Role> employeeRoles = new HashSet<>();
         employeeRoles.add(EMPLOYEE_ROLE);
@@ -107,28 +109,26 @@ public class EmployeeServiceTest {
         when(roleService.getEmpRoles()).thenReturn(employeeRoles);
         when(communityService.findByName(anyString())).thenReturn(employee.getCommunity());
         EmployeeDTO employeeDTO = employeeService.save(DTO);
-        assertEquals(employeeDTO.getEmail(), DTO.getEmail());
+        assertEquals("dancristea@sv.ro", employeeDTO.getEmail());
     }
 
 
     @Test(expected = UserAlreadyExistsException.class)
     public void saveExistingEmployeeTest() throws UserAlreadyExistsException, CommunityNotFoundByNameException {
 
-        Employee employee = new Employee(1, "Danut", "CRISTEA",
-                User.Gender.M, 12345L, "dancristea@sv.ro", "parola",
-                LocalDate.now(), new Community(1, "Bench"), null, "Bench", null);
+        Employee employee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
 
         when(userRepo.findByEmail(employee.getEmail())).thenReturn(Optional.of(employee));
         when(userRepo.save(employee)).thenReturn(employee);
-
-        EmployeeDTO employeeDTO = employeeService.save(DTO);
+        employeeService.save(DTO);
     }
 
     @Test
     public void deleteEmployeeTest() throws EmployeeNotFoundException {
-        Employee employee = new Employee(1, "Danut", "CRISTEA",
-                User.Gender.M, 12345L, "dancristea@sv.ro", "parola",
-                LocalDate.now(), new Community(1, "Bench"), null, "Bench", null);
+        Employee employee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+
         when(userRepo.findEmployeeById(employee.getUserId())).thenReturn(Optional.of(employee));
         employeeService.removeEmployee(employee.getUserId());
         verify(userRepo, times(1)).delete(employee);
@@ -140,4 +140,111 @@ public class EmployeeServiceTest {
         employeeService.removeEmployee(1);
     }
 
+    @Test
+    public void getEmployeesSortedASCByCriteriaASCTest() {
+
+        Employee employee1 = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+
+        Employee employee2 = Employee.builder().userId(2).firstName("Georgian").lastName("Cristea").email("georgiancristea@sv.ro").sex(M).
+                phoneNumber("45646575786").community(new Community(2, "QA")).build();
+
+        List<Employee> employeeList = Arrays.asList(employee1, employee2);
+
+        when(userRepo.findAllEmployees()).thenReturn(employeeList);
+        List<EmployeeDTO> employees = employeeService.getEmployeesSortedByCriteria("firstName", "ASC");
+        assertEquals("Danut", employees.get(0).getFirstName());
+    }
+
+    @Test
+    public void getEmployeesSortedDESCByCriteriaTest() {
+
+        Employee employee1 = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+
+        Employee employee2 = Employee.builder().userId(2).firstName("Georgian").lastName("Cristea").email("georgiancristea@sv.ro").sex(M).
+                phoneNumber("45646575786").community(new Community(2, "QA")).build();
+
+        List<Employee> employeeList = Arrays.asList(employee1, employee2);
+
+        when(userRepo.findAllEmployees()).thenReturn(employeeList);
+        List<EmployeeDTO> employees = employeeService.getEmployeesSortedByCriteria("firstName", "DESC");
+        assertEquals("Georgian", employees.get(0).getFirstName());
+    }
+
+    @Test
+    public void searchEmployeeByTest() throws NoResultsException {
+
+        Employee employee1 = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+
+        Employee employee2 = Employee.builder().userId(3).firstName("Stefan").lastName("Cristea").email("stefancristea@sv.ro").sex(M).
+                phoneNumber("45646575786").community(new Community(2, "QA")).build();
+
+        BaseCommunityDTO communityDTO = new BaseCommunityDTO("QA");
+        when(communityService.searchByName(anyString())).thenReturn(communityDTO);
+        when(userRepo.findAll(any(Example.class))).thenReturn(Arrays.asList(employee1, employee2));
+        List<EmployeeDTO> employeeDTOS = employeeService.searchEmployeeBy("Cristea", "QA");
+        assertEquals(employeeDTOS.size(), 2);
+        assertThat(employeeDTOS.get(0).getFirstName(), is("Danut"));
+        assertThat(employeeDTOS.get(1).getFirstName(), is("Stefan"));
+
+    }
+
+    @Test
+    public void getEmployeesWithPaginationTest() {
+        Employee employee1 = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+
+        Employee employee2 = Employee.builder().userId(2).firstName("Georgian").lastName("Cristea").email("georgiancristea@sv.ro").sex(M).
+                phoneNumber("45646575786").community(new Community(2, "QA")).build();
+
+        Employee employee3 = Employee.builder().userId(3).firstName("Stefan").lastName("Cristea").email("stefancristea@sv.ro").sex(M).
+                phoneNumber("45646575786").community(new Community(2, "QA")).build();
+
+
+        when(userRepo.findAllEmployees(any(Pageable.class))).thenReturn(Arrays.asList(employee1, employee2, employee3));
+        List<EmployeeDTO> employeeDTOList = employeeService.getEmployeesWithPagination(0, 4, "first_name");
+        assertEquals(employeeDTOList.size(), 3);
+        assertEquals("Danut", employeeDTOList.get(0).getFirstName());
+    }
+
+    @Test
+    public void updateEmployeeTest() throws EmployeeNotFoundException {
+        Employee oldEmployee = Employee.builder().userId(1).firstName("Danut").lastName("Bugan").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+        Employee newEmployee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("333333333").community(new Community(2, "QA")).build();
+
+        when(userRepo.findEmployeeById(anyInt())).thenReturn(Optional.of(oldEmployee));
+        when(userRepo.save(any(Employee.class))).thenReturn(newEmployee);
+        EmployeeDTO employeeDTO = employeeService.updateEmployee(DTO.getUserId(), DTO);
+        assertEquals("Cristea", employeeDTO.getLastName());
+        assertEquals(newEmployee.getPhoneNumber(), employeeDTO.getPhoneNumber());
+    }
+
+    @Test
+    public void assignCommunityTest() throws CommunityNotFoundByNameException, EmployeeNotFoundException {
+        Employee oldEmployee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+        Employee newEmployee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "HR")).build();
+        when(userRepo.findEmployeeById(anyInt())).thenReturn(Optional.of(oldEmployee));
+        Community community = new Community(1, "HR");
+        when(communityService.findByName(anyString())).thenReturn(community);
+        when(userRepo.save(any(Employee.class))).thenReturn(newEmployee);
+        EmployeeDTO employeeDTO = employeeService.assignCommunity(1, new BaseCommunityDTO("HR"));
+        assertEquals("HR", employeeDTO.getCommunityName());
+    }
+
+    @Test(expected = EmployeeNotFoundException.class)
+    public void assignCommunityEmployeeNotFoundTest() throws CommunityNotFoundByNameException, EmployeeNotFoundException {
+        Employee oldEmployee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "QA")).build();
+        Employee newEmployee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
+                phoneNumber("123456789").community(new Community(2, "HR")).build();
+        when(userRepo.findEmployeeById(anyInt())).thenReturn(Optional.empty());
+        employeeService.assignCommunity(1, new BaseCommunityDTO("HR"));
+
+    }
 }
