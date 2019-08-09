@@ -18,7 +18,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("Manager")
 public class Manager extends User {
-    @OneToMany(mappedBy = "manager", cascade = CascadeType.PERSIST, orphanRemoval = false)
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.PERSIST)
     private Set<Project> projects;
 
 

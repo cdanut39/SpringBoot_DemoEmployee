@@ -29,4 +29,12 @@ public class Constants {
 
     public static final String COMMUNITY_NOT_VALID = "Community data not valid";
 
+
+    public static final String PROJECT_ADDED = "Successfully added new project";
+
+    public static final String PROJECT_NOT_VALID = "Project data not valid";
+
+    public static final String MANAGER_404_ID = "Manager not found with id=";
+
+    public static final String MANAGER_404 = "Manager not found";
 }

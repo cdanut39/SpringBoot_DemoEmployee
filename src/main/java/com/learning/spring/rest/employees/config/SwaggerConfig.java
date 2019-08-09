@@ -34,10 +34,9 @@ public class SwaggerConfig {
     Contact contact = new Contact("CRISTEA Danut", "www.java.com", "danut.cristea@softvision.ro");
 
     private ApiInfo metaInfo() {
-        ApiInfo apiInfo = new ApiInfo("Employees Management App", "Manage employees, projects", "1.0",
+        return new ApiInfo("Employees Management App", "Manage employees, projects", "1.0",
                 "Terms of Service", contact,
                 "Apache License", "", vendorExtensions);
-        return apiInfo;
     }
 
     private Predicate<String> paths() {

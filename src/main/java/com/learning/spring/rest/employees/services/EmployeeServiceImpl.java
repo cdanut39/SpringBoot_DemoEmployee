@@ -73,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employeeToBeSaved.setRoles(roleService.getEmpRoles());
         }
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
-//        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), randomPassword)).start();
+        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), randomPassword)).start();
         log.info("User successfully registered, email:" + email + ", password:" + randomPassword);
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
     }

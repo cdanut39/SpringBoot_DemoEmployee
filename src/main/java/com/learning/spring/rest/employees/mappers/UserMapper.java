@@ -44,7 +44,7 @@ public class UserMapper {
     }
 
 
-    public Manager convertFromManagerDtoTOManager(ManagerDTO dto) {
+    public Manager convertFromManagerDtoToManagerSave(ManagerDTO dto) {
         Manager manager = new Manager();
 
         manager.setUserId(dto.getUserId());
@@ -58,8 +58,23 @@ public class UserMapper {
         return manager;
     }
 
+    public Manager convertFromManagerDtoToManager(ManagerDTO dto) {
+        Manager manager = new Manager();
 
-    public ManagerDTO convertFromManagerTOManagerDto(Manager manager) {
+        manager.setUserId(dto.getUserId());
+        manager.setFirstName(dto.getFirstName());
+        manager.setLastName(dto.getLastName());
+        manager.setSex(dto.getSex());
+        manager.setEmail(dto.getEmail());
+        manager.setPassword(dto.getPassword());
+        manager.setPhoneNumber(dto.getPhoneNumber());
+
+        return manager;
+    }
+
+
+
+    public ManagerDTO convertFromManagerToManagerDto(Manager manager) {
         ManagerDTO managerDTO = new ManagerDTO();
 
         managerDTO.setUserId(manager.getUserId());

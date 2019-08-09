@@ -4,7 +4,9 @@ import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.*;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.project.ProjectNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserNotValidException;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,15 @@ public class ErrorHandlerController {
         errorResp.setErrors(mnve.getFieldErrors());
         errorResp.setTimestamp(now());
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ManagerNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleManagerNotFoundError(ManagerNotFoundException mnfe) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
+        errorResp.setErrorMessage(mnfe.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserNotValidException.class)
@@ -118,5 +129,15 @@ public class ErrorHandlerController {
         errorResp.setErrorMessage(nre.getMessage());
         errorResp.setTimestamp(now());
         return new ResponseEntity<>(errorResp, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(ProjectNotValidException.class)
+    public ResponseEntity<ErrorResponseValidation> handleProjectNotValidError(ProjectNotValidException pnve) {
+        ErrorResponseValidation errorResp = new ErrorResponseValidation();
+        errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
+        errorResp.setErrorMessage(pnve.getMessage());
+        errorResp.setErrors(pnve.getFieldErrors());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
     }
 }

@@ -16,9 +16,9 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int projectId;
     private String projectName;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Manager manager;
-    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, orphanRemoval = false)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.MERGE)
     private Set<Employee> employees;
 
 }

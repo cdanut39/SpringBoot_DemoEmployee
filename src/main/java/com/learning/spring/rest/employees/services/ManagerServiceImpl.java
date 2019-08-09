@@ -2,6 +2,7 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.ManagerDTO;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.UserMapper;
 import com.learning.spring.rest.employees.model.Manager;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
+import static com.learning.spring.rest.employees.utils.Constants.*;
 
 
 @Service
@@ -40,11 +41,18 @@ public class ManagerServiceImpl implements ManagerService {
         if (user.isPresent()) {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
         } else {
-            managerToBeSaved = userMapper.convertFromManagerDtoTOManager(managerDTO);
+            managerToBeSaved = userMapper.convertFromManagerDtoToManagerSave(managerDTO);
             managerToBeSaved.setRoles(roleService.getManagerRoles());
         }
         Manager savedManager = userRepo.save(managerToBeSaved);
-        return userMapper.convertFromManagerTOManagerDto(savedManager);
+        return userMapper.convertFromManagerToManagerDto(savedManager);
     }
+
+    @Override
+    public ManagerDTO findManagerByName(String firstName, String lastName) throws ManagerNotFoundException {
+        Manager manager = userRepo.findManagerByName(firstName,lastName).orElseThrow(() -> new ManagerNotFoundException(MANAGER_404));
+        return userMapper.convertFromManagerToManagerDto(manager);
+    }
+
 
 }
