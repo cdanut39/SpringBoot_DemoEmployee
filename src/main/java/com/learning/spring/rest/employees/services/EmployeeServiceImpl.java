@@ -21,6 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,7 +75,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             employeeToBeSaved.setRoles(roleService.getEmpRoles());
         }
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
-        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), randomPassword)).start();
+//        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), randomPassword)).start();
         log.info("User successfully registered, email:" + email + ", password:" + randomPassword);
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
     }
@@ -123,9 +125,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
-    public List<EmployeeDTO> getEmployeesWithPagination(int page, int size, String criteria) {
+    public HashMap<String, Object> getEmployeesWithPagination(int page, int size, String criteria) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(criteria));
-        return userRepo.findAllEmployees(pageable).stream().map(emp -> userMapper.convertFromEmpTOEmployeeDTO(emp)).collect(Collectors.toList());
+        Page<Employee> employeePage = userRepo.findAllEmployees(pageable);
+        List<EmployeeDTO> allEmp = employeePage.stream().map(emp -> userMapper.convertFromEmpTOEmployeeDTO(emp)).collect(Collectors.toList());
+        HashMap<String, Object> pages = new LinkedHashMap<>();
+        pages.put("totalPages", employeePage.getTotalPages());
+        pages.put("totalRecords", employeePage.getTotalElements());
+        pages.put("employees", allEmp);
+        return pages;
     }
 
     /**

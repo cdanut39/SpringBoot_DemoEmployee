@@ -18,9 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.learning.spring.rest.employees.model.User.Gender.M;
 import static com.learning.spring.rest.employees.utils.Constants.*;
@@ -145,16 +143,23 @@ public class EmployeeControllerTest {
                 setEmail("stefanbadalache@sv.ro").setSex(M).setPhoneNumber("123456789").setCommunityName("QA")
                 .setStartDate(LocalDate.parse("2017-06-15")).build();
         List<EmployeeDTO> allEmployees = Arrays.asList(employeeDTO3, employeeDTO2, employeeDTO1);
+        HashMap<String, Object> pages = new LinkedHashMap<>();
+        pages.put("totalPages", 1);
+        pages.put("totalRecords", 3);
+        pages.put("currentPage",0);
+        pages.put("employees", allEmployees);
         when(employeeService.getEmployeesWithPagination(page, size, criteria))
-                .thenReturn(allEmployees);
+                .thenReturn(pages);
         mockMvc.perform(get("/getEmployees")
                 .contentType("application/json")
                 .param("page", String.valueOf(page))
                 .param("size", String.valueOf(size))
                 .param("sortBy", criteria))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(allEmployees.size())))
-                .andExpect(jsonPath("$[0].firstName", is("Stefan")));
+                .andExpect(jsonPath("employees", hasSize(allEmployees.size())))
+                .andExpect(jsonPath("totalPages",is(1)))
+                .andExpect(jsonPath("totalRecords",is(3)))
+                .andExpect(jsonPath("employees.[0].firstName", is("Stefan")));
     }
 
     @Test

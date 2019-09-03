@@ -24,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
@@ -92,7 +93,9 @@ public class EmployeeController {
     }
 
     @GetMapping(value = "/getEmployees")
-    public ResponseEntity<List<EmployeeDTO>> getEmployeesWithPagination(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy") String criteria) {
+    public ResponseEntity<HashMap<String, Object>> getEmployeesWithPagination(@RequestParam(value = "page", defaultValue = "1") int page,
+                                                                              @RequestParam(value = "size", defaultValue = "5") int size,
+                                                                              @RequestParam(value = "sortBy", defaultValue = "first_name") String criteria) {
         return new ResponseEntity<>(employeeService.getEmployeesWithPagination(page, size, criteria), HttpStatus.OK);
     }
 

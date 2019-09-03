@@ -9,6 +9,7 @@ import com.learning.spring.rest.employees.exceptions.custom.community.CommunityN
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -30,5 +31,5 @@ public interface EmployeeService {
 
     List<EmployeeDTO> searchEmployeeBy(String lastName, String community) throws NoResultsException;
 
-    List<EmployeeDTO> getEmployeesWithPagination(int page, int size, String criteria);
+    HashMap<String, Object> getEmployeesWithPagination(int page, int size, String criteria);
 }

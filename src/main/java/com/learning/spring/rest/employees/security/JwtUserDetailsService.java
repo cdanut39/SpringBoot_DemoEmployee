@@ -11,18 +11,20 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class MyUserDetailsService implements UserDetailsService {
+public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepo userRepo;
+    UserRepo userRepo;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
         Optional<User> user = userRepo.findByEmail(email);
-        if (!user.isPresent()) {
-            throw new UsernameNotFoundException("User not found");
+
+        if (user.isPresent()) {
+            return new UserPrincipal(user.get());
+        } else {
+            throw new UsernameNotFoundException("User not found with email: " + email);
         }
-        return new UserPrincipal(user.get());
     }
 }

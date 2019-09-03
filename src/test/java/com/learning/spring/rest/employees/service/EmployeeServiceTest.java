@@ -21,8 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.util.*;
 
@@ -202,11 +201,18 @@ public class EmployeeServiceTest {
         Employee employee3 = Employee.builder().userId(3).firstName("Stefan").lastName("Cristea").email("stefancristea@sv.ro").sex(M).
                 phoneNumber("45646575786").community(new Community(2, "QA")).build();
 
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("first_name"));
+        Page<Employee> page = new PageImpl<>(Arrays.asList(employee1, employee2, employee3), pageable, 3);
+        when(userRepo.findAllEmployees(any(Pageable.class))).thenReturn(page);
+        HashMap<String, Object> pages = new LinkedHashMap<>();
+        pages.put("employees", page.getContent());
+        pages.put("totalPages", page.getTotalPages());
+        pages.put("totalRecords", page.getTotalElements());
 
-        when(userRepo.findAllEmployees(any(Pageable.class))).thenReturn(Arrays.asList(employee1, employee2, employee3));
-        List<EmployeeDTO> employeeDTOList = employeeService.getEmployeesWithPagination(0, 4, "first_name");
-        assertEquals(employeeDTOList.size(), 3);
-        assertEquals("Danut", employeeDTOList.get(0).getFirstName());
+        HashMap<String, Object> map = employeeService.getEmployeesWithPagination(0, 2, "first_name");
+        assertEquals(3, ((List<EmployeeDTO>) map.get("employees")).size());
+        assertEquals("Danut", ((List<EmployeeDTO>) map.get("employees")).get(0).getFirstName());
+        assertEquals("incorrect number of pages", 2, map.get("totalPages"));
     }
 
     @Test
