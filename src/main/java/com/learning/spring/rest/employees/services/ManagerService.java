@@ -5,7 +5,7 @@ import com.learning.spring.rest.employees.dto.ManagerDTO;
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 
-public interface ManagerService {
+public interface ManagerService extends UserService {
 
     ManagerDTO save(ManagerDTO managerDTO) throws UserAlreadyExistsException;
 

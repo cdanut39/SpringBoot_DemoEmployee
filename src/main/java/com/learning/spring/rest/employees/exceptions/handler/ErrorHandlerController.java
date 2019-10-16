@@ -1,5 +1,8 @@
 package com.learning.spring.rest.employees.exceptions.handler;
 
+import com.learning.spring.rest.employees.exceptions.ExpiredTokenException;
+import com.learning.spring.rest.employees.exceptions.InvalidPasswordException;
+import com.learning.spring.rest.employees.exceptions.PasswordMismatchException;
 import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.*;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
@@ -8,6 +11,7 @@ import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFo
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.project.ProjectNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,15 @@ import static java.time.LocalDateTime.now;
 
 @ControllerAdvice
 public class ErrorHandlerController {
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundError(UserNotFoundException unfe) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
+        errorResp.setErrorMessage(unfe.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(EmployeeNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEmployeeNotFoundError(EmployeeNotFoundException enfe) {
@@ -137,6 +150,34 @@ public class ErrorHandlerController {
         errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
         errorResp.setErrorMessage(pnve.getMessage());
         errorResp.setErrors(pnve.getFieldErrors());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredPasswordTokenError(ExpiredTokenException epte) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.UNAUTHORIZED.value());
+        errorResp.setErrorMessage(epte.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordMismatchError(PasswordMismatchException pme) {
+        ErrorResponse errorResp = new ErrorResponse();
+        errorResp.setReasonCode(HttpStatus.NOT_FOUND.value());
+        errorResp.setErrorMessage(pme.getMessage());
+        errorResp.setTimestamp(now());
+        return new ResponseEntity<>(errorResp, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPasswordError(InvalidPasswordException ipe) {
+        ErrorResponseValidation errorResp = new ErrorResponseValidation();
+        errorResp.setReasonCode(HttpStatus.BAD_REQUEST.value());
+        errorResp.setErrorMessage(ipe.getMessage());
+        errorResp.setErrors(ipe.getFieldErrors());
         errorResp.setTimestamp(now());
         return new ResponseEntity<>(errorResp, HttpStatus.BAD_REQUEST);
     }

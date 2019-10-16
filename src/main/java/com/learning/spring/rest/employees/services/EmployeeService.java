@@ -2,7 +2,10 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
+import com.learning.spring.rest.employees.dto.PasswordDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
+import com.learning.spring.rest.employees.exceptions.ExpiredTokenException;
+import com.learning.spring.rest.employees.exceptions.PasswordMismatchException;
 import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
@@ -13,17 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public interface EmployeeService {
+public interface EmployeeService extends UserService {
 
-    EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException;
+    EmployeeDTO registerEmployee(EmployeeDTO employee) throws UserAlreadyExistsException, CommunityNotFoundByNameException;
 
-    EmployeeDTO save(EmployeeDTO employee) throws UserAlreadyExistsException, CommunityNotFoundByNameException;
+    EmployeeDTO setEmployeePassword(String token, PasswordDTO passwordDTO) throws EmployeeNotFoundException, ExpiredTokenException, PasswordMismatchException;
 
     EmployeeDTO updateEmployee(int id, EmployeeDTO employee) throws EmployeeNotFoundException;
 
     UserDTO assignCommunity(int employeeId, BaseCommunityDTO community) throws EmployeeNotFoundException, CommunityNotFoundByIdException, CommunityNotFoundByNameException;
-
-    void removeEmployee(int id) throws EmployeeNotFoundException;
 
     List<EmployeeDTO> getAllEmployees();
 

@@ -10,12 +10,16 @@ public class Constants {
     public static final String COMMUNITY_ASSIGNED = "Community was successfully assigned";
 
     public static final String COMMUNITY_ADDED = "New community was successfully added";
-    public static final String COMMUNITY_REMOVED = "Community was successfully removed";
 
+    public static final String COMMUNITY_REMOVED = "Community was successfully removed";
 
     public static final String USER_EXISTS = "User already exists! Use another email address";
 
     public static final String EMPLOYEE_REMOVED = "Employee was successfully removed";
+
+    public static final String MANAGER_REMOVED = "Manager was successfully removed";
+
+    public static final String USER_REMOVED = "User was successfully removed";
 
     public static final String NO_RESULTS = "No results were found based on your filters";
 
@@ -37,4 +41,14 @@ public class Constants {
     public static final String MANAGER_404_ID = "Manager not found with id=";
 
     public static final String MANAGER_404 = "Manager not found";
+
+    public static final String USER_404 = "User not found";
+
+    public static final String EXPIRED_TOKEN = "Expired password token";
+
+    public static final String PASSWORD_MISMATCH = "Please make sure your password match";
+
+    public static final String PASSWORD_ADDED = "Successfully added new password";
+
+    public static final String INVALID_PASSWORD ="Invalid data for adding new password";
 }

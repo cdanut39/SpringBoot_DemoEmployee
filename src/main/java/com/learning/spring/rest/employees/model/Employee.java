@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Setter
@@ -38,16 +39,15 @@ public class Employee extends User {
     @Builder
     public Employee(Integer userId, String firstName, String lastName, Gender sex,
                     String phoneNumber, String email, String password,
-                    LocalDate startDate, Community community, Project project, String communityName, String projectName) {
-        super(userId, firstName, lastName, sex, phoneNumber, email, password);
-
-
+                    LocalDate startDate, Community community, Project project, String communityName, String projectName,String passwordToken, Date tokenExpiryDate) {
+        super(userId, firstName, lastName, sex, phoneNumber, email, password,passwordToken,tokenExpiryDate);
         this.startDate = startDate;
         this.community = community;
         this.project = project;
         this.communityName = communityName;
         this.projectName = projectName;
     }
+
 
     public Employee(LocalDate startDate, Community community, Project project, String communityName, String projectName) {
         this.startDate = startDate;

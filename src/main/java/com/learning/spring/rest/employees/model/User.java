@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
 
 
@@ -28,6 +30,8 @@ public class User {
     private String phoneNumber;
     private String email;
     private String password;
+    private String passwordToken;
+    private Date tokenExpiryDate;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
@@ -40,7 +44,7 @@ public class User {
         M, F;
     }
 
-    public User(Integer userId, String firstName, String lastName, Gender sex, String phoneNumber, String email, String password) {
+    public User(Integer userId, String firstName, String lastName, Gender sex, String phoneNumber, String email, String password,String passwordToken, Date tokenExpiryDate) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -48,6 +52,8 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.passwordToken=passwordToken;
+        this.tokenExpiryDate=tokenExpiryDate;
     }
 }
 

@@ -2,9 +2,12 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.ManagerDTO;
+import com.learning.spring.rest.employees.dto.UserDTO;
+import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.UserMapper;
+import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Manager;
 import com.learning.spring.rest.employees.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,7 @@ import static com.learning.spring.rest.employees.utils.Constants.*;
 
 
 @Service
-public class ManagerServiceImpl implements ManagerService {
+public class ManagerServiceImpl extends AbstractUserService implements ManagerService {
 
 
     private UserRepo userRepo;
@@ -55,4 +58,12 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
 
+    @Override
+    public ManagerDTO getUserById(int id) throws ManagerNotFoundException {
+        Optional<Manager> manager = userRepo.findManagerById(id);
+        if (!manager.isPresent()) {
+            throw new ManagerNotFoundException(MANAGER_404);
+        }
+        return userMapper.convertFromManagerToManagerDto(manager.get());
+    }
 }

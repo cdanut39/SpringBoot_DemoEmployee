@@ -3,6 +3,9 @@ package com.learning.spring.rest.employees.services;
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
+import com.learning.spring.rest.employees.dto.PasswordDTO;
+import com.learning.spring.rest.employees.exceptions.ExpiredTokenException;
+import com.learning.spring.rest.employees.exceptions.PasswordMismatchException;
 import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
@@ -12,7 +15,6 @@ import com.learning.spring.rest.employees.mappers.UserMapper;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.User;
-import com.learning.spring.rest.employees.utils.RandomPassword;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -21,19 +23,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.learning.spring.rest.employees.utils.Constants.*;
+import static com.learning.spring.rest.employees.utils.Utils.tokenExpiryTime;
 import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.getMap;
 import static com.learning.spring.rest.employees.utils.comparators.EmployeeComparators.reversed;
 
 @Service
 @Slf4j
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeServiceImpl extends AbstractUserService implements EmployeeService {
 
 
     private UserRepo userRepo;
@@ -60,9 +60,8 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Transactional
     @Override
-    public EmployeeDTO save(EmployeeDTO employeeDto) throws UserAlreadyExistsException, CommunityNotFoundByNameException {
+    public EmployeeDTO registerEmployee(EmployeeDTO employeeDto) throws UserAlreadyExistsException, CommunityNotFoundByNameException {
         Employee employeeToBeSaved;
-        String randomPassword = RandomPassword.generatePassword(PASSWORD_LENGTH);
         String email = employeeDto.getEmail();
         Optional<User> user = userRepo.findByEmail(email);
         if (user.isPresent()) {
@@ -70,21 +69,44 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             Community community = communityService.findByName(employeeDto.getCommunityName());
             employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto);
-            employeeToBeSaved.setPassword(new BCryptPasswordEncoder().encode(randomPassword));
+            employeeToBeSaved.setPasswordToken(UUID.randomUUID().toString());
+            employeeToBeSaved.setTokenExpiryDate(tokenExpiryTime().getTime());
             employeeToBeSaved.setCommunity(community);
             employeeToBeSaved.setRoles(roleService.getEmpRoles());
         }
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
-//        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), randomPassword)).start();
-        log.info("User successfully registered, email:" + email + ", password:" + randomPassword);
+//        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), employeeToBeSaved.getPasswordToken())).start();
+        log.info("User successfully registered, email:" + email + ", token:" + employeeToBeSaved.getPasswordToken());
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
+    }
+
+
+    /**
+     * PATCH
+     */
+    @Transactional
+    @Override
+    public EmployeeDTO setEmployeePassword(String token, PasswordDTO passwordDTO) throws EmployeeNotFoundException, ExpiredTokenException, PasswordMismatchException {
+        Optional<User> user = userRepo.findByPasswordToken(token);
+        if (!user.isPresent()) {
+            throw new EmployeeNotFoundException(EMPLOYEE_404, "token");
+        } else if (new Date().after(user.get().getTokenExpiryDate())) {
+            throw new ExpiredTokenException(EXPIRED_TOKEN);
+        } else if (!passwordDTO.getPassword().equals(passwordDTO.getConfirmPassword())) {
+            throw new PasswordMismatchException(PASSWORD_MISMATCH);
+        }
+        user.get().setPassword(new BCryptPasswordEncoder().encode(passwordDTO.getPassword()));
+        user.get().setTokenExpiryDate(new Date());
+        userRepo.save(user.get());
+        return new EmployeeDTO();
     }
 
     /**
      * GET
      */
+
     @Override
-    public EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException {
+    public EmployeeDTO getUserById(int id) throws EmployeeNotFoundException {
         Optional<Employee> employee = userRepo.findEmployeeById(id);
         if (!employee.isPresent()) {
             throw new EmployeeNotFoundException(EMPLOYEE_404_ID + id, id);
@@ -168,22 +190,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
 
     }
-
-    /**
-     * DELETE
-     */
-    @Override
-    public void removeEmployee(int id) throws EmployeeNotFoundException {
-        Optional<Employee> employee = userRepo.findEmployeeById(id);
-        if (!employee.isPresent()) {
-            throw new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id);
-        } else {
-            Employee emp = employee.get();
-            userRepo.delete(emp);
-            log.info("Successfully removed employee with id={},{}", emp.getUserId(), emp.getFirstName());
-        }
-    }
-
 
 }
 

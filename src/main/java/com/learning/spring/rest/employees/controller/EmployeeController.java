@@ -2,13 +2,18 @@ package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dto.BaseCommunityDTO;
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
+import com.learning.spring.rest.employees.dto.PasswordDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
+import com.learning.spring.rest.employees.exceptions.ExpiredTokenException;
+import com.learning.spring.rest.employees.exceptions.InvalidPasswordException;
+import com.learning.spring.rest.employees.exceptions.PasswordMismatchException;
 import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserNotFoundException;
 import com.learning.spring.rest.employees.exceptions.handler.ValidationError;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
@@ -55,6 +60,7 @@ public class EmployeeController {
             @ApiResponse(code = 400, message = EMPLOYEE_NOT_VALID),
             @ApiResponse(code = 404, message = EMPLOYEE_404)
     })
+    @CrossOrigin
     @PostMapping("/register/employee")
     public ResponseEntity<Response> addEmployee(@Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, UserAlreadyExistsException, CommunityNotFoundByNameException {
         Response response = new Response();
@@ -63,18 +69,33 @@ public class EmployeeController {
             logger.error("Invalid data for adding new employee");
             throw new EmployeeNotValidException(EMPLOYEE_NOT_VALID, errors);
         }
-        employeeService.save(employee);
+        employeeService.registerEmployee(employee);
         response.setMessage(EMPLOYEE_ADDED);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * PATCH
+     */
+    @PatchMapping(value = "/password")
+    public ResponseEntity<Response> setPassword(@RequestParam(value = "token") String token, @Valid @RequestBody PasswordDTO passwordDTO, BindingResult result) throws ExpiredTokenException, PasswordMismatchException, EmployeeNotFoundException, InvalidPasswordException {
+        Response response = new Response();
+        if (result.hasErrors()) {
+            List<ValidationError> errors = getErrors(result);
+            logger.error(INVALID_PASSWORD);
+            throw new InvalidPasswordException(INVALID_PASSWORD, errors);
+        }
+        employeeService.setEmployeePassword(token, passwordDTO);
+        response.setMessage(PASSWORD_ADDED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     /**
      * GET
      */
     @GetMapping("/employee/{id}")
     public ResponseEntity<UserDTO> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
-        EmployeeDTO getEmployee = employeeService.getEmployeeById(id);
+        EmployeeDTO getEmployee = employeeService.getUserById(id);
         return new ResponseEntity<>(getEmployee, HttpStatus.OK);
     }
 
@@ -133,18 +154,4 @@ public class EmployeeController {
         response.setMessage(COMMUNITY_ASSIGNED);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
-    /**
-     * DELETE
-     */
-    @DeleteMapping("/employee/{id}")
-    public ResponseEntity<Response> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
-        Response response = new Response();
-        employeeService.removeEmployee(id);
-        response.setMessage(EMPLOYEE_REMOVED);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-
 }

@@ -7,13 +7,11 @@ import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
+import com.learning.spring.rest.employees.exceptions.custom.user.UserNotFoundException;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Role;
-import com.learning.spring.rest.employees.services.CommunityServiceImpl;
-import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
-import com.learning.spring.rest.employees.services.MailServiceImpl;
-import com.learning.spring.rest.employees.services.RoleService;
+import com.learning.spring.rest.employees.services.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +45,7 @@ public class EmployeeServiceTest {
 
     @Mock
     private MailServiceImpl mailService;
+
     @Mock
     private RoleService roleService;
 
@@ -85,14 +84,14 @@ public class EmployeeServiceTest {
                 phoneNumber("123456789").community(new Community(2, "QA")).build();
 
         when(userRepo.findEmployeeById(employee1.getUserId())).thenReturn(Optional.of(employee1));
-        EmployeeDTO employeeDTO = employeeService.getEmployeeById(1);
+        EmployeeDTO employeeDTO = employeeService.getUserById(1);
         assertEquals("dancristea@sv.ro", employeeDTO.getEmail());
     }
 
     @Test(expected = EmployeeNotFoundException.class)
     public void getEmployeeByInvalidIdTest() throws EmployeeNotFoundException {
         when(userRepo.findEmployeeById(2)).thenReturn(Optional.empty());
-        employeeService.getEmployeeById(2);
+        employeeService.getUserById(2);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class EmployeeServiceTest {
         when(userRepo.save(any(Employee.class))).thenReturn(employee);
         when(roleService.getEmpRoles()).thenReturn(employeeRoles);
         when(communityService.findByName(anyString())).thenReturn(employee.getCommunity());
-        EmployeeDTO employeeDTO = employeeService.save(DTO);
+        EmployeeDTO employeeDTO = employeeService.registerEmployee(DTO);
         assertEquals("dancristea@sv.ro", employeeDTO.getEmail());
     }
 
@@ -120,23 +119,23 @@ public class EmployeeServiceTest {
 
         when(userRepo.findByEmail(employee.getEmail())).thenReturn(Optional.of(employee));
         when(userRepo.save(employee)).thenReturn(employee);
-        employeeService.save(DTO);
+        employeeService.registerEmployee(DTO);
     }
 
     @Test
-    public void deleteEmployeeTest() throws EmployeeNotFoundException {
+    public void deleteEmployeeTest() throws UserNotFoundException {
         Employee employee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
                 phoneNumber("123456789").community(new Community(2, "QA")).build();
 
         when(userRepo.findEmployeeById(employee.getUserId())).thenReturn(Optional.of(employee));
-        employeeService.removeEmployee(employee.getUserId());
+        employeeService.removeUser(employee.getUserId());
         verify(userRepo, times(1)).delete(employee);
     }
 
-    @Test(expected = EmployeeNotFoundException.class)
-    public void deleteEmployeeInvalidIdTest() throws EmployeeNotFoundException {
-        when(userRepo.findEmployeeById(1)).thenReturn(Optional.empty());
-        employeeService.removeEmployee(1);
+    @Test(expected = UserNotFoundException.class)
+    public void deleteEmployeeInvalidIdTest() throws UserNotFoundException {
+        when(userRepo.findById(anyInt())).thenReturn(Optional.empty());
+        employeeService.removeUser(1);
     }
 
     @Test

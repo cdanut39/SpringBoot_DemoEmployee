@@ -33,8 +33,8 @@ public class MailServiceImpl implements MailService {
         simpleMail.setFrom("admin@sv.ro");
         simpleMail.setTo(to);
         simpleMail.setSubject("Welcome to Employee Management App");
-        simpleMail.setText("Hello "+recipient+",\n\n\t"+"Your account on EMA platform has been created. For login, please use the email address:"+emailAddress+" and the password:"+ password+"." +
-                " We strongly recommend to change your password.\n\nRegards," +
+        simpleMail.setText("Hello "+recipient+",\n\n\t"+"Your account on EMA platform has been created. For login, please create your password by accessing the following link: http://localhost:8080/password?token="+ password +
+                "\nRegards," +
                 "\nAdministration");
         mailSender.send(simpleMail);
     }

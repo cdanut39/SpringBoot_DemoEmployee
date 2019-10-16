@@ -57,7 +57,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void getEmployeeByIdTest() throws Exception {
-        when(employeeService.getEmployeeById(employeeDTO1.getUserId())).thenReturn(employeeDTO1);
+        when(employeeService.getUserById(employeeDTO1.getUserId())).thenReturn(employeeDTO1);
         mockMvc.perform(get("/employee/{id}", employeeDTO1.getUserId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email", is(employeeDTO1.getEmail())));
@@ -79,7 +79,7 @@ public class EmployeeControllerTest {
     @Test
     public void addEmployeeTest() throws Exception {
 
-        when(employeeService.save(any(EmployeeDTO.class))).thenReturn(employeeDTO1);
+        when(employeeService.registerEmployee(any(EmployeeDTO.class))).thenReturn(employeeDTO1);
         mockMvc.perform(post("/register/employee")
                 .contentType("application/json")
                 .content(asJsonString(employeeDTO1)))
@@ -91,7 +91,7 @@ public class EmployeeControllerTest {
     public void addEmployeeInvalidData() throws Exception {
         EmployeeDTO.EmployeeDTOBuilder builder = new EmployeeDTO.EmployeeDTOBuilder();
         EmployeeDTO employeeDTO = builder.setUserId(1).setFirstName("Danut").setCommunityName("QA").setLastName("Cristea").
-                setPhoneNumber("123456789").build();
+                setPhoneNumber("+40767915086").build();
         mockMvc.perform(post("/register/employee")
                 .contentType("application/json")
                 .content(asJsonString(employeeDTO)))
@@ -146,7 +146,7 @@ public class EmployeeControllerTest {
         HashMap<String, Object> pages = new LinkedHashMap<>();
         pages.put("totalPages", 1);
         pages.put("totalRecords", 3);
-        pages.put("currentPage",0);
+        pages.put("currentPage", 0);
         pages.put("employees", allEmployees);
         when(employeeService.getEmployeesWithPagination(page, size, criteria))
                 .thenReturn(pages);
@@ -157,8 +157,8 @@ public class EmployeeControllerTest {
                 .param("sortBy", criteria))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("employees", hasSize(allEmployees.size())))
-                .andExpect(jsonPath("totalPages",is(1)))
-                .andExpect(jsonPath("totalRecords",is(3)))
+                .andExpect(jsonPath("totalPages", is(1)))
+                .andExpect(jsonPath("totalRecords", is(3)))
                 .andExpect(jsonPath("employees.[0].firstName", is("Stefan")));
     }
 
@@ -242,7 +242,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void removeEmployeeTest() throws Exception {
-        doNothing().when(employeeService).removeEmployee(anyInt());
+        doNothing().when(employeeService).removeUser(anyInt());
         mockMvc.perform(delete("/employee/{id}", 1)
                 .contentType("application/json"))
                 .andExpect(status().isOk())
