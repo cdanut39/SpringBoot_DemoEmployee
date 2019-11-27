@@ -14,7 +14,6 @@ import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNot
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.custom.user.UserNotFoundException;
 import com.learning.spring.rest.employees.exceptions.handler.ValidationError;
 import com.learning.spring.rest.employees.services.EmployeeServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
@@ -37,6 +36,7 @@ import static com.learning.spring.rest.employees.utils.BindingResultErrors.getEr
 import static com.learning.spring.rest.employees.utils.Constants.*;
 
 @RestController
+@CrossOrigin
 public class EmployeeController {
 
     private static final Logger logger = LogManager.getLogger(EmployeeController.class);
@@ -61,9 +61,8 @@ public class EmployeeController {
             @ApiResponse(code = 400, message = EMPLOYEE_NOT_VALID),
             @ApiResponse(code = 404, message = EMPLOYEE_404)
     })
-    @CrossOrigin
     @PostMapping("/register/employee")
-    public ResponseEntity<Response> addEmployee(@Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, UserAlreadyExistsException, CommunityNotFoundByNameException {
+    public ResponseEntity<Response> addEmployee(@Valid @RequestBody EmployeeDTO employee, BindingResult result) throws EmployeeNotValidException, UserAlreadyExistsException, CommunityNotFoundByNameException, ManagerNotFoundException {
         Response response = new Response();
         if (result.hasErrors()) {
             List<ValidationError> errors = getErrors(result);

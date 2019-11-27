@@ -78,6 +78,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // Add a filter to validate the tokens with every request
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.cors().configurationSource(corsConfigurationSource());
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+        corsConfiguration.setAllowedMethods(Arrays.asList(
+                HttpMethod.GET.name(),
+                HttpMethod.HEAD.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.OPTIONS.name(),
+                HttpMethod.DELETE.name()));
+        corsConfiguration.setMaxAge(3600L);
+        source.registerCorsConfiguration("/**", corsConfiguration); // you restrict your path here
+        return source;
     }
 
     private static final String[] AUTH_WHITELIST = {
