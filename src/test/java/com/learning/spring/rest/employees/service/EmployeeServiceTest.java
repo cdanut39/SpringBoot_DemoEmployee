@@ -6,6 +6,7 @@ import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserNotFoundException;
 import com.learning.spring.rest.employees.model.Community;
@@ -84,18 +85,18 @@ public class EmployeeServiceTest {
                 phoneNumber("123456789").community(new Community(2, "QA")).build();
 
         when(userRepo.findEmployeeById(employee1.getUserId())).thenReturn(Optional.of(employee1));
-        EmployeeDTO employeeDTO = employeeService.getUserById(1);
+        EmployeeDTO employeeDTO = employeeService.getEmployeeById(1);
         assertEquals("dancristea@sv.ro", employeeDTO.getEmail());
     }
 
     @Test(expected = EmployeeNotFoundException.class)
     public void getEmployeeByInvalidIdTest() throws EmployeeNotFoundException {
         when(userRepo.findEmployeeById(2)).thenReturn(Optional.empty());
-        employeeService.getUserById(2);
+        employeeService.getEmployeeById(2);
     }
 
     @Test
-    public void saveEmployeeTest() throws UserAlreadyExistsException, CommunityNotFoundByNameException {
+    public void saveEmployeeTest() throws UserAlreadyExistsException, CommunityNotFoundByNameException, ManagerNotFoundException {
         Employee employee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
                 phoneNumber("123456789").community(new Community(2, "QA")).build();
         Role EMPLOYEE_ROLE = new Role(Role.RoleEnum.EMPLOYEE.name());
@@ -112,7 +113,7 @@ public class EmployeeServiceTest {
 
 
     @Test(expected = UserAlreadyExistsException.class)
-    public void saveExistingEmployeeTest() throws UserAlreadyExistsException, CommunityNotFoundByNameException {
+    public void saveExistingEmployeeTest() throws UserAlreadyExistsException, CommunityNotFoundByNameException, ManagerNotFoundException {
 
         Employee employee = Employee.builder().userId(1).firstName("Danut").lastName("Cristea").email("dancristea@sv.ro").sex(M).
                 phoneNumber("123456789").community(new Community(2, "QA")).build();
@@ -128,14 +129,14 @@ public class EmployeeServiceTest {
                 phoneNumber("123456789").community(new Community(2, "QA")).build();
 
         when(userRepo.findEmployeeById(employee.getUserId())).thenReturn(Optional.of(employee));
-        employeeService.removeUser(employee.getUserId());
+        employeeService.removeEmployee(employee.getUserId());
         verify(userRepo, times(1)).delete(employee);
     }
 
     @Test(expected = UserNotFoundException.class)
     public void deleteEmployeeInvalidIdTest() throws UserNotFoundException {
         when(userRepo.findById(anyInt())).thenReturn(Optional.empty());
-        employeeService.removeUser(1);
+        employeeService.removeEmployee(1);
     }
 
     @Test

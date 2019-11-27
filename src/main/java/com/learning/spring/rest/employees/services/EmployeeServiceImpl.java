@@ -9,11 +9,13 @@ import com.learning.spring.rest.employees.exceptions.PasswordMismatchException;
 import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.CommunityMapper;
 import com.learning.spring.rest.employees.mappers.UserMapper;
 import com.learning.spring.rest.employees.model.Community;
 import com.learning.spring.rest.employees.model.Employee;
+import com.learning.spring.rest.employees.model.Manager;
 import com.learning.spring.rest.employees.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ import static com.learning.spring.rest.employees.utils.comparators.EmployeeCompa
 
 @Service
 @Slf4j
-public class EmployeeServiceImpl extends AbstractUserService implements EmployeeService {
+public class EmployeeServiceImpl implements EmployeeService {
 
 
     private UserRepo userRepo;
@@ -60,20 +62,23 @@ public class EmployeeServiceImpl extends AbstractUserService implements Employee
      */
     @Transactional
     @Override
-    public EmployeeDTO registerEmployee(EmployeeDTO employeeDto) throws UserAlreadyExistsException, CommunityNotFoundByNameException {
+    public EmployeeDTO registerEmployee(EmployeeDTO employeeDto) throws UserAlreadyExistsException, CommunityNotFoundByNameException, ManagerNotFoundException {
         Employee employeeToBeSaved;
         String email = employeeDto.getEmail();
         Optional<User> user = userRepo.findByEmail(email);
+        Community community = communityService.findByName(employeeDto.getCommunityName());
+        Optional<Manager> manager = userRepo.findManagerByName(employeeDto.getManager().getFirstName(), employeeDto.getManager().getLastName());
         if (user.isPresent()) {
             throw new UserAlreadyExistsException(USER_EXISTS, email);
-        } else {
-            Community community = communityService.findByName(employeeDto.getCommunityName());
-            employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto);
-            employeeToBeSaved.setPasswordToken(UUID.randomUUID().toString());
-            employeeToBeSaved.setTokenExpiryDate(tokenExpiryTime().getTime());
-            employeeToBeSaved.setCommunity(community);
-            employeeToBeSaved.setRoles(roleService.getEmpRoles());
+        } else if (!manager.isPresent()) {
+            throw new ManagerNotFoundException(MANAGER_404);
         }
+        employeeToBeSaved = userMapper.convertFromEmpDtoTOEmployee(employeeDto);
+        employeeToBeSaved.setPasswordToken(UUID.randomUUID().toString());
+        employeeToBeSaved.setTokenExpiryDate(tokenExpiryTime().getTime());
+        employeeToBeSaved.setCommunity(community);
+        employeeToBeSaved.setManager(manager.get());
+        employeeToBeSaved.setRoles(roleService.getEmpRoles());
         Employee savedEmployee = userRepo.save(employeeToBeSaved);
 //        new Thread(() -> mailService.sendEmail(savedEmployee.getEmail(), savedEmployee.getFirstName() + " " + savedEmployee.getLastName(), savedEmployee.getEmail(), employeeToBeSaved.getPasswordToken())).start();
         log.info("User successfully registered, email:" + email + ", token:" + employeeToBeSaved.getPasswordToken());
@@ -106,7 +111,7 @@ public class EmployeeServiceImpl extends AbstractUserService implements Employee
      */
 
     @Override
-    public EmployeeDTO getUserById(int id) throws EmployeeNotFoundException {
+    public EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException {
         Optional<Employee> employee = userRepo.findEmployeeById(id);
         if (!employee.isPresent()) {
             throw new EmployeeNotFoundException(EMPLOYEE_404_ID + id, id);
@@ -190,6 +195,22 @@ public class EmployeeServiceImpl extends AbstractUserService implements Employee
         return userMapper.convertFromEmpTOEmployeeDTO(savedEmployee);
 
     }
+
+    /**
+     * DELETE
+     */
+    @Override
+    public void removeEmployee(int id) throws EmployeeNotFoundException {
+        Optional<Employee> employee = userRepo.findEmployeeById(id);
+        if (!employee.isPresent()) {
+            throw new EmployeeNotFoundException("Couldn't delete. Employee with id=" + id + " doesn't exist", id);
+        } else {
+            Employee emp = employee.get();
+            userRepo.delete(emp);
+            log.info("Successfully removed employee with id={},{}", emp.getUserId(), emp.getFirstName());
+        }
+    }
+
 
 }
 

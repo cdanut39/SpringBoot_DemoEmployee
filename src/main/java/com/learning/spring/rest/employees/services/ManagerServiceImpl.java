@@ -2,12 +2,9 @@ package com.learning.spring.rest.employees.services;
 
 import com.learning.spring.rest.employees.dao.UserRepo;
 import com.learning.spring.rest.employees.dto.ManagerDTO;
-import com.learning.spring.rest.employees.dto.UserDTO;
-import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.mappers.UserMapper;
-import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Manager;
 import com.learning.spring.rest.employees.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.learning.spring.rest.employees.utils.Constants.*;
+import static com.learning.spring.rest.employees.utils.Constants.MANAGER_404;
+import static com.learning.spring.rest.employees.utils.Constants.USER_EXISTS;
 
 
 @Service
-public class ManagerServiceImpl extends AbstractUserService implements ManagerService {
+public class ManagerServiceImpl implements ManagerService {
 
 
     private UserRepo userRepo;
@@ -53,13 +51,13 @@ public class ManagerServiceImpl extends AbstractUserService implements ManagerSe
 
     @Override
     public ManagerDTO findManagerByName(String firstName, String lastName) throws ManagerNotFoundException {
-        Manager manager = userRepo.findManagerByName(firstName,lastName).orElseThrow(() -> new ManagerNotFoundException(MANAGER_404));
+        Manager manager = userRepo.findManagerByName(firstName, lastName).orElseThrow(() -> new ManagerNotFoundException(MANAGER_404));
         return userMapper.convertFromManagerToManagerDto(manager);
     }
 
 
     @Override
-    public ManagerDTO getUserById(int id) throws ManagerNotFoundException {
+    public ManagerDTO getManagerById(int id) throws ManagerNotFoundException {
         Optional<Manager> manager = userRepo.findManagerById(id);
         if (!manager.isPresent()) {
             throw new ManagerNotFoundException(MANAGER_404);

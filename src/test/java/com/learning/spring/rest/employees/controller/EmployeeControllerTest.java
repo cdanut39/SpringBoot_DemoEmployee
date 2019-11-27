@@ -57,7 +57,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void getEmployeeByIdTest() throws Exception {
-        when(employeeService.getUserById(employeeDTO1.getUserId())).thenReturn(employeeDTO1);
+        when(employeeService.getEmployeeById(employeeDTO1.getUserId())).thenReturn(employeeDTO1);
         mockMvc.perform(get("/employee/{id}", employeeDTO1.getUserId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("email", is(employeeDTO1.getEmail())));
@@ -242,7 +242,7 @@ public class EmployeeControllerTest {
 
     @Test
     public void removeEmployeeTest() throws Exception {
-        doNothing().when(employeeService).removeUser(anyInt());
+        doNothing().when(employeeService).removeEmployee(anyInt());
         mockMvc.perform(delete("/employee/{id}", 1)
                 .contentType("application/json"))
                 .andExpect(status().isOk())

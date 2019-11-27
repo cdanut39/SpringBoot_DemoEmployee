@@ -27,6 +27,10 @@ public class Employee extends User {
     @JoinColumn(name = "project_ID")
     private Project project;
 
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "manager_ID")
+    private Manager manager;
+
     @Transient
     private String communityName;
 

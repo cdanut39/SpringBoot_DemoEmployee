@@ -17,6 +17,8 @@ public class EmployeeDTO extends UserDTO {
     @NotBlank
     private String communityName;
 
+    private ManagerForEmployeeDTO manager;
+
     public EmployeeDTO() {
     }
 
@@ -40,6 +42,14 @@ public class EmployeeDTO extends UserDTO {
 
     public void setCommunityName(String communityName) {
         this.communityName = communityName;
+    }
+
+    public ManagerForEmployeeDTO getManager() {
+        return manager;
+    }
+
+    public void setManager(ManagerForEmployeeDTO manager) {
+        this.manager = manager;
     }
 
     public static class EmployeeDTOBuilder extends UserDTO.UserDTOBuilder<EmployeeDTOBuilder> {

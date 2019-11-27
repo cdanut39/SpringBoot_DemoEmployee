@@ -12,6 +12,7 @@ import com.learning.spring.rest.employees.exceptions.custom.community.CommunityN
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotValidException;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserNotFoundException;
 import com.learning.spring.rest.employees.exceptions.handler.ValidationError;
@@ -95,7 +96,7 @@ public class EmployeeController {
      */
     @GetMapping("/employee/{id}")
     public ResponseEntity<UserDTO> getEmployeeById(@PathVariable("id") int id) throws EmployeeNotFoundException {
-        EmployeeDTO getEmployee = employeeService.getUserById(id);
+        EmployeeDTO getEmployee = employeeService.getEmployeeById(id);
         return new ResponseEntity<>(getEmployee, HttpStatus.OK);
     }
 
@@ -152,6 +153,17 @@ public class EmployeeController {
         }
         employeeService.assignCommunity(empId, community);
         response.setMessage(COMMUNITY_ASSIGNED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * DELETE
+     */
+    @DeleteMapping("/employee/{id}")
+    public ResponseEntity<Response> deleteEmployee(@PathVariable("id") int id) throws EmployeeNotFoundException {
+        Response response = new Response();
+        employeeService.removeEmployee(id);
+        response.setMessage(EMPLOYEE_REMOVED);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

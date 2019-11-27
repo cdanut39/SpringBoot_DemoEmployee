@@ -2,6 +2,7 @@ package com.learning.spring.rest.employees.mappers;
 
 import com.learning.spring.rest.employees.dto.EmployeeDTO;
 import com.learning.spring.rest.employees.dto.ManagerDTO;
+import com.learning.spring.rest.employees.dto.ManagerForEmployeeDTO;
 import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Manager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,6 +14,9 @@ public class UserMapper {
 
     public EmployeeDTO convertFromEmpTOEmployeeDTO(Employee employee) {
         EmployeeDTO employeeDTO = new EmployeeDTO();
+        ManagerForEmployeeDTO manager = new ManagerForEmployeeDTO();
+        manager.setFirstName(employee.getManager().getFirstName());
+        manager.setLastName(employee.getManager().getLastName());
 
         employeeDTO.setUserId(employee.getUserId());
         employeeDTO.setFirstName(employee.getFirstName());
@@ -21,6 +25,7 @@ public class UserMapper {
         employeeDTO.setEmail(employee.getEmail());
         employeeDTO.setPhoneNumber(employee.getPhoneNumber());
         employeeDTO.setCommunityName(employee.getCommunity().getCommunityName());
+        employeeDTO.setManager(manager);
         employeeDTO.setStartDate(employee.getStartDate());
 
         return employeeDTO;
@@ -71,7 +76,6 @@ public class UserMapper {
 
         return manager;
     }
-
 
 
     public ManagerDTO convertFromManagerToManagerDto(Manager manager) {

@@ -3,11 +3,9 @@ package com.learning.spring.rest.employees.controller;
 
 import com.learning.spring.rest.employees.dto.ManagerDTO;
 import com.learning.spring.rest.employees.dto.UserDTO;
-import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotValidException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
-import com.learning.spring.rest.employees.exceptions.custom.user.UserNotFoundException;
 import com.learning.spring.rest.employees.exceptions.handler.ValidationError;
 import com.learning.spring.rest.employees.services.ManagerServiceImpl;
 import com.learning.spring.rest.employees.utils.Response;
@@ -23,12 +21,12 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static com.learning.spring.rest.employees.utils.BindingResultErrors.getErrors;
-import static com.learning.spring.rest.employees.utils.Constants.*;
+import static com.learning.spring.rest.employees.utils.Constants.MANAGER_ADDED;
 
 @RestController
 public class ManagerController {
 
-    private static final Logger logger = LogManager.getLogger(EmployeeController.class);
+    private static final Logger logger = LogManager.getLogger(ManagerController.class);
 
     private ManagerServiceImpl managerService;
 
@@ -58,7 +56,7 @@ public class ManagerController {
      */
     @GetMapping("/manager/{id}")
     public ResponseEntity<UserDTO> getEmployeeById(@PathVariable("id") int id) throws ManagerNotFoundException {
-        ManagerDTO getEmployee = managerService.getUserById(id);
+        ManagerDTO getEmployee = managerService.getManagerById(id);
         return new ResponseEntity<>(getEmployee, HttpStatus.OK);
     }
 }

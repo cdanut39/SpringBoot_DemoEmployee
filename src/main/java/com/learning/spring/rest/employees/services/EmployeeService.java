@@ -10,15 +10,16 @@ import com.learning.spring.rest.employees.exceptions.custom.NoResultsException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByIdException;
 import com.learning.spring.rest.employees.exceptions.custom.community.CommunityNotFoundByNameException;
 import com.learning.spring.rest.employees.exceptions.custom.employee.EmployeeNotFoundException;
+import com.learning.spring.rest.employees.exceptions.custom.manager.ManagerNotFoundException;
 import com.learning.spring.rest.employees.exceptions.custom.user.UserAlreadyExistsException;
 
 import java.util.HashMap;
 import java.util.List;
 
 
-public interface EmployeeService extends UserService {
+public interface EmployeeService {
 
-    EmployeeDTO registerEmployee(EmployeeDTO employee) throws UserAlreadyExistsException, CommunityNotFoundByNameException;
+    EmployeeDTO registerEmployee(EmployeeDTO employee) throws UserAlreadyExistsException, CommunityNotFoundByNameException, ManagerNotFoundException;
 
     EmployeeDTO setEmployeePassword(String token, PasswordDTO passwordDTO) throws EmployeeNotFoundException, ExpiredTokenException, PasswordMismatchException;
 
@@ -28,9 +29,13 @@ public interface EmployeeService extends UserService {
 
     List<EmployeeDTO> getAllEmployees();
 
+    EmployeeDTO getEmployeeById(int id) throws EmployeeNotFoundException;
+
     List<EmployeeDTO> getEmployeesSortedByCriteria(String criteria, String direction);
 
     List<EmployeeDTO> searchEmployeeBy(String lastName, String community) throws NoResultsException;
 
     HashMap<String, Object> getEmployeesWithPagination(int page, int size, String criteria);
+
+    void removeEmployee(int id) throws EmployeeNotFoundException;
 }

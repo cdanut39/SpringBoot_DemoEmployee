@@ -21,5 +21,8 @@ public class Manager extends User {
     @OneToMany(mappedBy = "manager", cascade = CascadeType.PERSIST)
     private Set<Project> projects;
 
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.MERGE)
+    private Set<Employee> employees;
+
 
 }
