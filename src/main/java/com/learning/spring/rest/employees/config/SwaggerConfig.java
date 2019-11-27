@@ -47,8 +47,8 @@ public class SwaggerConfig {
                 regex("/employees"),
                 regex("/register.*"),
                 regex("/search"),
-                regex("/getEmployees*")
-
+                regex("/getEmployees*"),
+                regex("/login")
 
         );
     }
