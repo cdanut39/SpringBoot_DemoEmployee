@@ -54,7 +54,7 @@ public class CommunityServiceImpl implements CommunityService {
     public BaseCommunityDTO getCommunityById(int id) throws CommunityNotFoundByIdException {
         Community community = communityRepo.findById(id).orElseThrow(() -> new CommunityNotFoundByIdException("community not found with id=" + id, id));
         BaseCommunityDTO baseCommunityDTO = communityMapper.convertFromCommunityToBaseCommunityDto(community);
-        logger.info("Information for community with id=" + id + ": Name={}", community.getCommunityName());
+        logger.info("Information for community with id={} : Name={}", id, community.getCommunityName());
         return baseCommunityDTO;
     }
 

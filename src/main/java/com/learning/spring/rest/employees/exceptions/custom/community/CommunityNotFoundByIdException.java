@@ -10,6 +10,6 @@ public class CommunityNotFoundByIdException extends Exception {
 
     public CommunityNotFoundByIdException(String message, int id) {
         super(message);
-        logger.error("No community found with id=" + id);
+        logger.error("No community found with id={}",id);
     }
 }

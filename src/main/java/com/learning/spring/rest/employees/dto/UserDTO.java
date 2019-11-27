@@ -2,7 +2,6 @@ package com.learning.spring.rest.employees.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.learning.spring.rest.employees.model.Employee;
 import com.learning.spring.rest.employees.model.Role;
 import com.learning.spring.rest.employees.model.User;
 import com.learning.spring.rest.employees.utils.validators.RoPhoneNumberConstraint;
@@ -40,7 +39,6 @@ public class UserDTO {
     @RoPhoneNumberConstraint
     private String phoneNumber;
 
-    @ApiModelProperty(required = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
@@ -91,11 +89,11 @@ public class UserDTO {
         this.lastName = lastName;
     }
 
-    public Employee.Gender getSex() {
+    public User.Gender getSex() {
         return sex;
     }
 
-    public void setSex(Employee.Gender sex) {
+    public void setSex(User.Gender sex) {
         this.sex = sex;
     }
 
@@ -167,7 +165,7 @@ public class UserDTO {
             return getThis();
         }
 
-        public T setPhoneNumber(String  phoneNumber) {
+        public T setPhoneNumber(String phoneNumber) {
             this.phoneNumber = phoneNumber;
             return getThis();
         }

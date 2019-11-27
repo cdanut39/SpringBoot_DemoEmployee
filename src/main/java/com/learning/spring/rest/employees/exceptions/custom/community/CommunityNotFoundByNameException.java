@@ -8,8 +8,8 @@ public class CommunityNotFoundByNameException extends Exception {
     private static final Logger logger = LogManager.getLogger(CommunityNotFoundByNameException.class);
 
 
-    public CommunityNotFoundByNameException(String message, String CommunityName) {
+    public CommunityNotFoundByNameException(String message, String communityName) {
         super(message);
-        logger.error("No community found with name=" + CommunityName);
+        logger.error("No community found with name={}",communityName);
     }
 }

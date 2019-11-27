@@ -16,6 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -52,12 +57,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        final String ADMIN = "ADMIN";
+        final String MANAGER = "MANAGER";
         httpSecurity.csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/login", "/register/**").permitAll()
+                .authorizeRequests().antMatchers("/login", "/register/**", "/password").permitAll()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers(HttpMethod.GET, "/communities").hasAnyRole("ADMIN", "MANAGER")
-                .antMatchers(HttpMethod.GET, "/employees").hasAnyRole("ADMIN", "MANAGER").
+                .antMatchers(HttpMethod.GET, "/communities").hasAnyRole(ADMIN, MANAGER)
+                .antMatchers(HttpMethod.GET, "/employees").hasAnyRole(ADMIN, MANAGER)
+                .antMatchers(HttpMethod.GET, "/community").hasAnyRole(ADMIN, MANAGER)
+                .antMatchers(HttpMethod.GET, "/getEmployees").hasAnyRole(ADMIN, MANAGER).
                 // all other requests need to be authenticated
                         anyRequest().authenticated().and().
                 logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login").
